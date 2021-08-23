@@ -7,7 +7,31 @@ import {
     Redirect
 } from "react-router-dom";
 import Chart from 'chart.js/auto';
+import {
+    Button,
+    Space,
+    Menu,
+    Dropdown,
+    Divider,
+    Avatar
+} from 'antd';
+import { WarningOutlined, DownOutlined, UserOutlined, AudioOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
+
+
+const menu = (
+    <Menu onClick={() => alert('sup')}>
+        <Menu.Item key="1" icon={<UserOutlined />}>
+            Date
+        </Menu.Item>
+        <Menu.Item key="2" icon={<UserOutlined />}>
+            Name
+        </Menu.Item>
+        <Menu.Item key="3" icon={<UserOutlined />}>
+            Priority
+        </Menu.Item>
+    </Menu>
+);
 
 class App extends React.Component {
     constructor(props) {
@@ -25,34 +49,22 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <div style={{ display: 'inline-flex', width: '100%' }}>
-                    <div style={{
-                        border: '1px solid black',
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        textAlign: 'center',
-                        paddingTop: 5,
-                        borderRadius: 5,
-                        height: 30,
-                        marginBottom: 20,
-                        marginRight: 20
-                    }}>
+
+                <Space style={{
+                    marginBottom: 20
+                }}>
+                    <Button>
                         Mark All as Read
-                    </div>
-                    <div style={{
-                        border: '1px solid black',
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        textAlign: 'center',
-                        paddingTop: 5,
-                        borderRadius: 5,
-                        height: 30,
-                        marginBottom: 20,
-                        marginRight: 20
-                    }}>
-                        Sort
-                    </div>
-                </div>
+                    </Button>
+
+                    <Dropdown overlay={menu}>
+
+                        <Button>
+                            Sort By <DownOutlined />
+                        </Button>
+                    </Dropdown>
+                </Space>
+                <br />
 
                 <div style={{
                     display: 'inline-flex'
@@ -67,7 +79,7 @@ class App extends React.Component {
                         height: 600
                     }}>
                         <div style={{
-                            height: 120,
+                            height: 100,
                             width: '100%',
                             // backgroundColor: 'red',
                             borderStyle: 'solid',
@@ -77,32 +89,37 @@ class App extends React.Component {
                             display: 'inline-flex',
                             alignItems: 'center'
                         }}>
-                            <div style={{
-                                height: 50,
-                                width: 50,
+
+
+                            <Avatar size={'large'} style={{
                                 marginLeft: 20,
-                                marginRight: 10,
-                                borderRadius: 25,
-                                backgroundColor: 'grey'
-                            }} />
+                                marginRight: 10
+                            }} icon={<UserOutlined />} />
 
 
                             <div style={{ flex: 1, marginRight: 20 }}>
                                 <div style={{
                                     display: 'inline-flex',
                                     justifyContent: 'space-between',
-                                    width: '100%'
+                                    width: '100%',
+
                                 }}>
-                                    <p>
-                                        Imran Shitta-Bey
+                                    <p style={{
+                                        margin: 0
+                                    }}>
+                                        <b>Imran Shitta-Bey</b>
                                     </p>
-                                    <p>
+                                    <p style={{
+                                        margin: 0
+                                    }}>
                                         12:30pm
                                     </p>
                                 </div>
 
-                                <p>
-                                    Do your job :)
+                                <p style={{
+                                    margin: 0
+                                }}>
+                                    Do your job!
                                 </p>
                             </div>
                         </div>
@@ -115,18 +132,32 @@ class App extends React.Component {
                             display: 'inline-flex',
                             alignItems: 'center'
                         }}>
-                            <div style={{
-                                height: 75,
-                                width: 75,
-                                // marginLeft: 20,
-                                marginRight: 10,
-                                borderRadius: 75 / 2,
-                                backgroundColor: 'grey'
-                            }} />
-                            <p>
-                                Imran Shitta-Bey
-                            </p>
+                            <Avatar size={64}
+                                style={{
+                                    marginRight: 20
+                                }}
+                                icon={<UserOutlined />} />
+                            <span>
+                                <p style={{
+                                    margin: 0,
+                                    fontSize: 18
+                                }}>
+                                    <b>Imran Shitta-Bey</b>
+                                </p>
+                                <p style={{
+                                    margin: 0
+                                }}>
+                                    Director
+                                </p>
+                            </span>
+                            <span>
+                                <Button type="text" style={{
+                                    color: '#1890ff',
+                                    marginLeft: 20
+                                }}>Reply</Button>
+                            </span>
                         </div>
+                        <Divider />
                         <h1>
                             Bruh moment
                         </h1>

@@ -1,5 +1,5 @@
 import logo from './logo.svg';
-import './App.css';
+//import './App.css';
 import React from 'react';
 import Authentication from './pages/Authentication';
 import {
@@ -10,7 +10,7 @@ import {
   Redirect
 } from "react-router-dom";
 import Dashboard from './pages/Dashboard';
-
+import './App.less';
 
 
 class App extends React.Component {
@@ -44,8 +44,10 @@ class App extends React.Component {
           (() => {
             if (window.location.pathname.indexOf('dashboard') !== -1 && isAuthed) {
               return false;
-            } else {
+            } else if (isAuthed) {
               return true
+            } else {
+              return false
             }
           })() ? <Redirect to="dashboard" /> : null
         }

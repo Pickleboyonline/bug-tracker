@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import FullCalendar from '@fullcalendar/react' // must go before plugins
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
-
+import { Calendar } from 'antd';
 
 class App extends React.Component {
     constructor(props) {
@@ -29,10 +29,7 @@ class App extends React.Component {
                 <div style={{
                     width: 800
                 }}>
-                    <FullCalendar
-                        plugins={[dayGridPlugin]}
-                        initialView="dayGridMonth"
-                    />
+                    <Calendar />
                 </div>
 
             </div>

@@ -10,7 +10,8 @@ import {
 import Chart from 'chart.js/auto';
 import Overview from './sub-pages/Overview';
 import SkeletonProject from './sub-pages/SkeletonProject';
-
+import { Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
 class App extends React.Component {
     constructor(props) {
@@ -30,30 +31,54 @@ class App extends React.Component {
         return (
             <div className="Dashboard" style={{
                 display: 'inline-flex',
-                width: '100%'
+                width: '100%',
+                paddingLeft: 330,
+                paddingBottom: 64
             }}>
                 <div className="navigation" style={{
-                    backgroundColor: 'black',
                     color: 'white',
-                    width: 260,
+                    width: 300,
+                    'box-shadow': '-7px 0px 13px 0px black',
                     height: 800,
-                    paddingLeft: 20,
-                    paddingRight: 20,
-                    borderRadius: 10, margin: 20,
-                    boxShadow: 1
+                    boxShadow: 1,
+                    position: 'fixed',
+                    left: 0,
+                    top: 0,
+                    height: '100%',
+                    backgroundColor: '#0093E9',
+                    backgroundImage: 'linear-gradient(43deg, #0093E9 0%, #80D0C7 100%)',
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
-                    <h2 style={{ marginBottom: 30 }}>
-                        Bug Tracker
+                    <h2 style={{
+                        marginBottom: 30,
+                        marginLeft: 30,
+                        marginTop: 30,
+                        color: 'white'
+                    }}>
+                        Bugg
                     </h2>
-                    <Link to={`/dashboard`} replace>
+                    <Link
 
-                        <h4 >
+                        to={`/dashboard`} replace>
+
+                        <h4 style={{
+                            marginLeft: 30,
+                            color: 'white'
+
+                        }}>
                             Overview
                         </h4>
                     </Link>
-                    <Link to={`/dashboard/messages`} replace>
+                    <Link
 
-                        <h4 >
+                        to={`/dashboard/messages`} replace>
+
+                        <h4 style={{
+                            marginLeft: 30,
+                            color: 'white'
+
+                        }}>
                             Messages
                         </h4>
                     </Link>
@@ -64,10 +89,14 @@ class App extends React.Component {
                             justifyContent: 'space-between',
 
                         }}>
-                            <h4 >
+                            <h4 style={{
+                                marginLeft: 30,
+                                color: 'white'
+
+                            }}>
                                 Projects
                             </h4>
-                            <h4 style={{ marginRight: 10 }}>
+                            <h4 style={{ marginRight: 30, color: 'white' }}>
                                 ↓
                             </h4>
                         </div>
@@ -80,7 +109,7 @@ class App extends React.Component {
 
                         }}>
                             <Link to={`${window.location.pathname}/projects/mixtape`}>
-                                <h5 style={{ marginLeft: 10 }}>
+                                <h5 style={{ marginLeft: 60, color: 'white' }}>
                                     Mixtape
                                 </h5>
                             </Link>
@@ -92,24 +121,31 @@ class App extends React.Component {
                 </div>
                 <div className="main-wrapper" style={{ flex: 1 }}>
 
-                    <div className="header" style={{ width: '100%', display: 'inline-flex', justifyContent: 'space-between' }}>
+                    <div
+                        className="header"
+                        style={{
+                            width: '100%',
+                            display: 'inline-flex',
+                            justifyContent: 'space-between',
+                            height: 110,
+                            alignItems: 'center'
+                        }}>
                         <h2>
-                            Welcome, Imran
+                            Welcome, Imran S.
                         </h2>
-                        <div style={{ display: 'inline-flex', marginTop: 20 }}>
+                        <div style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+
+                        }}>
                             <h3 style={{ marginRight: 20 }}>
                                 Settings
                             </h3>
                             <h3 style={{ marginRight: 20 }}>
                                 Notifications
                             </h3>
-                            <div style={{
-                                height: 75,
-                                float: 'right',
-                                width: 75,
-                                borderRadius: 75 / 2,
-                                backgroundColor: 'grey',
-                                marginRight: 20
+                            <Avatar size={64} icon={<UserOutlined />} style={{
+                                marginRight: 30
                             }} />
                         </div>
 

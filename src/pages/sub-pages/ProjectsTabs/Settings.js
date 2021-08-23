@@ -51,7 +51,8 @@ class App extends React.Component {
                             alignItems: 'center'
                         }}>
                             <p style={{
-                                marginLeft: 20
+                                marginLeft: 20,
+                                marginBottom: 0
                             }}>
                                 A Setting
                             </p>
@@ -63,7 +64,7 @@ class App extends React.Component {
                     }}>
 
                         <h1>
-                            Change Some Stuff, Go Ahead
+                            Go Ahead, Change Some Stuff
                         </h1>
                         <p style={{ maxWidth: 700 }}>
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.

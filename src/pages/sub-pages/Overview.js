@@ -46,7 +46,7 @@ class App extends React.Component {
         return (
             <React.Fragment>
                 <h1>
-                    Overview Widgets & Shit
+                    Overview Widgets & Stuff
                 </h1>
                 <div style={{
                     display: 'flex',

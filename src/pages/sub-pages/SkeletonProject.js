@@ -13,6 +13,19 @@ import Announcements from './ProjectsTabs/Announcements';
 import Calendar from './ProjectsTabs/Calendar';
 import Settings from './ProjectsTabs/Settings';
 import Collaborators from './ProjectsTabs/Collaborators'
+import { Menu, Space } from 'antd';
+import {
+    MailOutlined,
+    BugOutlined,
+    SettingOutlined,
+    DashboardOutlined,
+    CalendarOutlined,
+    NotificationOutlined,
+    TeamOutlined
+
+} from '@ant-design/icons';
+
+const { SubMenu } = Menu;
 
 function Tabs(props) {
     return (
@@ -40,67 +53,64 @@ class App extends React.Component {
     componentDidMount() {
 
     }
+    handleClick = e => {
+
+        this.setState({ activeTab: e.key });
+    };
 
     render() {
+        const current = this.state.activeTab;
         return (
             <React.Fragment>
-                <h1>
-                    Mixtape
-                </h1>
+                <Space align='center'>
+                    <img
+                        style={{
+                            height: 72,
+                            width: 72,
+                            borderRadius: 5,
+                            borderColor: 'rgba(0,0,0,.2)',
+                            borderStyle: 'solid',
+                            borderWidth: 1
+                        }}
+                        src="https://getmixtape.app/static/media/JUSTFORAPPLE.fa2ec9e8.png" />
+                    <h1 style={{
+                        fontSize: 50,
+                        margin: 0
+                    }}>
+                        Mixtape
+                    </h1>
+                </Space>
+
                 <div style={{ display: 'flex' }}>
-                    <Tabs
-                        name='overview'
-                        title='Overview'
-                        activeColor='cyan'
-                        ctx={this}
-                        activeTabValue={this.state.activeTab}
 
-                    />
-                    <Tabs
-                        name='bugs'
-                        title='Bugs'
-                        activeColor='cyan'
-                        ctx={this}
-                        activeTabValue={this.state.activeTab}
+                    <Menu
+                        style={{
+                            marginBottom: 20,
+                            position: 'relative',
+                            //left: -18,
+                            width: 900
+                        }}
+                        onClick={this.handleClick} selectedKeys={[current]} mode="horizontal">
+                        <Menu.Item key="overview" icon={<DashboardOutlined />}>
+                            Overview
+                        </Menu.Item>
+                        <Menu.Item key="bugs" icon={<BugOutlined />}>
+                            Bugs
+                        </Menu.Item>
+                        <Menu.Item key="announcements" icon={<NotificationOutlined />}>
+                            Announcements
+                        </Menu.Item>
+                        <Menu.Item key="calendar" icon={<CalendarOutlined />}>
+                            Calendar
+                        </Menu.Item>
+                        <Menu.Item key="settings" icon={<SettingOutlined />}>
+                            Settings
+                        </Menu.Item>
+                        <Menu.Item key="collaborators" icon={<TeamOutlined />}>
+                            Collaborators
+                        </Menu.Item>
+                    </Menu>
 
-                    />
-
-                    <Tabs
-                        name='announcements'
-                        title='Announcements'
-                        activeColor='cyan'
-                        ctx={this}
-                        activeTabValue={this.state.activeTab}
-
-                    />
-
-                    <Tabs
-                        name='calendar'
-                        title='Calendar'
-                        activeColor='cyan'
-                        ctx={this}
-                        activeTabValue={this.state.activeTab}
-
-                    />
-
-
-                    <Tabs
-                        name='settings'
-                        title='Settings'
-                        activeColor='cyan'
-                        ctx={this}
-                        activeTabValue={this.state.activeTab}
-
-                    />
-
-                    <Tabs
-                        name='collaborators'
-                        title='Collaborators'
-                        activeColor='cyan'
-                        ctx={this}
-                        activeTabValue={this.state.activeTab}
-
-                    />
 
                 </div>
                 {

@@ -7,6 +7,7 @@ import {
     Redirect
 } from "react-router-dom";
 import Chart from 'chart.js/auto';
+import { Card, Statistic, Row, Col, Button, Space } from 'antd';
 
 
 class App extends React.Component {
@@ -24,9 +25,9 @@ class App extends React.Component {
             type: 'pie',
             data: {
                 labels: [
-                    'Red',
-                    'Blue',
-                    'Yellow'
+                    'Uncompleted',
+                    'Completed',
+                    'In Progress'
                 ],
                 datasets: [{
                     label: 'My First Dataset',
@@ -46,24 +47,57 @@ class App extends React.Component {
         return (
             <React.Fragment>
 
+                <Row
+                    style={{
+                        width: '100%'
+                    }}
+                    gutter={16}>
+                    <Col span={8}>
+                        <Card
+                            title="Statistics"
+                            style={{
+                                //width: 450
+                            }}>
+                            <Row gutter={16}>
+                                <Col span={12}>
+                                    <Statistic title="Members" value={112893} />
+                                </Col>
+                                <Col span={12}>
+                                    <Statistic title="Bugs Submited" value={112893} />
 
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderColor: 'rgba(0,0,0,.2)',
-                    borderRadius: 10,
-                    borderStyle: 'solid',
-                    borderWidth: 1,
-                    padding: 20,
-                    flexDirection: 'column',
-                    width: 450
-                }}>
-                    <h3 style={{ textAlign: 'center' }}>Bugs Progress</h3>
-                    <div style={{ width: 400, height: 400 }}>
-                        <canvas id="pieChart" width="400" height="400"></canvas>
-                    </div>
+                                </Col>
+                                <Col span={12}>
+                                    <Statistic title="Up Time" value={"25 days"} />
+                                </Col>
+                            </Row>
+                        </Card>
+                    </Col>
+                    <Col span={8}>
 
-                </div>
+                        <Card
+                            title="Progress"
+                            style={{
+                                //width: 450
+                            }}>
+                            <Space
+                                style={{
+                                    width: '100%'
+                                }}
+                                direction='vertical' align='center'>
+                                <div style={{ width: 400, height: 400 }}>
+                                    <canvas id="pieChart" width="400" height="400"></canvas>
+                                </div>
+                            </Space>
+
+                        </Card>
+
+
+                    </Col>
+                </Row>
+
+
+
+
 
             </React.Fragment>
 
