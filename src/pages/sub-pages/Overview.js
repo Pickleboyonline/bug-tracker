@@ -7,7 +7,7 @@ import {
     Redirect
 } from "react-router-dom";
 import Chart from 'chart.js/auto';
-
+import { Divider } from 'antd'
 
 class App extends React.Component {
     constructor(props) {
@@ -46,8 +46,9 @@ class App extends React.Component {
         return (
             <React.Fragment>
                 <h1>
-                    Overview Widgets & Stuff
+                    Home
                 </h1>
+                <Divider style={{ width: 800 }} />
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
