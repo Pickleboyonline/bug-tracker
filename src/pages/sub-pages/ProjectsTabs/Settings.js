@@ -7,7 +7,14 @@ import {
     Redirect
 } from "react-router-dom";
 import Chart from 'chart.js/auto';
+import { List, Typography, Divider, Avatar } from 'antd';
 
+
+
+const data = [
+    'Notifications',
+    'Pages',
+];
 
 class App extends React.Component {
     constructor(props) {
@@ -31,33 +38,29 @@ class App extends React.Component {
                     display: 'inline-flex'
 
                 }}>
-                    <div style={{
-                        borderColor: 'rgba(0,0,0,.1)',
-                        borderStyle: 'solid',
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        width: 300,
-                        height: 600
-                    }}>
-                        <div style={{
-                            height: 60,
-                            width: '100%',
-                            // backgroundColor: 'red',
-                            borderStyle: 'solid',
-                            borderColor: 'rgba(0,0,0,.1)',
-                            borderWidth: 0,
-                            borderBottomWidth: 1,
-                            display: 'inline-flex',
-                            alignItems: 'center'
-                        }}>
-                            <p style={{
-                                marginLeft: 20,
-                                marginBottom: 0
-                            }}>
-                                A Setting
-                            </p>
-                        </div>
-                    </div>
+                    <style>{`
+.bugg-list-item-button:hover {
+    background-color: rgb(0 0 0 / 5%);
+    cursor: pointer;
+}
+.bugg-list-item-button {
+    background-color: white;
+}
+`}</style>
+                    <List
+                        // header={<div>Header</div>}
+                        // footer={<div>Footer</div>}
+                        bordered
+                        dataSource={data}
+                        style={{
+                            width: 300
+                        }}
+                        renderItem={item => (
+                            <List.Item className="bugg-list-item-button">
+                                <Avatar>S</Avatar> {item}
+                            </List.Item>
+                        )}
+                    />
                     <div style={{
                         flex: 1,
                         marginLeft: 20

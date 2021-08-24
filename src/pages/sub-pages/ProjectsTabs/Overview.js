@@ -25,17 +25,16 @@ class App extends React.Component {
             type: 'pie',
             data: {
                 labels: [
-                    'Uncompleted',
-                    'Completed',
-                    'In Progress'
+                    'Open',
+                    'Closed',
+
                 ],
                 datasets: [{
                     label: 'My First Dataset',
-                    data: [300, 50, 100],
+                    data: [300, 50],
                     backgroundColor: [
                         'rgb(255, 99, 132)',
                         'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
                     ],
                     hoverOffset: 4
                 }]
@@ -60,7 +59,7 @@ class App extends React.Component {
                             }}>
                             <Row gutter={16}>
                                 <Col span={12}>
-                                    <Statistic title="Members" value={112893} />
+                                    <Statistic title="Members" value={1002} />
                                 </Col>
                                 <Col span={12}>
                                     <Statistic title="Bugs Submited" value={112893} />

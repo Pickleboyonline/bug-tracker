@@ -86,6 +86,7 @@ class App extends React.Component {
                     <Menu
                         style={{
                             marginBottom: 20,
+                            marginTop: 20,
                             position: 'relative',
                             //left: -18,
                             width: 900

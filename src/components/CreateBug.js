@@ -15,6 +15,8 @@ import { Select } from 'antd';
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 
+
+
 const { Dragger } = Upload;
 const { Option } = Select;
 
@@ -30,7 +32,7 @@ function handleChange(value) {
 const props = {
     name: 'file',
     multiple: true,
-    //action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
     onChange(info) {
         const { status } = info.file;
         if (status !== 'uploading') {

@@ -23,6 +23,10 @@ import {
     EditOutlined
 } from '@ant-design/icons';
 import { Typography } from 'antd';
+import BugDissussion from './../../../components/BugDiscussion';
+import BugStats from '../../../components/BugStats';
+import BugAssignedTo from './../../../components/BugAssignedTo';
+import ViewBug from './ViewBug';
 
 const { Title, Paragraph, Text, Link } = Typography;
 const { Search } = Input;
@@ -84,7 +88,7 @@ class App extends React.Component {
         this.state = {
             toggleCreatePopup: false,
             toggleViewBugPopup: false,
-            toggleDrawer: true
+            toggleDrawer: false
         };
 
     }
@@ -167,14 +171,6 @@ class App extends React.Component {
                                 <Skeleton avatar title={false} loading={item.loading} active>
                                     <List.Item.Meta
                                         avatar={
-                                            // <WarningOutlined
-                                            //     twoToneColor="red"
-                                            //     style={{
-                                            //         color: 'red',
-                                            //         fontSize: 24,
-                                            //         marginTop: 10
-                                            //     }}
-                                            // />
                                             <ExclamationCircleOutlined
                                                 twoToneColor="red"
                                                 style={{
@@ -197,9 +193,7 @@ class App extends React.Component {
                             </List.Item>
                         )}
                     />
-
                 </div>
-
                 <Drawer
                     width={800}
                     title="Videos will not play"
@@ -208,38 +202,10 @@ class App extends React.Component {
                     onClose={() => this.setState({ toggleDrawer: false })}
                     visible={this.state.toggleDrawer}
                 >
-                    <Space align='center'>
-                        <Title
-                            style={{
-                                margin: 0,
-                                marginRight: 10
-                            }}
-                            level={5}>Description</Title>
-                        <Button shape="circle"
-                            icon={<EditOutlined />}
-                        />
-
-                    </Space>
-
-                    <Divider />
-                    <Paragraph>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Purus non enim praesent elementum facilisis leo vel fringilla. Ullamcorper velit sed ullamcorper morbi tincidunt ornare massa. Morbi tincidunt ornare massa eget egestas purus viverra accumsan. Elementum nisi quis eleifend quam. Bibendum ut tristique et egestas quis ipsum suspendisse ultrices. Porttitor rhoncus dolor purus non enim praesent elementum facilisis leo. Amet luctus venenatis lectus magna fringilla urna porttitor. </Paragraph>
-                    <br />
-                    <Space align='center'>
-                        <Title
-                            style={{
-                                margin: 0,
-                                marginRight: 10
-                            }}
-                            level={5}>Discussion</Title>
-                        <Button shape="circle"
-                            icon={<EditOutlined />}
-                        />
-
-                    </Space>
-
-                    <Divider />
-
+                    <ViewBug />
                 </Drawer>
+
+
             </div>
         );
     }

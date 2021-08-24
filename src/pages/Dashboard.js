@@ -38,6 +38,7 @@ class App extends React.Component {
                 <div className="navigation" style={{
                     color: 'white',
                     width: 300,
+                    zIndex: 10,
                     'box-shadow': '-7px 0px 13px 0px black',
                     height: 800,
                     boxShadow: 1,
