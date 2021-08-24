@@ -10,11 +10,16 @@ import {
 import Chart from 'chart.js/auto';
 import Overview from './sub-pages/Overview';
 import SkeletonProject from './sub-pages/SkeletonProject';
-import { Avatar, Menu, Button, Space } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Avatar, Menu, Button, Space, Drawer, Dropdown } from 'antd';
+import {
+    UserOutlined,
+    BellFilled,
+    SettingOutlined, CodeOutlined
+} from '@ant-design/icons';
 import anime from 'animejs/lib/anime.es.js';
-
-
+import Home from './../components/Home';
+import Settings from './Settings';
+import Notifications from './Notifications';
 import {
     AppstoreOutlined,
     MenuUnfoldOutlined,
@@ -25,15 +30,28 @@ import {
     MailOutlined,
 } from '@ant-design/icons';
 import Messages from './Messages';
+import AvatarSettings from '../components/AvatarSettings';
 
 const { SubMenu } = Menu;
-
+const menu = (
+    <Menu>
+        <Menu.Item key="0">
+            1st menu item
+        </Menu.Item>
+        <Menu.Item key="1">
+            2nd menu item
+        </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key="3">3rd menu item</Menu.Item>
+    </Menu>
+);
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isAuthed: false,
-            collapsed: false
+            collapsed: false,
+            toggleDrawer: false
         };
 
     }
@@ -201,17 +219,21 @@ class App extends React.Component {
                             icon={<DesktopOutlined />}>
                             Home
                         </Menu.Item>
-                        <style>{`
-                        .bugg-sub-menu ul {
-                            background-color: red
-                        }
-                        `}</style>
+                        <Menu.Item key="1"
+                            onClick={() => this.props.history.push('/dashboard/settings')}
+                            style={{
+                                backgroundColor: 'transparent'
+                            }}
+                            icon={<SettingOutlined />}>
+                            Settings
+                        </Menu.Item>
+
                         <SubMenu
                             key="sub1"
                             style={{
                                 backgroundColor: 'transparent'
                             }}
-                            icon={<MailOutlined />}
+                            icon={<CodeOutlined />}
                             title="Projects"
                             className="bugg-sub-menu"
 
@@ -245,30 +267,69 @@ class App extends React.Component {
                         <h2>
                             Welcome, Imran S.
                         </h2>
-                        <div style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
+                        <Space size='large'>
+                            <Button
+                                type='text'
+                                shape='circle'
+                                size='large'
+                                style={{
+                                    transform: 'scale(1.2)',
+                                    color: 'rgba(0,0,0,.7)'
+                                }}
 
-                        }}>
-                            <h3 style={{ marginRight: 20 }}>
-                                Settings
-                            </h3>
-                            <h3 style={{ marginRight: 20 }}>
-                                Notifications
-                            </h3>
-                            <Avatar size={64} icon={<UserOutlined />} style={{
-                                marginRight: 30
-                            }} />
-                        </div>
+                                onClick={() => this.setState({ toggleDrawer: true })}
+                                icon={<BellFilled
+                                    style={{
+                                        //fontSize: 64
+                                    }} />}
+                            />
+                            <style>
+                                {`
+                                .bugg-profile-pic:hover {
+                                    cursor: pointer;
+                                }
+                                `}
+                            </style>
+                            <Dropdown
+                                //overlay={<AvatarSettings />}
+                                overlay={menu}
+                                trigger={['click']}
+                            >
+
+                                <Avatar
+                                    className="bugg-profile-pic"
+                                    size={64} icon={<UserOutlined />} style={{
+                                        marginRight: 30
+                                    }} />
+
+
+                            </Dropdown>
+
+                        </Space>
 
                     </div>
                     <Route exact path="/dashboard">
-                        <Overview />
+
+                        <Home />
+                        {/* <Overview /> */}
+                    </Route>
+                    <Route path='/dashboard/settings'>
+                        <Settings />
                     </Route>
                     <Route path="/dashboard/projects/:name">
                         <SkeletonProject />
                     </Route>
                 </div>
+                <Drawer
+                    width={500}
+                    title="Notifications"
+                    placement="right"
+                    closable={true}
+                    onClose={() => this.setState({ toggleDrawer: false })}
+                    visible={this.state.toggleDrawer}
+                >
+                    <Notifications />
+                </Drawer>
 
                 <Messages />
             </div >
