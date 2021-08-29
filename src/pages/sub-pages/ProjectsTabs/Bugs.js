@@ -97,6 +97,8 @@ class App extends React.Component {
 
     }
 
+    createBugState = null;
+
     toggleFunc = (name) => {
         this.setState({
             [name]: !this.state[name]
@@ -143,10 +145,13 @@ class App extends React.Component {
                 <Modal
                     title="Submit New Bug"
                     visible={this.state.toggleCreatePopup}
-                    onOk={() => this.toggleFunc('toggleCreatePopup')}
+                    // onOk={() => this.toggleFunc('toggleCreatePopup')}
                     width={900}
+                    footer={null}
                     onCancel={() => this.toggleFunc('toggleCreatePopup')}>
-                    <CreateBug />
+                    <CreateBug
+                        toggleFunc={this.toggleFunc}
+                    />
                 </Modal>
 
 

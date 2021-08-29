@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^12.1.10",
     "animejs": "^3.2.1",
     "antd": "^4.16.12",
+    "axios": "^0.21.1",
     "chart.js": "^3.5.1",
     "craco-less": "^1.18.0",
     "draft-js": "^0.11.7",

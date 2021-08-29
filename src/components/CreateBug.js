@@ -9,7 +9,7 @@ import {
 import { EditorState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import './../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import { Form, Input, Button, Radio, DatePicker } from 'antd';
+import { Form, Input, Button, Space, DatePicker } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
 import { Upload, message } from 'antd';
@@ -55,7 +55,16 @@ class App extends React.Component {
         super(props);
         this.state = {
             editorState: EditorState.createEmpty(),
+            title: 'bkbjbjk',
+            tags: [],
+            files: null,
+            dueDate: null,
+            assignTo: [],
+            severity: '',
+            reproducibility: '',
+            catagory: ''
         };
+        // this.resetState = { ...this.state }
     }
 
     onEditorStateChange = (editorState) => {
@@ -64,10 +73,21 @@ class App extends React.Component {
         });
     };
 
+    _handleChange = (name, value) => {
+        this.setState({
+            [name]: value
+        })
+    }
 
-    componentDidMount() {
+    _onSubmit = async () => {
 
     }
+
+    _onCancel = async () => {
+        //this.props.toggleFunc('toggleCreatePopup')
+        this.setState({ title: '' })
+    }
+
     onFinish = (values) => {
         console.log('Success:', values);
     };
@@ -109,7 +129,12 @@ class App extends React.Component {
                             },
                         ]}
                     >
-                        <Input />
+                        <Input
+                            type="text"
+                            value={'this.state.title'}
+
+                            onChange={(e) => this._handleChange('title', e)}
+                        />
                     </Form.Item>
 
                     <style>
@@ -151,7 +176,14 @@ class App extends React.Component {
                             },
                         ]}
                     >
-                        <Select mode="tags" style={{ width: '100%' }} placeholder="Tags Mode" onChange={handleChange}>
+                        <Select
+
+                            mode="tags"
+                            style={{ width: '100%' }}
+                            placeholder="Tags Mode"
+                            onChange={(e) => this._handleChange('tags', e)}
+                        // onChange={handleChange}
+                        >
                             {children}
                         </Select>,
                     </Form.Item>
@@ -188,7 +220,9 @@ class App extends React.Component {
                             style={{
                                 width: '100%'
                             }}
-                            onChange={() => alert('val')} />
+                            // onChange={() => alert('val')}
+                            onChange={(e) => this._handleChange('dueDate', e)}
+                        />
                     </Form.Item>
                     <Form.Item
                         label="Assign To..."
@@ -206,7 +240,8 @@ class App extends React.Component {
                             style={{ width: '100%' }}
                             placeholder="Please select"
                             // defaultValue={['a10', 'c12']}
-                            onChange={handleChange}
+                            // onChange={handleChange}
+                            onChange={(e) => this._handleChange('assignTo', e)}
                         >
                             <Option>
                                 Imran S. (ias45@getmixtape.app)
@@ -234,6 +269,7 @@ class App extends React.Component {
                             filterSort={(optionA, optionB) =>
                                 optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
                             }
+                            onChange={(e) => this._handleChange('severity', e)}
                         >
                             <Option value="1">None</Option>
                             <Option value="2">Critical</Option>
@@ -252,6 +288,7 @@ class App extends React.Component {
                         ]}
                     >
                         <Select
+                            onChange={(e) => this._handleChange('reproducibility', e)}
                             showSearch
                             // style={{ width: 200 }}
                             placeholder="Search to Select"
@@ -283,6 +320,7 @@ class App extends React.Component {
                     >
                         <Select
                             showSearch
+                            onChange={(e) => this._handleChange('catagory', e)}
                             //style={{ width: 200 }}
                             placeholder="Search to Select"
                             optionFilterProp="children"
@@ -303,6 +341,26 @@ class App extends React.Component {
                             <Option value="8">Enhancement</Option>
                         </Select>
                     </Form.Item>
+                    <Space
+                        style={{
+                            width: '100%',
+                            display: 'inline-flex',
+                            justifyContent: 'flex-end'
+                        }}
+
+                    >
+                        <Button
+                            onClick={this._onCancel}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+
+                            type='primary'>
+                            Submit
+                        </Button>
+                    </Space>
+
                 </Form>
 
             </div>

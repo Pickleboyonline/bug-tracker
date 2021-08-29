@@ -1,228 +1,243 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import {
-    BrowserRouter as Router,
-    Switch,
     Redirect,
     // Link
 } from "react-router-dom";
 import { Card } from 'antd';
-import { Typography, Divider } from 'antd';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Typography } from 'antd';
+import { Form, Input, Button } from 'antd';
+import axios from 'axios';
 
-const { Title, Paragraph, Text, Link } = Typography;
+const { Title } = Typography;
 
-export default class Authentication extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-            mode: 'login',
-            isAuthed: false,
+
+
+const AuthenticationHooks = () => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [mode, setMode] = useState('login');
+    const [loading, setLoading] = useState(false);
+    const [isAuthed, setIsAuthed] = useState(false);
+    const [form] = Form.useForm();
+
+
+    const handleSubmit = async () => {
+        setLoading(true)
+        var res;
+        console.log(password)
+        // attempt to get token
+        try {
+            if (mode === 'login') {
+                console.log(password)
+                res = await axios.post('http://localhost:1337/user/login', {
+                    email,
+                    password
+                })
+            } else {
+                res = await axios.post('http://localhost:1337/user/signup',
+                    {
+                        name,
+                        email,
+                        password,
+                    })
+            }
+        } catch (e) {
+            console.log("Error: " + e.message);
+            if (e.response) {
+                console.log(e.response.data)
+                alert(e.response.data.split('\n')[0])
+            }
         }
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
 
-
-    // Updates value of text field in state
-    // e is event and target is name of mutible property
-    handleChange(e, target) {
-        this.setState({ [target]: e.target.value });
-    }
-
-    // TODO
-    // Add server side functionality
-    handleSubmit(e) {
-        let success = false;
-
-        alert('server stuff stilol needs implimentation :3');
-        success = true;
-        // send data to server
-        // check if server verify and recieve token
-
-        if (success) {
+        setLoading(false)
+        if (res) {
             // store token :)
+            alert(res.data.message)
+            window.localStorage.setItem('token', res.data.token);
 
-            window.localStorage.setItem('token', 'bruh');
-
-            this.setState({
-                isAuthed: true
-            })
+            setIsAuthed(true)
         }
-        e.preventDefault();
+
     }
-    onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-    };
+    const onFinishedFailed = () => false;
+    const toggleMode = () => {
+        if (mode === 'login') {
+            setMode('signup')
+        } else {
+            setMode('login')
+        }
+    }
 
-    toggleMode = () => { let prevMode = this.state.mode; this.setState({ mode: (prevMode === 'login') ? 'signup' : 'login' }); }
+    return (
+        <div className="App" style={styles.App}>
+            {isAuthed ? <Redirect to="/dashboard" /> : null}
 
-    render() {
-        return (
-            <div className="App" style={{
-                backgroundColor: 'cyan',
-                margin: 0,
-                padding: 0,
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                height: '100%',
-                width: '100%',
-                backgroundImage: "url('https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2134&q=80')",
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-            }}>
-                {this.state.isAuthed ? <Redirect to="/dashboard" /> : null}
+            <h1 style={styles.h1}>
+                Bugg
+            </h1>
 
+            <Card style={styles.Card}>
 
-                <h1 style={{
-                    marginTop: 100,
-                    paddingTop: 0,
-                    color: 'black',
-                    marginLeft: 100,
-                    fontSize: 48
-                }}>
-                    Bugg
-                </h1>
-
-                <Card style={{
-                    width: 450,
-                    float: 'right',
-                    borderRadius: 5,
-                    position: 'absolute',
-                    top: 110,
-                    right: 100
-                }}>
-
-                    <Form
-                        name="basic"
-                        labelAlign="left"
-                        labelCol={{
-                            //span: 8,
-                            span: 8,
-                        }}
-                        wrapperCol={{
-                            //span: 16,
-                            span: 16
-                        }}
-                        initialValues={{
-                            remember: true,
-                        }}
-                        onFinish={this.handleSubmit}
-                        onFinishFailed={this.onFinishFailed}
-                    >
-                        <Typography>
-                            {this.state.mode === 'login' ? <Title>Login</Title> : <Title>Signup</Title>}
-
-                        </Typography>
-
-                        <h4 style={{
-                            marginBottom: 30
-                        }}>
-                            {this.state.mode === 'login' ?
-                                <React.Fragment>
-                                    Don't have an account? <a href='#' onClick={this.toggleMode}>Sign up</a>
-                                </React.Fragment> :
-                                <React.Fragment>
-                                    Already have an account? <a href='#' onClick={this.toggleMode}>Login</a>
-                                </React.Fragment>
-                            }
-
-                        </h4>
-
-
-
-
-
+                <Form
+                    name="basic"
+                    labelAlign="left"
+                    labelCol={{
+                        //span: 8,
+                        span: 8,
+                    }}
+                    wrapperCol={{
+                        //span: 16,
+                        span: 16
+                    }}
+                    initialValues={{
+                        remember: true,
+                    }}
+                    form={form}
+                    onFinish={handleSubmit}
+                    onFinishFailed={onFinishedFailed}
+                >
+                    <Typography>
                         {
-                            this.state.mode === 'signup' ?
-                                <React.Fragment>
-                                    <Form.Item
-                                        label="Name"
-                                        name="name"
-                                        style={{
-
-                                        }}
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Please input your name!',
-                                            },
-                                        ]}
-                                    >
-                                        <Input value={this.state.name} type="text" onChange={(e) => this.handleChange(e, 'name')} />
-                                    </Form.Item>
-
-                                </React.Fragment>
-                                :
-                                null
+                            mode === 'login' ?
+                                <Title>Login</Title> : <Title>Signup</Title>
                         }
 
-                        <Form.Item name={['user', 'email']} label="Email" rules={[{ type: 'email' }]}>
-                            <Input
-                                value={this.state.email}
-                                onChange={(e) => this.handleChange(e, 'email')}
-                            />
-                        </Form.Item>
+                    </Typography>
+                    <h4 style={{
+                        marginBottom: 30
+                    }}>
+                        {mode === 'login' ?
+                            <>
+                                Don't have an account? <a href='#' onClick={toggleMode}>Sign up</a>
+                            </> :
+                            <>
+                                Already have an account? <a href='#' onClick={toggleMode}>Login</a>
+                            </>
+                        }
 
-                        <Form.Item
-                            label="Password"
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your password!',
-                                },
-                            ]}
-                        >
-                            <Input.Password
-                                onChange={(e) => this.handleChange(e, 'password')}
-                                value={this.state.password}
-                            />
-                        </Form.Item>
-
-
-
-                        {
-                            this.state.mode === 'signup' ?
+                    </h4>
+                    {
+                        mode === 'signup' ?
+                            <>
                                 <Form.Item
-                                    label="Confirm Passord"
-                                    name="confirm-password"
+                                    label="Name"
+                                    name="name"
+                                    style={{
+
+                                    }}
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Please input your password!',
+                                            message: 'Please input your name!',
                                         },
                                     ]}
                                 >
-                                    <Input.Password
-                                        onChange={(e) => this.handleChange(e, 'confirmPassword')}
-                                        value={this.state.confirmPassword}
+                                    <Input
+                                        type="text" onChange={(e) => setName(e.target.value)}
                                     />
                                 </Form.Item>
 
-                                :
-                                null
-                        }
-                        <Form.Item
-                            wrapperCol={{
-                                offset: 0,
-                                span: 16,
-                            }}
-                        >
-                            <Button type="primary" htmlType="submit">
-                                SUBMIT
-                            </Button>
-                        </Form.Item>
+                            </>
+                            :
+                            null
+                    }
+                    <Form.Item name='email' label="Email" rules={[{
+                        required: true,
+                        type: 'email'
+                    }]}>
+                        <Input
 
-                    </Form>
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </Form.Item>
 
-                </Card>
-            </div >
-        );
-    }
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input your password!',
+                            },
+                        ]}
+                    >
+                        <Input.Password
+                            onChange={(e) => setPassword(e.target.value)}
+
+                        />
+                    </Form.Item>
+
+                    {
+                        mode === 'signup' ?
+                            <Form.Item
+                                label="Confirm Passord"
+                                name="confirm-password"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your password!',
+                                    },
+                                ]}
+                            >
+                                <Input.Password
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+
+                                />
+                            </Form.Item>
+
+                            :
+                            null
+                    }
+                    <Form.Item
+                        wrapperCol={{
+                            offset: 0,
+                            span: 16,
+                        }}
+                    >
+                        <Button
+                            loading={loading}
+                            type="primary" htmlType="submit">
+                            SUBMIT
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Card>
+        </div>
+    )
+}
+
+export default AuthenticationHooks;
+
+const styles = {
+    App: {
+        backgroundColor: 'cyan',
+        margin: 0,
+        padding: 0,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        height: '100%',
+        width: '100%',
+        backgroundImage: "url('https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2134&q=80')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+    },
+    h1: {
+        marginTop: 100,
+        paddingTop: 0,
+        color: 'black',
+        marginLeft: 100,
+        fontSize: 48
+    },
+    Card: {
+        width: 450,
+        float: 'right',
+        borderRadius: 5,
+        position: 'absolute',
+        top: 110,
+        right: 100
+    },
 }
