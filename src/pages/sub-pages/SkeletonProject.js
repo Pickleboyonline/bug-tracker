@@ -1,10 +1,6 @@
 import React from 'react';
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect
+    withRouter
 } from "react-router-dom";
 import Chart from 'chart.js/auto';
 import Overview from './ProjectsTabs/Overview';
@@ -24,8 +20,12 @@ import {
     TeamOutlined
 
 } from '@ant-design/icons';
+import axios from 'axios';
+
 
 const { SubMenu } = Menu;
+const PubSub = require('./../../PubSub');
+
 
 function Tabs(props) {
     return (
@@ -45,14 +45,67 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeTab: 'overview'
+            activeTab: 'overview',
+            title: 'Loading...',
+            imageUrl: ''
         };
 
     }
 
     componentDidMount() {
+        // PubSub.join('selected-project').on('update', this._handleProjectUpdate);
+        // console.log(this.props.location)
+        let id = this.props.location.pathname.split('/');
+        id = id[id.length - 1];
+        // console.log(id)
+        this._handleProjectUpdate(id);
+    }
+
+    componentWillUnmount() {
+
 
     }
+
+    componentDidUpdate(prevProps) {
+        const locationChanged =
+            this.props.location !== prevProps.location;
+
+
+        if (locationChanged) {
+            let id = this.props.location.pathname.split('/');
+            id = id[id.length - 1];
+            this._handleProjectUpdate(id);
+            console.log('yuh')
+        }
+    }
+
+    _handleProjectUpdate = async (id) => {
+        const token = window.localStorage.getItem('token');
+
+        try {
+            let { data } = await axios.get('http://localhost:1337/project/find', {
+                headers: {
+                    'x-auth-token': token
+                },
+                params: {
+                    projectId: id
+                }
+            });
+
+            if (data.project) {
+                this.setState({
+                    title: data.project.title,
+                    imageUrl: 'http://localhost:1337/icon/' + (data.project.icon && data.project.icon[0] ? data.project.icon[0].id : '')
+                });
+            }
+
+            // console.log(data.projects)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+
     handleClick = e => {
 
         this.setState({ activeTab: e.key });
@@ -72,12 +125,14 @@ class App extends React.Component {
                             borderStyle: 'solid',
                             borderWidth: 1
                         }}
-                        src="https://getmixtape.app/static/media/JUSTFORAPPLE.fa2ec9e8.png" />
+                        //src="https://getmixtape.app/static/media/JUSTFORAPPLE.fa2ec9e8.png"
+                        src={this.state.imageUrl}
+                    />
                     <h1 style={{
                         fontSize: 50,
                         margin: 0
                     }}>
-                        Mixtape
+                        {this.state.title}
                     </h1>
                 </Space>
 
@@ -145,4 +200,4 @@ class App extends React.Component {
 }
 
 
-export default App;
+export default withRouter(App);
