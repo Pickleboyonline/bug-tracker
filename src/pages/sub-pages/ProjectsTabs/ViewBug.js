@@ -40,7 +40,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-
+        console.log(this.props.bug)
     }
 
 
@@ -50,16 +50,16 @@ class App extends React.Component {
         return (
             <div>
 
-                <BugStats />
+                <BugStats bugId={this.props.bug.id} bug={this.props.bug} />
 
 
-                <BugDescription />
+                <BugDescription bug={this.props.bug} description={this.props.bug.description} />
 
-                <BugFiles />
+                <BugFiles bug={this.props.bug} />
 
-                <BugAssignedTo />
+                <BugAssignedTo bug={this.props.bug} />
 
-                <BugDissussion />
+                <BugDissussion bug={this.props.bug} />
 
             </div>
         );

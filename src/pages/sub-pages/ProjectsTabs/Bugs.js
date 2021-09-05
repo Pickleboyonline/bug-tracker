@@ -12,7 +12,7 @@ import CreateBug from './../../../components/CreateBug';
 import { Button, Divider, Modal, Tag } from 'antd';
 import {
     List, Avatar, Skeleton,
-    Menu, Dropdown, message, Space, Drawer,
+    Menu, Dropdown, Switch as AntSwitch, Space, Drawer,
     Input, Pagination
 } from 'antd';
 import {
@@ -89,7 +89,10 @@ class App extends React.Component {
             sortBy: '',
             page: 1,
             bugs: [],
-            selectedSort: '0'
+            selectedSort: '0',
+            checked: true,
+            selectedBug: null,
+            selectedBugTitle: ''
         };
 
     }
@@ -123,14 +126,22 @@ class App extends React.Component {
             page = 1
         }
 
+        let order;
         let sortBy;
-        let { selectedSort } = this.state;
+        let { selectedSort, checked } = this.state;
         if (selectedSort === '1') {
-
+            sortBy = 'upload-date'
         } else if (selectedSort === '2') {
-
+            sortBy = 'title'
         } else if (selectedSort === '3') {
-
+            sortBy = 'last-modified'
+        }
+        if (selectedSort !== '0') {
+            if (checked) {
+                order = 'ASC'
+            } else {
+                order = 'DESC'
+            }
         }
 
         try {
@@ -142,10 +153,12 @@ class App extends React.Component {
                     projectId: id,
                     limit: pageSize,
                     skip: pageSize * (page - 1),
-                    search
+                    search,
+                    sortBy,
+                    order
                 }
             });
-            console.log(data)
+            //console.log(data)
             this.setState({
                 bugs: data.bugs,
                 totalBugCount: data.total,
@@ -165,7 +178,7 @@ class App extends React.Component {
     }
 
     _handleSortChange = (obj) => {
-        console.log(obj)
+        //console.log(obj)
         if (obj.key === this.state.selectedSort) {
             this.setState({
                 selectedSort: '0',
@@ -191,7 +204,10 @@ class App extends React.Component {
                 <Space style={{
                     marginBottom: 20
                 }}>
-                    <Search placeholder="search"
+                    <Button
+
+                        type="primary" onClick={() => this.toggleFunc('toggleCreatePopup')}>Submit New</Button>
+                    <Search placeholder="Search"
                         onChange={(e) => this._handleListUpdate(e.target.value)}
                         onSearch={(e) => this._handleListUpdate(e)} style={{ width: 200 }} />
 
@@ -203,21 +219,25 @@ class App extends React.Component {
                             Sort By <DownOutlined />
                         </Button>
                     </Dropdown>
-                    <Button
+                    {
+                        this.state.selectedSort !== '0' ?
+                            <AntSwitch
+                                checkedChildren="ASC"
+                                unCheckedChildren="DESC"
+                                defaultChecked
+                                onChange={(checked) => {
 
-                        type="primary" onClick={() => this.toggleFunc('toggleCreatePopup')}>Submit New</Button>
+                                    this.setState({
+                                        page: 1,
+                                        checked
+                                    }, this._handleListUpdate)
+
+                                }}
+                            />
+                            : null
+                    }
+
                 </Space>
-
-
-                {/* 
-                {
-                    this.state.toggleCreatePopup ?
-                        <Popup
-                            title="Submit New Bug"
-                            toggleFunc={() => this.toggleFunc('toggleCreatePopup')}>
-                            <CreateBug />
-                        </Popup> : null
-                } */}
 
                 <Modal
                     destroyOnClose
@@ -248,31 +268,45 @@ class App extends React.Component {
                         dataSource={this.state.bugs}
                         renderItem={item => (
                             <List.Item
-                                actions={[<a key="list-loadmore-edit" onClick={
-                                    () => this.setState({
-                                        toggleDrawer: true
+                                actions={[<a key="list-loadmore-edit" onClick={(e) => {
+                                    this.setState({
+                                        toggleDrawer: true,
+                                        selectedBugTitle: item.title,
+                                        selectedBug: item
                                     })
-                                }>select</a>, <a key="list-loadmore-more">more</a>]}
+                                    e.preventDefault()
+                                }
+
+                                }>view</a>]}
                             >
                                 <Skeleton avatar title={false}
                                     loading={false}
                                     active>
                                     <List.Item.Meta
-                                        avatar={
-                                            <ExclamationCircleOutlined
-                                                twoToneColor="red"
-                                                style={{
-                                                    color: 'red',
-                                                    fontSize: 24,
-                                                    marginTop: 10
-                                                }}
-                                            />
-                                        }
+                                        // avatar={
+                                        //     <ExclamationCircleOutlined
+                                        //         twoToneColor="red"
+                                        //         style={{
+                                        //             color: 'red',
+                                        //             fontSize: 24,
+                                        //             marginTop: 10
+                                        //         }}
+                                        //     />
+                                        // }
                                         title={<div style={{
                                             display: 'inline'
                                         }}>
-                                            <a href="#">{item.title}</a>
-                                            <Tag color="#f50" style={{ marginLeft: 10 }}>PRIOIRTY</Tag>
+                                            <a href="#" onClick={(e) => {
+                                                this.setState({
+                                                    toggleDrawer: true,
+                                                    selectedBugTitle: item.title,
+                                                    selectedBug: item
+                                                })
+                                                e.preventDefault()
+                                            }
+
+                                            }>{item.title}</a>
+                                            {/* <Tag color="#f50" style={{ marginLeft: 10 }}>PRIOIRTY</Tag> */}
                                         </div>}
                                         //description="Ant Design, a design language for background applications, is refined by Ant UED Team"
                                         //description={convertToPlain(item.description)}
@@ -292,13 +326,14 @@ class App extends React.Component {
                 </div>
                 <Drawer
                     width={800}
-                    title="Videos will not play"
+                    title={this.state.selectedBugTitle}
                     placement="right"
                     closable={true}
                     onClose={() => this.setState({ toggleDrawer: false })}
                     visible={this.state.toggleDrawer}
+                    destroyOnClose
                 >
-                    <ViewBug />
+                    <ViewBug bug={this.state.selectedBug} />
                 </Drawer>
 
 

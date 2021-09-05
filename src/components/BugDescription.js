@@ -16,10 +16,12 @@ import {
     EditOutlined
 } from '@ant-design/icons';
 import { Typography } from 'antd';
-import { EditorState, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import { Editor as DraftEditor } from 'react-draft-wysiwyg';
 import './../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
+import htmlToDraft from 'html-to-draftjs';
+import draftToHtml from 'draftjs-to-html';
+import axios from 'axios';
 
 const { Title, Paragraph, Text, Link } = Typography;
 const { Search } = Input;
@@ -32,19 +34,40 @@ class BugDescription extends React.Component {
         super(props);
         this.state = {
             editDescription: false,
-            editorState: EditorState.createEmpty()
+            editorState: EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(this.props.bug.description))),
+            description: ''
         };
 
     }
 
     componentDidMount() {
-
+        this.setState({
+            description: this.props.bug.description
+        })
     }
 
     toggleFunc = (name) => {
         this.setState({
             [name]: !this.state[name]
         })
+    }
+
+    _handleUpdateDescription = async (text) => {
+        const token = await window.localStorage.getItem('token')
+        try {
+            await axios.put('http://localhost:1337/bug/' + this.props.bug.id, {
+                description: this.state.description
+            }, {
+                headers: {
+                    'x-auth-token': token
+                }
+            });
+
+            message.success("Description was updated!")
+        } catch (e) {
+            console.log(e)
+            message.error('Error: ' + e.message)
+        }
     }
 
     render() {
@@ -62,7 +85,12 @@ class BugDescription extends React.Component {
                         }}
                         level={5}>Description</Title>
                     <Button shape="circle"
-                        onClick={() => this.toggleFunc('editDescription')}
+                        onClick={() => {
+                            if (this.state.editDescription) {
+                                this._handleUpdateDescription()
+                            }
+                            this.toggleFunc('editDescription')
+                        }}
                         icon={<EditOutlined />}
                     />
 
@@ -90,21 +118,21 @@ class BugDescription extends React.Component {
                                 editorClassName="demo-editor"
                                 onEditorStateChange={(editorState) => {
                                     this.setState({
-                                        //value: draftToHtml(convertToRaw(editorState.getCurrentContent())),
+                                        description: draftToHtml(convertToRaw(editorState.getCurrentContent())),
                                         editorState
                                     })
                                 }}
                             />
-                            <Button
+                            {/* <Button
                                 style={{
                                     marginBottom: 30
                                 }}
                                 onClick={() => this.setState({ editDescription: false })}
                                 htmlType="submit" type="primary">
                                 Update
-                            </Button>
+                            </Button> */}
                         </React.Fragment> :
-                        <Paragraph>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Purus non enim praesent elementum facilisis leo vel fringilla. Ullamcorper velit sed ullamcorper morbi tincidunt ornare massa. Morbi tincidunt ornare massa eget egestas purus viverra accumsan. Elementum nisi quis eleifend quam. Bibendum ut tristique et egestas quis ipsum suspendisse ultrices. Porttitor rhoncus dolor purus non enim praesent elementum facilisis leo. Amet luctus venenatis lectus magna fringilla urna porttitor. </Paragraph>
+                        <Paragraph ><span dangerouslySetInnerHTML={{ __html: this.state.description }} /></Paragraph>
 
                 }
                 <br />

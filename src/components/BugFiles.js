@@ -8,58 +8,114 @@ import {
 import Chart from 'chart.js/auto';
 import { Button, Divider, Modal, Upload } from 'antd';
 import {
-    List, Avatar, Skeleton,
-    Menu, Dropdown, message, Space, Drawer,
+    Avatar, Skeleton,
+    Menu, List, message, Space, Drawer,
     Input,
 } from 'antd';
 import {
     EditOutlined, InboxOutlined
 } from '@ant-design/icons';
 import { Typography } from 'antd';
-
+import axios from 'axios';
 
 const { Title, Paragraph, Text, Link } = Typography;
 const { Search } = Input;
 const { Dragger } = Upload;
-
-const props = {
-    name: 'file',
-    multiple: true,
-    // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    onChange(info) {
-        const { status } = info.file;
-        if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
-        }
-        if (status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully.`);
-        } else if (status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-        }
-    },
-    onDrop(e) {
-        console.log('Dropped files', e.dataTransfer.files);
-    },
-};
-
 
 class BugDescription extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             editFiles: false,
+            files: [],
+            filesToRender: []
         };
 
     }
 
     componentDidMount() {
-
+        // console.log(this.props.bug.files)
+        let tempFiles = this.props.bug.files.map((item) => {
+            let tempFile = new File([], item.name)
+            tempFile.uid = '' + (new Date()).getTime() + '-' + tempFile.name;
+            tempFile.serverId = item.id;
+            tempFile.isUploaded = true;
+            return tempFile;
+        })
+        this.setState({
+            files: tempFiles
+        })
     }
 
     toggleFunc = (name) => {
         this.setState({
             [name]: !this.state[name]
         })
+    }
+    token = window.localStorage.getItem('token');
+
+    beforeUpload = async (file) => {
+
+        let formData = new FormData()
+        formData.append('files', file);
+        // handle uploading
+        try {
+            let { data } = await axios.post('http://localhost:1337/file/', formData, {
+                headers: {
+                    'x-auth-token': this.token,
+                    'Content-Type': 'multipart/form-data'
+                },
+                params: {
+                    bugId: this.props.bug.id
+                },
+                // onUploadProgress: (progress) => console.log(progress)
+            })
+            file.isUploaded = true;
+            // console.log(data)
+            let fileId = data.uploadedFiles[0].id;
+            file.serverId = fileId;
+            message.success(`"${file.name}" was uploaded!"`)
+            this.setState({
+                files: [...this.state.files, file]
+            })
+        } catch (e) {
+            message.error("Error: " + e.message)
+        }
+
+
+        return false;
+    }
+
+    _onFileDelete = async (file) => {
+        let { files } = this.state;
+        // console.log("HEY")
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].uid === file.uid) {
+                try {
+
+                    await axios.delete('http://localhost:1337/file/' + file.serverId, {
+                        headers: {
+                            'x-auth-token': this.token
+                        }
+                    })
+
+                    message.success(`"${file.name}" was deleted!`)
+                    files.splice(i, 1);
+                    this.setState({
+                        files
+                    })
+
+                } catch (e) {
+                    message.error("Error: " + e.message)
+                }
+                break;
+            }
+        }
+        // if file was uploaded to server, remove on server
+    }
+
+    _onFileUpload = () => {
+
     }
 
     render() {
@@ -91,7 +147,11 @@ class BugDescription extends React.Component {
                             style={{
                                 marginBottom: 20
                             }}
-                            {...props}>
+                            multiple
+                            beforeUpload={this.beforeUpload}
+                            onRemove={this._onFileDelete}
+                            fileList={this.state.files}
+                        >
 
                             <p className="ant-upload-drag-icon">
                                 <InboxOutlined />
@@ -102,9 +162,16 @@ class BugDescription extends React.Component {
                                 band files
                             </p>
                         </Dragger> :
-                        <Paragraph>
-                            files go brrrr...
-                        </Paragraph>}
+                        <List
+                            bordered
+                            size='small'
+                            dataSource={this.state.files}
+                            renderItem={item => <List.Item>
+                                <a href={"http://localhost:1337/file/" + item.serverId}>{item.name}</a>
+                            </List.Item>}
+                        />
+
+                }
                 <br />
 
 

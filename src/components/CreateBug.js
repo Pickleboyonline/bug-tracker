@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     withRouter
 } from "react-router-dom";
@@ -17,40 +17,15 @@ import draftToHtml from 'draftjs-to-html';
 const { Dragger } = Upload;
 const { Option } = Select;
 
-const children = [];
-for (let i = 10; i < 36; i++) {
-    children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
-}
 
-function handleChange(value) {
-    console.log(`selected ${value}`);
-}
 
-const props = {
-    name: 'file',
-    multiple: true,
-    // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    onChange(info) {
-        const { status } = info.file;
-        if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
-        }
-        if (status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully.`);
-        } else if (status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-        }
-    },
-    onDrop(e) {
-        console.log('Dropped files', e.dataTransfer.files);
-    },
-};
 
 
 const App = (props) => {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [title, setTitle] = useState('');
     const [tags, setTags] = useState([]);
+    const [value, setValue] = useState([]);
     const [files, setFiles] = useState(null);
     const [dueDate, setDueDate] = useState(0);
     const [assignTo, setAssignTo] = useState([]);
@@ -93,20 +68,6 @@ const App = (props) => {
     }
 
     async function onFinish(values) {
-
-        // console.log('Success:', values);
-        // console.log('Pure Values: ');
-        // console.log({
-        //     editorState,
-        //     title,
-        //     tags,
-        //     files,
-        //     dueDate,
-        //     assignTo,
-        //     severity,
-        //     reproducibility,
-        //     catagory
-        // })
         let description = draftToHtml(convertToRaw(editorState.getCurrentContent()));
 
         try {
@@ -120,6 +81,7 @@ const App = (props) => {
                 severity,
                 reproducibility,
                 catagory,
+                assignees: value.join(','),
                 projectId: props.location.pathname.split('/')[3]
             }
             // console.log(requestData)
@@ -167,12 +129,67 @@ const App = (props) => {
 
     };
 
+    const handleChange = (val, option) => {
+        //console.log(value)
+        setValue(val)
+    }
+
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
         notification.error({
             message: 'Please input title'
         })
     };
+
+    // const [name, setName] = useState('imran')
+    const [members, setMembers] = useState([]);
+    const [query, setQuery] = useState();
+
+    useEffect(() => {
+        const handleChange = async () => {
+            let results;
+            //setLoading(true);
+
+            try {
+                results = await axios.get('http://localhost:1337/user/search', {
+                    params: {
+                        query: query
+                    },
+                    headers: {
+                        'x-auth-token': token
+                    }
+                })
+            } catch (e) {
+                if (e.response) {
+                    console.log(e.response.data)
+                    //message.error()
+                } else {
+                    console.log(e)
+                }
+                // setLoading(false);
+                return
+            }
+
+            //console.log(results.data)
+            let newMembers = [];
+            let users = results.data.results;
+            for (let i = 0; i < users.length; i++) {
+                newMembers.push({
+                    key: users[i].id,
+                    name: users[i].name,
+                    email: users[i].email,
+                    id: users[i].id
+                })
+            }
+
+            setMembers(newMembers);
+            //setLoading(false);
+            // console.log('Updated: ')
+            //console.log(newMembers);
+        }
+
+        handleChange()
+    }, [query]);
 
     return (
         <div style={{
@@ -202,6 +219,7 @@ const App = (props) => {
                     rules={[
                         {
                             required: true,
+                            remember: false
                             // message: 'Please input your username!',
                         },
                     ]}
@@ -261,7 +279,7 @@ const App = (props) => {
                         onChange={(e) => setTags(e)}
                     // onChange={handleChange}
                     >
-                        {children}
+
                     </Select>,
                 </Form.Item>
 
@@ -316,17 +334,22 @@ const App = (props) => {
                     ]}
                 >
                     <Select
-                        mode="multiple"
-                        allowClear
-                        style={{ width: '100%' }}
-                        placeholder="Please select"
-                        // defaultValue={['a10', 'c12']}
-                        // onChange={handleChange}
-                        onChange={setAssignTo}
+                        showSearch
+                        mode='multiple'
+                        // value={this.state.value}
+                        placeholder={"search..."}
+                        // style={this.props.style}
+                        // defaultActiveFirstOption={false}
+                        // showArrow={false}
+                        filterOption={false}
+                        onSearch={setQuery}
+                        onChange={handleChange}
+                    // notFoundContent={""}
                     >
-                        <Option>
-                            Imran S. (ias45@getmixtape.app)
-                        </Option>
+                        {/* <Option key={'1'}>{query}</Option> */}
+                        {
+                            members.map(doc => <Option key={doc.id}>{`${doc.name} (${doc.email})`}</Option>)
+                        }
                     </Select>
                 </Form.Item>
                 <Form.Item

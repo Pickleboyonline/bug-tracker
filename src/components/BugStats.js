@@ -10,9 +10,13 @@ import {
     Switch,
     DatePicker,
     Upload,
-    Select
+    Select,
+    message,
+    notification
 } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { ConsoleSqlOutlined, EditOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import moment from 'moment';
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -25,11 +29,50 @@ class BugStats extends React.Component {
         editReproducibility: false,
         editSeverity: false,
         editCatagory: false,
-        editStatus: false
+        editStatus: false,
+        values: { tags: [' '], dueDate: null }
     };
 
     toggleValue = (val) => this.setState({ [val]: !this.state[val] })
 
+    _updateValueOnServer = async (field, value) => {
+        const token = window.localStorage.getItem('token');
+
+        try {
+            let res = await axios.put('http://localhost:1337/bug/' + this.props.bugId, {
+                [field]: value
+            }, {
+                headers: {
+                    'x-auth-token': token
+                }
+
+            })
+            message.success(`"${field}" was updated to "${value}"`)
+        } catch (e) {
+            message.error("Error: " + e.message)
+        }
+
+    }
+
+    componentDidMount() {
+        let { bug } = this.props;
+
+        this.setState({
+            values: {
+                status: bug.status,
+                tags: (bug.tags !== '' ? bug.tags.split(',') : []),
+                dueDate: (bug.dueDate ? moment(new Date(bug.dueDate)) : null),
+                catagory: (bug.catagory ? bug.catagory : undefined),
+                severity: (bug.severity ? bug.severity : undefined),
+                reproducibility: (bug.reproducibility ? bug.reproducibility : undefined),
+
+            }
+        })
+    }
+
+    _forceUpdateBug() {
+
+    }
 
     render() {
 
@@ -46,16 +89,41 @@ class BugStats extends React.Component {
 
                             formatter={(val) => {
                                 if (this.state.editStatus) {
-                                    return (<Switch checkedChildren="OPEN" unCheckedChildren="CLOSED" defaultChecked />
+                                    return (<Switch
+                                        checkedChildren="OPEN"
+                                        unCheckedChildren="CLOSED"
+
+                                        onChange={(checked) => {
+                                            if (checked) {
+                                                //open
+                                                this.setState({
+                                                    values: { ...this.state.values, status: 'open' }
+                                                })
+                                            } else {
+                                                //closed
+                                                this.setState({
+                                                    values: { ...this.state.values, status: 'closed' }
+                                                })
+                                            }
+                                        }}
+                                        defaultChecked={(this.state.values.status === 'open' ? true : false)} />
                                     )
                                 } else {
-                                    return <Tag color="#f50">OPEN</Tag>
+                                    return <Tag color={(this.state.values.status === 'open' ? "#f50" : "#389e0d")} //"#f50"
+                                    >{
+                                            new String(this.state.values.status).toUpperCase()
+                                        }</Tag>
                                 }
                             }}
                             title={<>
                                 Status
                                 <Button
-                                    onClick={() => this.toggleValue('editStatus')}
+                                    onClick={() => {
+                                        if (this.state.editStatus) {
+                                            this._updateValueOnServer('status', this.state.values.status)
+                                        }
+                                        this.toggleValue('editStatus')
+                                    }}
                                     type="text"
                                     icon={<EditOutlined />}
                                 />
@@ -74,7 +142,12 @@ class BugStats extends React.Component {
                             title={<>
                                 Tags
                                 <Button
-                                    onClick={() => this.toggleValue('editTags')}
+                                    onClick={() => {
+                                        if (this.state.editTags) {
+                                            this._updateValueOnServer('tags', this.state.values.tags.join())
+                                        }
+                                        this.toggleValue('editTags')
+                                    }}
                                     type="text"
                                     icon={<EditOutlined />}
                                 />
@@ -83,11 +156,31 @@ class BugStats extends React.Component {
                             }
                             formatter={(val) => {
                                 if (this.state.editTags) {
-                                    return (<Select mode="tags" style={{ width: 200 }} placeholder="Tags Mode">
-                                        <Option key={69}>Poggers</Option>)
+                                    return (<Select mode="tags"
+                                        onChange={
+                                            (e) => {
+                                                this.setState({
+                                                    values: { ...this.state.values, tags: e }
+                                                })
+                                            }
+                                        }
+                                        // value={(() => {
+                                        //     if (this.state.values.tags) {
+                                        //         return []
+                                        //     } else {
+                                        //         return this.state.values.tags.split(',')
+                                        //     }
+                                        // })()}
+                                        value={this.state.values.tags}
+                                        style={{ width: 200 }} placeholder="Tags Mode">
+                                        <Option key={"Poggers"}>Poggers</Option>)
                                     </Select>)
                                 } else {
-                                    return <Tag color="magenta">{val}</Tag>
+
+                                    return this.state.values.tags.map((item) => {
+                                        return <Tag color="cyan">{item}</Tag>
+                                    })
+
                                 }
                             }}
                             value={"URGENT"} />
@@ -103,7 +196,13 @@ class BugStats extends React.Component {
                             title={<>
                                 Due Date
                                 <Button
-                                    onClick={() => this.toggleValue('editDueDate')}
+                                    onClick={() => {
+                                        if (this.state.editDueDate && this.state.values.dueDate) {
+
+                                            this._updateValueOnServer('dueDate', this.state.values.dueDate.toDate().getTime())
+                                        }
+                                        this.toggleValue('editDueDate')
+                                    }}
                                     type="text"
                                     icon={<EditOutlined />}
                                 />
@@ -116,9 +215,20 @@ class BugStats extends React.Component {
                                         style={{
                                             width: 200
                                         }}
-                                        onChange={() => alert('val')} />)
+                                        value={this.state.values.dueDate}
+                                        onChange={(mom) => {
+                                            this.setState({
+                                                values: {
+                                                    ...this.state.values,
+                                                    dueDate: mom
+                                                }
+                                            })
+                                        }} />)
                                 } else {
-                                    return "Oct 24, 2022"
+                                    if (this.state.values.dueDate) {
+                                        return this.state.values.dueDate.format('MMM Do YY')
+                                    }
+                                    return "N/A"
                                 }
                             }}
                             value={"Oct 24, 2022"} />
@@ -140,7 +250,12 @@ class BugStats extends React.Component {
                                 Reproducibility
                                 <Button type="text"
 
-                                    onClick={() => this.toggleValue('editReproducibility')}
+                                    onClick={() => {
+                                        if (this.state.editReproducibility) {
+                                            this._updateValueOnServer('reproducibility', this.state.values.reproducibility)
+                                        }
+                                        this.toggleValue('editReproducibility')
+                                    }}
                                     icon={<EditOutlined />}
                                 />
                             </>
@@ -150,6 +265,15 @@ class BugStats extends React.Component {
                                 if (this.state.editReproducibility) {
                                     return (<Select
                                         showSearch
+                                        onChange={(e) => {
+                                            this.setState({
+                                                values: {
+                                                    ...this.state.values,
+                                                    reproducibility: e
+                                                }
+                                            })
+                                        }}
+                                        value={this.state.values.reproducibility}
                                         style={{ width: 200 }}
                                         placeholder="Search to Select"
                                         optionFilterProp="children"
@@ -160,15 +284,15 @@ class BugStats extends React.Component {
                                             optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
                                         }
                                     >
-                                        <Option value="1">Always</Option>
-                                        <Option value="2">Sometimes</Option>
-                                        <Option value="3">Rarely</Option>
-                                        <Option value="4">Unable</Option>
-                                        <Option value="5">Never tried</Option>
-                                        <Option value="6">N/A</Option>
+                                        <Option value="Always">Always</Option>
+                                        <Option value="Sometimes">Sometimes</Option>
+                                        <Option value="Rarely">Rarely</Option>
+                                        <Option value="Unable">Unable</Option>
+                                        <Option value="Never tried">Never tried</Option>
+                                        <Option value="N/A">N/A</Option>
                                     </Select>)
                                 } else {
-                                    return val
+                                    return this.state.values.reproducibility
                                 }
                             }}
                             value={'Always'} />
@@ -185,7 +309,12 @@ class BugStats extends React.Component {
                             title={<>
                                 Severity
                                 <Button type="text"
-                                    onClick={() => this.toggleValue('editSeverity')}
+                                    onClick={() => {
+                                        if (this.state.editSeverity) {
+                                            this._updateValueOnServer('severity', this.state.values.severity)
+                                        }
+                                        this.toggleValue('editSeverity')
+                                    }}
                                     icon={<EditOutlined />}
                                 />
                             </>
@@ -200,6 +329,15 @@ class BugStats extends React.Component {
                                             style={{ width: 200 }}
                                             placeholder="Search to Select"
                                             optionFilterProp="children"
+                                            value={this.state.values.severity}
+                                            onChange={(e) => {
+                                                this.setState({
+                                                    values: {
+                                                        ...this.state.values,
+                                                        severity: e
+                                                    }
+                                                })
+                                            }}
                                             filterOption={(input, option) =>
                                                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }
@@ -207,13 +345,13 @@ class BugStats extends React.Component {
                                                 optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
                                             }
                                         >
-                                            <Option value="1">None</Option>
-                                            <Option value="2">Critical</Option>
-                                            <Option value="3">Major</Option>
-                                            <Option value="4">Minor</Option>
+                                            <Option value="None">None</Option>
+                                            <Option value="Critical">Critical</Option>
+                                            <Option value="Major">Major</Option>
+                                            <Option value="Minor">Minor</Option>
                                         </Select>)
                                 } else {
-                                    return val
+                                    return this.state.values.severity
                                 }
                             }}
                             value={'Major'} />
@@ -230,7 +368,12 @@ class BugStats extends React.Component {
                             title={<>
                                 Catagory
                                 <Button type="text"
-                                    onClick={() => this.toggleValue('editCatagory')}
+                                    onClick={() => {
+                                        if (this.state.editCatagory) {
+                                            this._updateValueOnServer('catagory', this.state.values.catagory)
+                                        }
+                                        this.toggleValue('editCatagory')
+                                    }}
                                     icon={<EditOutlined />}
                                 />
                             </>
@@ -244,24 +387,33 @@ class BugStats extends React.Component {
                                             style={{ width: 200 }}
                                             placeholder="Search to Select"
                                             optionFilterProp="children"
+                                            onChange={(e) => {
+                                                this.setState({
+                                                    values: {
+                                                        ...this.state.values,
+                                                        catagory: e
+                                                    }
+                                                })
+                                            }}
                                             filterOption={(input, option) =>
                                                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }
+                                            value={this.state.values.catagory}
                                             filterSort={(optionA, optionB) =>
                                                 optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
                                             }
                                         >
-                                            <Option value="1">Security</Option>
-                                            <Option value="2">Data Loss</Option>
-                                            <Option value="3">Performance</Option>
-                                            <Option value="4">Crash/Hang</Option>
-                                            <Option value="5">Other Bug</Option>
-                                            <Option value="6">UI</Option>
-                                            <Option value="7">New Feature</Option>
-                                            <Option value="8">Enhancement</Option>
+                                            <Option value="Security">Security</Option>
+                                            <Option value="Data Loss">Data Loss</Option>
+                                            <Option value="Performance">Performance</Option>
+                                            <Option value="Crash/Hang">Crash/Hang</Option>
+                                            <Option value="Other Bug">Other Bug</Option>
+                                            <Option value="UI">UI</Option>
+                                            <Option value="New Feature">New Feature</Option>
+                                            <Option value="Enhancement">Enhancement</Option>
                                         </Select>)
                                 } else {
-                                    return val
+                                    return this.state.values.catagory
                                 }
                             }}
                             value={'Crashes/Hang'} />
@@ -285,7 +437,7 @@ class BugStats extends React.Component {
                             </span>
 
                             }
-                            value={"Imran Shitta-Bey"} />
+                            value={this.props.bug.submitter.name} />
                     </Col>
 
                     <Col
@@ -297,7 +449,7 @@ class BugStats extends React.Component {
                                 fontSize: 16
                             }}
                             title='Date Submited'
-                            value={"Oct 21, 2021"} />
+                            value={moment(new Date(this.props.bug.createdAt)).format('MMM Do YY')} />
                     </Col>
                 </Row>
                 <br />

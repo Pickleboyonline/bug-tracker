@@ -2,7 +2,7 @@ import React from 'react';
 import {
     Comment,
     Space, Divider,
-    Avatar, Form, Button, List, Input, Typography
+    Avatar, Form, Button, List, Input, Typography, message
 } from 'antd';
 import moment from 'moment';
 import { EditorState, convertToRaw } from 'draft-js';
@@ -10,6 +10,7 @@ import { Editor as DraftEditor } from 'react-draft-wysiwyg';
 import './../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
 import { EditOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -44,7 +45,53 @@ class App extends React.Component {
         editorState: EditorState.createEmpty(),
     };
 
-    handleSubmit = () => {
+    TOKEN = window.localStorage.getItem('token');
+
+    componentDidMount() {
+        this._handleUpdateComments()
+    }
+
+    _handleUpdateComments = async () => {
+        try {
+            let { data } = await axios.get('http://localhost:1337/comment', {
+                headers: {
+                    'x-auth-token': this.TOKEN
+                },
+                params: {
+                    bugId: this.props.bug.id
+                }
+            });
+
+            let comments = data.comments.map((item) => {
+
+                return {
+                    author: item.owner.name,
+                    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+                    content: <div
+                        style={{
+                            width: 700,
+                            minHeight: 50,
+                            overflowX: 'auto'
+                        }}
+                        dangerouslySetInnerHTML={{ __html: item.body }} />,
+                    datetime: moment(new Date(item.createdAt)).fromNow(),
+
+                }
+            })
+            // for (let i = 0; i < comments.length; i++) {
+            //     this.state.comments.push(comments[i])
+            // }
+            // console.log(this.state.comments)
+
+            this.setState({
+                comments: [...this.state.comments, ...comments].reverse()
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    handleSubmit = async () => {
         if (!this.state.value) {
             return;
         }
@@ -53,27 +100,48 @@ class App extends React.Component {
             submitting: true,
         });
 
-        setTimeout(() => {
-            this.setState({
-                submitting: false,
-                value: '',
-                comments: [
-                    ...this.state.comments,
-                    {
-                        author: 'Han Solo',
-                        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-                        content: <div
-                            style={{
-                                width: 700,
-                                minHeight: 50,
-                                overflowX: 'auto'
-                            }}
-                            dangerouslySetInnerHTML={{ __html: this.state.value }} />,
-                        datetime: moment().fromNow(),
-                    },
-                ],
-            });
-        }, 1000);
+        try {
+            await axios.post('http://localhost:1337/comment/', {
+                bugId: this.props.bug.id,
+                body: this.state.value
+            }, {
+                headers: {
+                    'x-auth-token': this.TOKEN
+                }
+            })
+        } catch (e) {
+            if (e.response) {
+                console.log(e.response)
+            } else {
+                console.log(e)
+            }
+            message.error('Could not send message: ' + e.message)
+            return this.setState({ submitting: false })
+        }
+
+
+
+        this.setState({
+            submitting: false,
+            value: '',
+            comments: [
+
+                {
+                    author: 'Han Solo',
+                    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+                    content: <div
+                        style={{
+                            width: 700,
+                            minHeight: 50,
+                            overflowX: 'auto'
+                        }}
+                        dangerouslySetInnerHTML={{ __html: this.state.value }} />,
+                    datetime: moment().fromNow(),
+                },
+                ...this.state.comments,
+            ],
+        });
+
     };
 
     handleChange = e => {
