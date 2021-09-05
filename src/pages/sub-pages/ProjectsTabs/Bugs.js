@@ -29,6 +29,7 @@ import BugStats from '../../../components/BugStats';
 import BugAssignedTo from './../../../components/BugAssignedTo';
 import ViewBug from './ViewBug';
 import axios from 'axios';
+import moment from 'moment';
 
 
 const { Title, Paragraph, Text, Link } = Typography;
@@ -92,7 +93,8 @@ class App extends React.Component {
             selectedSort: '0',
             checked: true,
             selectedBug: null,
-            selectedBugTitle: ''
+            selectedBugTitle: '',
+            search: ''
         };
 
     }
@@ -116,14 +118,17 @@ class App extends React.Component {
 
     }
 
-    _handleListUpdate = async (search,) => {
+    _handleListUpdate = async () => {
         const token = window.localStorage.getItem('token')
+
         let id = this.props.location.pathname.split('/');
         id = id[id.length - 1];
-        let { pageSize, page } = this.state;
+        let { pageSize, page, search } = this.state;
 
         if (search) {
             page = 1
+        } else {
+            search = undefined
         }
 
         let order;
@@ -192,6 +197,22 @@ class App extends React.Component {
         }
     }
 
+    componentDidUpdate(prevProps) {
+        const locationChanged =
+            this.props.location !== prevProps.location;
+
+
+        if (locationChanged) {
+            let id = this.props.location.pathname.split('/');
+            id = id[id.length - 1];
+            this.setState({
+                search: '',
+                page: 1
+            }, this._handleListUpdate)
+
+        }
+    }
+
     render() {
 
         var listData = [];
@@ -207,9 +228,17 @@ class App extends React.Component {
                     <Button
 
                         type="primary" onClick={() => this.toggleFunc('toggleCreatePopup')}>Submit New</Button>
-                    <Search placeholder="Search"
-                        onChange={(e) => this._handleListUpdate(e.target.value)}
-                        onSearch={(e) => this._handleListUpdate(e)} style={{ width: 200 }} />
+                    <Search
+                        value={this.state.search}
+                        placeholder="Search"
+                        onChange={(e) => {
+                            this.setState({
+                                search: e.target.value
+                            }, this._handleListUpdate)
+                        }}
+                        onSearch={(e) => {
+                            this._handleListUpdate()
+                        }} style={{ width: 200 }} />
 
                     <Dropdown overlay={menu({
                         selectedSort: this.state.selectedSort,
@@ -277,7 +306,17 @@ class App extends React.Component {
                                     e.preventDefault()
                                 }
 
-                                }>view</a>]}
+                                }>view</a>, <a key="list-loadmore-edit" onClick={(e) => {
+
+                                    e.preventDefault()
+                                }
+
+                                }>share</a>, <a key="list-loadmore-edit" onClick={(e) => {
+
+                                    e.preventDefault()
+                                }
+
+                                }>delete</a>]}
                             >
                                 <Skeleton avatar title={false}
                                     loading={false}
@@ -312,7 +351,7 @@ class App extends React.Component {
                                         //description={convertToPlain(item.description)}
                                         description={item.plainTextDescription}
                                     />
-                                    <div>Last Modified at 12:30pm</div>
+                                    <div>{'Last modified ' + moment(new Date(item.updatedAt)).fromNow()}</div>
                                 </Skeleton>
                             </List.Item>
                         )}
@@ -329,7 +368,10 @@ class App extends React.Component {
                     title={this.state.selectedBugTitle}
                     placement="right"
                     closable={true}
-                    onClose={() => this.setState({ toggleDrawer: false })}
+                    onClose={() => {
+                        this._handleListUpdate();
+                        this.setState({ toggleDrawer: false })
+                    }}
                     visible={this.state.toggleDrawer}
                     destroyOnClose
                 >

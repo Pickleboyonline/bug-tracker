@@ -45,9 +45,10 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeTab: 'overview',
-            title: 'Loading...',
-            imageUrl: ''
+            activeTab: 'calendar',
+            title: '',
+            imageUrl: '',
+            project: {}
         };
 
     }
@@ -95,6 +96,7 @@ class App extends React.Component {
             if (data.project) {
                 this.setState({
                     title: data.project.title,
+                    project: data.project,
                     imageUrl: 'http://localhost:1337/icon/' + (data.project.icon && data.project.icon[0] ? data.project.icon[0].id : '')
                 });
             }
@@ -123,7 +125,8 @@ class App extends React.Component {
                             borderRadius: 5,
                             borderColor: 'rgba(0,0,0,.2)',
                             borderStyle: 'solid',
-                            borderWidth: 1
+                            borderWidth: 1,
+                            marginRight: 10
                         }}
                         //src="https://getmixtape.app/static/media/JUSTFORAPPLE.fa2ec9e8.png"
                         src={this.state.imageUrl}
@@ -179,7 +182,7 @@ class App extends React.Component {
                             case "announcements":
                                 return <Announcements />
                             case "calendar":
-                                return <Calendar />
+                                return <Calendar project={this.state.project} />
                             case "settings":
                                 return <Settings />
                             case "collaborators":

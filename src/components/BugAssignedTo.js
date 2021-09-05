@@ -209,6 +209,7 @@ class BugStats extends React.Component {
                     visible={this.state.editAssigned}
                     onOk={() => {
                         this._handleAddMembers()
+                        this._handleUpdateAssignees()
                     }} onCancel={() => this.setState({ editAssigned: false })}>
                     <Select
                         showSearch
