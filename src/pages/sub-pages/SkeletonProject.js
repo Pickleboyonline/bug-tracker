@@ -27,28 +27,17 @@ const { SubMenu } = Menu;
 const PubSub = require('./../../PubSub');
 
 
-function Tabs(props) {
-    return (
-        <h4 style={{
-            marginRight: 20,
-            color: props.activeTabValue === props.name ? props.activeColor : 'black'
-        }}
-            onClick={() => props.ctx.setState({ activeTab: props.name })}
-        >
-            {props.title}
-        </h4>
-    )
-}
-
 
 class App extends React.Component {
     constructor(props) {
         super(props);
+        let id = this.props.location.pathname.split('/');
+        id = id[id.length - 1];
         this.state = {
-            activeTab: 'calendar',
+            activeTab: 'announcements',
             title: '',
             imageUrl: '',
-            project: {}
+            project: { id }
         };
 
     }
@@ -176,17 +165,17 @@ class App extends React.Component {
                     (() => {
                         switch (this.state.activeTab) {
                             case "overview":
-                                return <Overview />
+                                return <Overview project={this.state.project} />
                             case "bugs":
-                                return <Bugs />
+                                return <Bugs project={this.state.project} />
                             case "announcements":
-                                return <Announcements />
+                                return <Announcements project={this.state.project} />
                             case "calendar":
                                 return <Calendar project={this.state.project} />
                             case "settings":
-                                return <Settings />
+                                return <Settings project={this.state.project} />
                             case "collaborators":
-                                return <Collaborators />
+                                return <Collaborators project={this.state.project} />
                             default:
                                 return 'hi'
                         }

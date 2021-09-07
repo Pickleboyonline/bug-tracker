@@ -11,7 +11,9 @@ const data = [
     'Pages',
 ];
 class Home extends React.Component {
+    state = {
 
+    }
     render() {
         return (
             <div style={{ width: 1100 }}>
@@ -57,6 +59,22 @@ class Home extends React.Component {
                         flex: 1,
                         marginLeft: 20
                     }}>
+                        {
+                            (() => {
+                                switch (this.state.activeSetting) {
+                                    case 2:
+                                        return "@"
+                                    default:
+                                        return 'no tab selected'
+                                }
+
+                            })()
+                        }
+                    </div>
+                    {/* <div style={{
+                        flex: 1,
+                        marginLeft: 20
+                    }}>
 
                         <h1>
                             Go Ahead, Change Some Stuff
@@ -66,7 +84,7 @@ class Home extends React.Component {
                         </p>
 
 
-                    </div>
+                    </div> */}
                 </div>
             </div>
         )

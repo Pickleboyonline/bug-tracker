@@ -11,7 +11,6 @@ import { Select } from 'antd';
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import moment from 'moment';
 import draftToHtml from 'draftjs-to-html';
 
 const { Dragger } = Upload;
