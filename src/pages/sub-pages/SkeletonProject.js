@@ -34,7 +34,7 @@ class App extends React.Component {
         let id = this.props.location.pathname.split('/');
         id = id[id.length - 1];
         this.state = {
-            activeTab: 'announcements',
+            activeTab: 'settings',
             title: '',
             imageUrl: '',
             project: { id }

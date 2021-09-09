@@ -27,6 +27,7 @@ function CreateAnnouncement(props) {
             })
             message.success('Announcement was created')
             props.closeModal()
+            props.updateList()
             // TODO, refresh list on create
         } catch (e) {
             console.log(e)

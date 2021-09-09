@@ -19,7 +19,7 @@ const data = [
     'General',
     'Roles',
     'Notifications',
-    'Members',
+    // 'Members',
 ];
 
 class App extends React.Component {
@@ -27,7 +27,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             isAuthed: false,
-            selectedSetting: 'general',
+            selectedSetting: 'roles',
 
         };
 
@@ -43,8 +43,8 @@ class App extends React.Component {
 
 
                 <div style={{
-                    display: 'inline-flex'
-
+                    display: 'inline-flex',
+                    marginTop: 10
                 }}>
                     <style>{`
 .bugg-list-item-button:hover {
@@ -61,8 +61,8 @@ class App extends React.Component {
                         bordered
                         dataSource={data}
                         style={{
-                            width: 300,
-                            height: 229
+                            width: 220,
+                            height: 229 - (229 / 4)
                         }}
                         renderItem={item => (
                             <List.Item
@@ -86,7 +86,7 @@ class App extends React.Component {
                     }
                     <div style={{
                         flex: 1,
-                        marginLeft: 20
+                        marginLeft: 20,
                     }}>
                         {
                             (() => {
@@ -94,11 +94,11 @@ class App extends React.Component {
                                     case data[0].toLowerCase().split(' ').join('-'):
                                         return <General project={this.props.project} />
                                     case data[1].toLowerCase().split(' ').join('-'):
-                                        return <Roles />
+                                        return <Roles project={this.props.project} />
                                     case data[2].toLowerCase().split(' ').join('-'):
-                                        return <Notifications />
+                                        return <Notifications project={this.props.project} />
                                     case data[3].toLowerCase().split(' ').join('-'):
-                                        return <Members />
+                                        return <Members project={this.props.project} />
                                     default:
                                         return 'no tab selected'
                                 }

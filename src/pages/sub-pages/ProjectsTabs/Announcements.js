@@ -197,6 +197,7 @@ class App extends React.Component {
                     <CreateAnnouncement
                         project={this.props.project}
                         closeModal={() => this.toggleState('createAnnouncement')}
+                        updateList={() => this.fetchAndSetAnnouncements(true)}
                     />
                 </Modal>
                 <Space style={{
