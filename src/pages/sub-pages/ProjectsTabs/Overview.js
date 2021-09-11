@@ -8,38 +8,96 @@ import {
 } from "react-router-dom";
 import Chart from 'chart.js/auto';
 import { Card, Statistic, Row, Col, Button, Space } from 'antd';
+import axios from 'axios';
 
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAuthed: false
+            isAuthed: false,
+            totalBugs: 0,
+            totalBugsClosed: 0,
+            totalBugsOpen: 0,
+            totalMembers: 0,
+            pieChart: null
         };
 
     }
+    TOKEN = window.localStorage.getItem('token');
 
-    componentDidMount() {
-        var ctx = document.getElementById('pieChart').getContext('2d');
-        var pieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: [
-                    'Open',
-                    'Closed',
 
-                ],
-                datasets: [{
-                    label: 'My First Dataset',
-                    data: [300, 50],
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
+    async componentDidMount() {
+        await this.renderChart();
+        this.fetchStats()
+
+
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.project.id !== this.props.project.id) {
+            this.fetchStats()
+        }
+    }
+
+    renderChart = () => {
+        return new Promise((res) => {
+            var ctx = document.getElementById('pieChart').getContext('2d');
+            var pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: [
+                        'Open',
+                        'Closed',
+
                     ],
-                    hoverOffset: 4
-                }]
-            }
+                    datasets: [{
+                        label: 'My First Dataset',
+                        data: [this.state.totalBugsOpen, this.state.totalBugsClosed],
+                        backgroundColor: [
+                            '#f50',
+                            '#389e0d',
+                        ],
+                        hoverOffset: 4
+                    }]
+                }
+            })
+
+            this.setState({
+                pieChart
+            }, res)
         })
+    }
+
+    updateChart = async () => {
+        let { pieChart } = this.state;
+        pieChart.data.datasets[0].data = [this.state.totalBugsOpen, this.state.totalBugsClosed];
+        pieChart.update()
+    }
+
+    fetchStats = async () => {
+        try {
+            let { data } = await axios.get('http://localhost:1337/project/stats/' + this.props.project.id, {
+                headers: {
+                    'x-auth-token': this.TOKEN
+                }
+            });
+
+            let {
+                totalBugs,
+                totalBugsClosed,
+                totalBugsOpen,
+                totalMembers } = data;
+
+            this.setState({
+                totalBugs,
+                totalBugsClosed,
+                totalBugsOpen,
+                totalMembers
+            }, this.updateChart)
+        } catch (e) {
+            console.log(e.response || e)
+        }
     }
 
     render() {
@@ -59,14 +117,17 @@ class App extends React.Component {
                             }}>
                             <Row gutter={16}>
                                 <Col span={12}>
-                                    <Statistic title="Members" value={1002} />
+                                    <Statistic title="Members" value={this.state.totalMembers} />
                                 </Col>
                                 <Col span={12}>
-                                    <Statistic title="Bugs Submited" value={112893} />
+                                    <Statistic title="Bugs Submited" value={this.state.totalBugs} />
 
                                 </Col>
                                 <Col span={12}>
-                                    <Statistic title="Up Time" value={"25 days"} />
+                                    <Statistic title="Bugs Open" value={this.state.totalBugsOpen} />
+                                </Col>
+                                <Col span={12}>
+                                    <Statistic title="Bugs Closed" value={this.state.totalBugsClosed} />
                                 </Col>
                             </Row>
                         </Card>

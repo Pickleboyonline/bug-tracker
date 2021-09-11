@@ -104,14 +104,11 @@ class App extends React.Component {
     }
 
     _handlePaginationChange = (page, pageSize) => {
-        let updateList = false;
-        if (this.state.page !== page || this.state.pageSize !== pageSize) updateList = true;
-
         this.setState({
             page,
             pageSize
         }, () => {
-            if (updateList) {
+            if (this.state.page !== page || this.state.pageSize !== pageSize) {
                 this._handleListUpdate()
             }
         })
@@ -358,6 +355,7 @@ class App extends React.Component {
                     />
                     <Pagination
                         style={{ float: 'right', marginTop: 20 }}
+                        current={this.state.page}
                         defaultCurrent={1} total={this.state.totalBugCount}
                         onChange={this._handlePaginationChange}
                     // pageSizeOptions={[5, 50, 100]}

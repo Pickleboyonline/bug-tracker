@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Modal, Form, Input, Switch, Select, Space, Button, message } from "antd";
 import axios
     from "axios";
+
+import { CirclePicker } from 'react-color'
 const PERMISSIONS = {
     ALL: 'ALL',
     MODIFY_GENERAL: 'MODIFY_GENERAL',
@@ -25,6 +27,7 @@ const ModifyRole = (props) => {
         if (props.role) {
             setMembers(props.role.users)
             setSelectedMembers(props.role.users.map((item) => item.id))
+            if (props.role.color) setColor(props.role.color)
         }
     }, [props.role]);
 
@@ -32,7 +35,7 @@ const ModifyRole = (props) => {
     const [selectedMembers, setSelectedMembers] = useState([])
     const [search, setSearch] = useState('');
     const { toggleUpdateRoleModal, fetchRoles } = props;
-
+    const [color, setColor] = useState('#f44336')
     const [form] = Form.useForm()
     const TOKEN = window.localStorage.getItem('token')
 
@@ -101,6 +104,7 @@ const ModifyRole = (props) => {
             let { data: { role } } = await axios.put('http://localhost:1337/role', {
                 roleId: props.role.id,
                 title,
+                color,
                 permissions: permissions.join(','),
                 users: selectedMembers.join(',')
             }, {
@@ -195,11 +199,19 @@ const ModifyRole = (props) => {
                                     }
                                 </Select>
                             </Form.Item>
-
+                            <Form.Item
+                                label="Color"
+                                name="color"
+                            >
+                                <CirclePicker
+                                    color={color}
+                                    onChangeComplete={(value) => setColor(value.hex)}
+                                />
+                            </Form.Item>
                             <Form.Item
                                 label="Can modify bugs"
                                 name={PERMISSIONS.MODIFY_BUGS}
-                                initialValue={getInitialValue(PERMISSIONS.MODIFY_ANNOUNCEMENTS)}
+                                initialValue={getInitialValue(PERMISSIONS.MODIFY_BUGS)}
                                 valuePropName="checked">
                                 <Switch />
                             </Form.Item>
@@ -231,11 +243,7 @@ const ModifyRole = (props) => {
                                 display: 'inline-flex',
                                 justifyContent: 'flex-end'
                             }}>
-                                <Button onClick={() => {
-                                    this.setState({
-                                        isModalVisible: false
-                                    })
-                                }}>
+                                <Button onClick={toggleUpdateRoleModal}>
                                     Cancel
                                 </Button>
                                 <Button

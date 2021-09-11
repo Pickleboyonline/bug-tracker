@@ -11,11 +11,14 @@ import {
     Input,
     Switch,
     Menu,
-    List
+    List,
+    Popconfirm, Tag
 } from 'antd';
 import axios from "axios";
 import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons';
 import ModifyRole from './../../../../components/ModifyRole'
+import { CirclePicker } from 'react-color'
+
 const { SubMenu } = Menu;
 
 const PERMISSIONS = {
@@ -44,12 +47,19 @@ export default class Roles extends react.Component {
         selectedMembers: [],
         search: '',
         current: 'display',
-        updateRoleModalVisible: false
+        updateRoleModalVisible: false,
+        color: '#f44336'
     }
     TOKEN = window.localStorage.getItem('token')
 
     componentDidMount() {
         this.fetchRoles()
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.project.id !== this.props.project.id) {
+            this.fetchRoles()
+        }
     }
 
     // TODO: only search for users apart of the project
@@ -132,6 +142,7 @@ export default class Roles extends react.Component {
                 projectId: this.props.project.id,
                 title,
                 permissions: permissions.join(','),
+                color: this.state.color,
                 users: this.state.selectedMembers.join(',')
             }, {
                 headers: {
@@ -174,6 +185,25 @@ export default class Roles extends react.Component {
             updateRoleModalVisible: !this.state.updateRoleModalVisible
         })
     }
+    handleChangeComplete = (color) => {
+        this.setState({ color: color.hex });
+    };
+
+    deleteRole = async (roleId) => {
+        try {
+            await axios.delete('http://localhost:1337/role/' + roleId, {
+                headers: {
+                    'x-auth-token': this.TOKEN
+                }
+            });
+            this.fetchRoles()
+            message.success('role was deleted')
+        } catch (e) {
+            console.log(e)
+            console.log(e.repsonse)
+            message.error("Role could not be deleted: " + e.message)
+        }
+    }
 
     render() {
         const { current } = this.state;
@@ -210,21 +240,36 @@ export default class Roles extends react.Component {
                     dataSource={this.state.roles}
                     renderItem={item => (
                         <List.Item
+                            key={item.id}
                             extra={
-                                <Button
+                                <Space>
+                                    <Button
 
-                                    onClick={(e) => {
-                                        this.setState({
-                                            selectedRole: item,
-                                            updateRoleModalVisible: true
-                                        })
-                                        e.preventDefault()
-                                    }}>
-                                    Edit
-                                </Button>
+                                        onClick={(e) => {
+                                            this.setState({
+                                                selectedRole: item,
+                                                updateRoleModalVisible: true
+                                            })
+                                            e.preventDefault()
+                                        }}>
+                                        Edit
+                                    </Button>
+                                    <Popconfirm
+                                        title="Are you sure?"
+                                        onConfirm={() => this.deleteRole(item.id)}
+                                    >
+
+                                        <Button
+                                            danger
+                                        >
+                                            Delete
+                                        </Button>
+                                    </Popconfirm>
+                                </Space>
+
                             }
                         >
-                            {item.title}
+                            <Tag color={item.color}>{item.title} </Tag>
 
                         </List.Item>
                     )}
@@ -269,23 +314,27 @@ export default class Roles extends react.Component {
                         <Select
                             showSearch
                             mode='multiple'
-                            // value={this.state.value}
                             placeholder={"search..."}
-                            // style={this.props.style}
-                            // defaultActiveFirstOption={false}
-                            // showArrow={false}
                             filterOption={false}
                             onSearch={(value) => this.setState({ search: value }, this._handleUserSearch)}
                             onChange={this._handleSelectUser}
                         // notFoundContent={""}
                         >
-                            {/* <Option key={'1'}>{query}</Option> */}
                             {
                                 this.state.members.map(doc => <Option key={doc.id}>{`${doc.name} (${doc.email})`}</Option>)
                             }
                         </Select>
                     </Form.Item>
 
+                    <Form.Item
+                        label="Color"
+                        name="color"
+                    >
+                        <CirclePicker
+                            color={this.state.color}
+                            onChangeComplete={this.handleChangeComplete}
+                        />
+                    </Form.Item>
                     <Form.Item
                         label="Can modify bugs"
                         name={PERMISSIONS.MODIFY_BUGS}

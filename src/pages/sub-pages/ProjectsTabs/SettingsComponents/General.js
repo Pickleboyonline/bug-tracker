@@ -2,6 +2,7 @@ import react, { useState, useEffect } from "react";
 import {
     Input, Form,
     Button,
+    Divider,
     Select, Upload,
     Space,
     message
@@ -9,70 +10,9 @@ import {
 import axios from "axios";
 
 export default function General(props) {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [icon, setIcon] = useState(null);
-    const [form] = Form.useForm()
-    const [imageUri, setImageUri] = useState('');
-    const [project, setProject] = useState({});
-    const TOKEN = window.localStorage.getItem('token')
-    // upload image and set imageUri
-    const beforeUpload = async (file) => {
-        let formData = new FormData();
-        formData.append('icon', file);
-        try {
-            let { data } = await axios.post('http://localhost:1337/icon/upload', formData, {
-                headers: {
-                    'x-auth-token': TOKEN,
-                    'Content-Type': 'multipart/form-data'
-                },
-                params: {
-                    projectId: project.id
-                }
-            });
-            console.log(data)
-            let newImageUri = 'http://localhost:1337/icon/' + data.uploadedFiles[0].id;
-            setImageUri(newImageUri)
-            message.success('Icon was updated')
-        } catch (e) {
-            console.log(e)
-            console.log(e.response)
-            message.error('Could not upload image')
-        }
 
+    const initializeComponent = () => {
 
-        return false;
-    }
-
-    const updateProject = async (field) => {
-        let value;
-        if (field === 'title') {
-            value = title;
-        } else if (field === 'description') {
-            value = description;
-        }
-
-        try {
-            let { data } = await axios.put('http://localhost:1337/project/' + project.id, {
-                [field]: value
-            }, {
-                headers: {
-                    'x-auth-token': TOKEN
-                }
-            })
-
-            let newProject = data.project;
-            setProject(newProject)
-
-            message.success(`${field} was updated to "${value}"`)
-        } catch (e) {
-            console.log(e)
-            console.log(e.resonse)
-            message.error("Could not update project details")
-        }
-    }
-
-    useEffect(() => {
         setProject(props.project);
         setTitle(props.project.title);
         setDescription(props.project.description)
@@ -106,7 +46,79 @@ export default function General(props) {
         }
 
         retreiveProject()
-    }, [])
+
+    }
+    useEffect(initializeComponent, [props.project.id])
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [icon, setIcon] = useState(null);
+    const [form] = Form.useForm()
+    const [imageUri, setImageUri] = useState('');
+    const [project, setProject] = useState({});
+    const TOKEN = window.localStorage.getItem('token')
+
+
+    // upload image and set imageUri
+    const beforeUpload = async (file) => {
+        let formData = new FormData();
+        formData.append('icon', file);
+        try {
+            let { data } = await axios.post('http://localhost:1337/icon/upload', formData, {
+                headers: {
+                    'x-auth-token': TOKEN,
+                    'Content-Type': 'multipart/form-data'
+                },
+                params: {
+                    projectId: project.id
+                }
+            });
+            console.log(data)
+            let newImageUri = 'http://localhost:1337/icon/' + data.uploadedFiles[0].id;
+            // TODO: Update project URI
+            props.updateProject()
+            setImageUri(newImageUri)
+            message.success('Icon was updated')
+        } catch (e) {
+            console.log(e)
+            console.log(e.response)
+            message.error('Could not upload image')
+        }
+
+
+        return false;
+    }
+
+    const updateProject = async (field) => {
+        let value;
+        if (field === 'title') {
+            value = title;
+        } else if (field === 'description') {
+            value = description;
+        }
+
+        try {
+            let { data } = await axios.put('http://localhost:1337/project/' + project.id, {
+                [field]: value
+            }, {
+                headers: {
+                    'x-auth-token': TOKEN
+                }
+            })
+
+            let newProject = data.project;
+            setProject(newProject)
+
+            message.success(`${field} was updated to "${value}"`)
+            props.updateProject()
+        } catch (e) {
+            console.log(e)
+            console.log(e.resonse)
+            message.error("Could not update project details")
+        }
+    }
+
+
+    useEffect(initializeComponent, [])
 
 
     return (<div>

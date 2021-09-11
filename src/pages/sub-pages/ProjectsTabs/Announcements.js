@@ -101,6 +101,12 @@ class App extends React.Component {
         // this.setState({ loading: false })
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.project.id !== this.props.project.id) {
+            this.fetchAndSetAnnouncements(true)
+        }
+    }
+
     // fetch announcemnents, set data, and total that match the query
     // will append new announcemnts
     // DOES NOT CHANGE LOADING STATE
@@ -165,7 +171,7 @@ class App extends React.Component {
         console.log('State: ')
         console.log(this.state)
         if (announcements.length === total && firstLoad === false) {
-            message.warning('All announcements are loaded')
+            // message.warning('All announcements are loaded')
             this.setState({
                 hasMore: false,
                 loading: false

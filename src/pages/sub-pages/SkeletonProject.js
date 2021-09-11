@@ -71,7 +71,7 @@ class App extends React.Component {
 
     _handleProjectUpdate = async (id) => {
         const token = window.localStorage.getItem('token');
-
+        id = id || this.state.project.id;
         try {
             let { data } = await axios.get('http://localhost:1337/project/find', {
                 headers: {
@@ -90,15 +90,22 @@ class App extends React.Component {
                 });
             }
 
-            // console.log(data.projects)
+
         } catch (e) {
             console.log(e)
         }
     }
 
+    updateProject = (newProject) => {
+        this.setState({
+            project: {
+                ...this.state.project,
+                ...newProject
+            }
+        })
+    }
 
     handleClick = e => {
-
         this.setState({ activeTab: e.key });
     };
 
@@ -173,7 +180,11 @@ class App extends React.Component {
                             case "calendar":
                                 return <Calendar project={this.state.project} />
                             case "settings":
-                                return <Settings project={this.state.project} />
+                                return <Settings project={this.state.project} updateProject={() => {
+                                    this._handleProjectUpdate()
+                                    this.props.updateProjects()
+
+                                }} />
                             case "collaborators":
                                 return <Collaborators project={this.state.project} />
                             default:

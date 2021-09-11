@@ -60,11 +60,11 @@ class App extends React.Component {
 
     }
     componentDidMount() {
-        PubSub.join('project').on('update', this._handleProjectUpdate);
-        this._handleProjectUpdate()
+        PubSub.join('project').on('update', this.updateProjects);
+        this.updateProjects()
     }
 
-    _handleProjectUpdate = async () => {
+    updateProjects = async () => {
         const token = window.localStorage.getItem('token');
 
         try {
@@ -253,7 +253,7 @@ class App extends React.Component {
                         <Settings />
                     </Route>
                     <Route path="/dashboard/projects/:name">
-                        <SkeletonProject />
+                        <SkeletonProject updateProjects={this.updateProjects} />
                     </Route>
                 </div>
                 <Drawer

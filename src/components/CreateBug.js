@@ -35,35 +35,17 @@ const App = (props) => {
     const [fileRegister, setFileRegister] = useState([]);
     const token = window.localStorage.getItem('token')
 
-    const onEditorStateChange = (editorState) => {
-        setEditorState(editorState)
-    };
-
     const beforeUpload = async (file, fileList) => {
-        // console.log("Before Upload: ")
-        // console.log(file)
-        // console.log(fileList)
-        // for (let fileElem of fileList) {
-        //     fileRegister.push(fileElem)
-        // }
         fileRegister.push(file)
-
-        // console.log("File Register: ");
-        // console.log(fileRegister);
         return false
     };
     const onRemove = (file) => {
-        // console.log('On remove: ')
-        // console.log(file);
-
         for (let i = 0; i < fileRegister.length; i++) {
             if (fileRegister[i].uid === file.uid) {
                 fileRegister.splice(i, 1);
                 break;
             }
         }
-        // console.log("File Register: ");
-        // console.log(fileRegister);
     }
 
     async function onFinish(values) {
@@ -226,7 +208,7 @@ const App = (props) => {
                     <Input
                         type="text"
                         // value={'this.state.title'}
-
+                        autoComplete='off'
                         onChange={(e) => setTitle(e.target.value)}
                     />
                 </Form.Item>
@@ -256,7 +238,7 @@ const App = (props) => {
                         editorState={editorState}
                         wrapperClassName="demo-wrapper"
                         editorClassName="demo-editor"
-                        onEditorStateChange={onEditorStateChange}
+                        onEditorStateChange={setEditorState}
                     />
                 </Form.Item>
 
@@ -453,7 +435,7 @@ const App = (props) => {
 
                 >
                     <Button
-                    // onClick={this._onCancel}
+                        onClick={props.toggleFunc}
                     >
                         Cancel
                     </Button>

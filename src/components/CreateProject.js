@@ -210,7 +210,29 @@ export function CreateProject(props) {
                         </Upload>
                     </Form.Item>
 
-
+                    <Form.Item
+                        label="Members"
+                        name="members"
+                    >
+                        <Select
+                            showSearch
+                            mode='multiple'
+                            // value={this.state.value}
+                            placeholder={"search..."}
+                            // style={this.props.style}
+                            // defaultActiveFirstOption={false}
+                            // showArrow={false}
+                            filterOption={false}
+                            onSearch={setQuery}
+                            onChange={handleChange}
+                        // notFoundContent={""}
+                        >
+                            {/* <Option key={'1'}>{query}</Option> */}
+                            {
+                                members.map(doc => <Option key={doc.id}>{`${doc.name} (${doc.email})`}</Option>)
+                            }
+                        </Select>
+                    </Form.Item>
                     <Space style={{
                         width: '100%',
                         marginTop: 20,

@@ -73,6 +73,12 @@ class App extends React.Component {
         this._handleRetrieveBugs()
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.project.id !== this.props.project.id) {
+            this._handleRetrieveBugs()
+        }
+    }
+
     // retrives bugs assoiated with this project and sends them to this.state.bugs
     _handleRetrieveBugs = async () => {
         if (!this.props.project.id) return;

@@ -27,7 +27,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             isAuthed: false,
-            selectedSetting: 'roles',
+            selectedSetting: 'general',
 
         };
 
@@ -92,7 +92,7 @@ class App extends React.Component {
                             (() => {
                                 switch (this.state.selectedSetting) {
                                     case data[0].toLowerCase().split(' ').join('-'):
-                                        return <General project={this.props.project} />
+                                        return <General project={this.props.project} updateProject={this.props.updateProject} />
                                     case data[1].toLowerCase().split(' ').join('-'):
                                         return <Roles project={this.props.project} />
                                     case data[2].toLowerCase().split(' ').join('-'):
