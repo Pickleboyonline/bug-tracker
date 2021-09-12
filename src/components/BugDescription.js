@@ -44,6 +44,7 @@ class BugDescription extends React.Component {
         this.setState({
             description: this.props.bug.description
         })
+        console.log(this.props.bug.description)
     }
 
     toggleFunc = (name) => {
@@ -132,7 +133,11 @@ class BugDescription extends React.Component {
                                 Update
                             </Button> */}
                         </React.Fragment> :
-                        <Paragraph ><span dangerouslySetInnerHTML={{ __html: this.state.description }} /></Paragraph>
+                        <Paragraph >
+                            <div
+                                // style={{ textAlign: 'center' }}
+                                dangerouslySetInnerHTML={{ __html: this.state.description }} />
+                        </Paragraph>
 
                 }
                 <br />

@@ -175,7 +175,7 @@ class Home extends React.Component {
         let batch = [];
         let projects = this.state.projects;
 
-        console.log(projects)
+        //(projects)
         for (let i = 0; i < projects.length; i++) {
             if (batch.length < 2) {
                 batch.push(<ProjectButton
@@ -196,7 +196,7 @@ class Home extends React.Component {
             }
 
         }
-        console.log(renderedProjects)
+        //console.log(renderedProjects)
 
         return renderedProjects;
     }

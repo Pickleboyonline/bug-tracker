@@ -76,7 +76,7 @@ class App extends React.Component {
             this.setState({
                 projects: data.projects
             });
-            console.log(data.projects)
+            // console.log(data.projects)
         } catch (e) {
             console.log(e)
         }

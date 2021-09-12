@@ -111,7 +111,7 @@ export function CreateProject(props) {
                 })
             } catch (e) {
                 if (e.response) {
-                    console.log(e.response.data)
+                    //console.log(e.response.data)
                     //message.error()
                 } else {
                     console.log(e)

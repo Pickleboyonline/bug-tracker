@@ -18,6 +18,7 @@ import { WarningOutlined, DownOutlined, UserOutlined, AudioOutlined, Exclamation
 import CreateAnnouncement from '../../../components/CreateAnnouncement';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroller';
+import moment from 'moment';
 const { Search } = Input;
 
 function Message(props) {
@@ -105,6 +106,17 @@ class App extends React.Component {
         if (prevProps.project.id !== this.props.project.id) {
             this.fetchAndSetAnnouncements(true)
         }
+    }
+
+    formatName = (name) => {
+        var nameSegments = name.split(' ');
+        let shortHandName = nameSegments[0];
+
+        if (nameSegments[1]) {
+            shortHandName += ' ' + nameSegments[1].substring(0, 1).toUpperCase() + '.'
+        }
+
+        return shortHandName
     }
 
     // fetch announcemnents, set data, and total that match the query
@@ -214,6 +226,11 @@ class App extends React.Component {
                         type='primary'>
                         New Announcement
                     </Button>
+                    <Button
+                        onClick={() => this.fetchAndSetAnnouncements(true)}
+                    >
+                        Refresh
+                    </Button>
                     <Search placeholder="search"
                         onChange={(e) => this._handleOnSearch(e.target.value)}
                         onSearch={() => alert('hey')} style={{ width: 200 }} />
@@ -230,11 +247,11 @@ class App extends React.Component {
                 </Space>
                 <br />
                 <style>{`
-.bugg-list-item-button:hover {
-    background-color: rgb(255 255 255 / 90%);
+.bugg-list-item-button-321312312:hover {
+    background-color: rgb(0 0 0 / 5%);
     cursor: pointer;
 }
-.bugg-list-item-button {
+.bugg-list-item-button-321312312 {
     background-color: white;
 }
 `}</style>
@@ -249,7 +266,7 @@ class App extends React.Component {
                             borderStyle: 'solid',
                             borderWidth: 1,
                             borderRadius: 5,
-                            width: 350,
+                            width: 360,
                             height: 600,
                             overflowY: 'auto',
                             overflowClipBox: 'content-box'
@@ -272,7 +289,7 @@ class App extends React.Component {
                                 renderItem={(item) => (
 
                                     <List.Item
-                                        className="bugg-list-item-button"
+                                        className="bugg-list-item-button-321312312"
                                         onClick={() => {
                                             this.setState({
                                                 selectedAnnouncement: item
@@ -283,13 +300,30 @@ class App extends React.Component {
 
                                             avatar={<Avatar
                                                 style={{
-                                                    // marginLeft: 20,
+                                                    marginLeft: 20,
                                                     marginTop: 9
                                                 }}
-                                            >A </Avatar>}
-                                            title={<> <a
-                                                onClick={e => e.preventDefault()}
-                                                href="#">{item.submitter.name}</a> <Tag color='pink'>ADMIN</Tag> <span style={{ float: 'right', marginRight: 20, opacity: .8 }}>12:20pm</span></>}
+                                            >{item.submitter.name.substring(0, 1).toUpperCase()}</Avatar>}
+                                            title={<>
+                                                <a
+                                                    style={{
+                                                        marginRight: 10
+                                                    }}
+                                                    onClick={e => e.preventDefault()}
+                                                    href="#">
+
+                                                    {this.formatName(item.submitter.name)}
+                                                </a>
+                                                <Tag color='#f50'>OWNER</Tag>
+                                                <span
+                                                    style={{
+                                                        float: 'right',
+                                                        marginRight: 20,
+                                                        opacity: .8
+                                                    }}>
+                                                    {moment(new Date(item.createdAt)).format('LT')}
+                                                </span>
+                                            </>}
 
                                             description={item.plainTextBody}
                                         />

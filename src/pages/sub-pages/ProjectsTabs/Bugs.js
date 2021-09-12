@@ -100,7 +100,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        this._handleListUpdate()
+        this.fetchBugs()
     }
 
     _handlePaginationChange = (page, pageSize) => {
@@ -109,13 +109,13 @@ class App extends React.Component {
             pageSize
         }, () => {
             if (this.state.page !== page || this.state.pageSize !== pageSize) {
-                this._handleListUpdate()
+                this.fetchBugs()
             }
         })
 
     }
 
-    _handleListUpdate = async () => {
+    fetchBugs = async () => {
         const token = window.localStorage.getItem('token')
 
         let id = this.props.location.pathname.split('/');
@@ -185,12 +185,12 @@ class App extends React.Component {
             this.setState({
                 selectedSort: '0',
                 page: 1
-            }, this._handleListUpdate)
+            }, this.fetchBugs)
         } else {
             this.setState({
                 selectedSort: obj.key,
                 page: 1
-            }, this._handleListUpdate)
+            }, this.fetchBugs)
         }
     }
 
@@ -205,7 +205,7 @@ class App extends React.Component {
             this.setState({
                 search: '',
                 page: 1
-            }, this._handleListUpdate)
+            }, this.fetchBugs)
 
         }
     }
@@ -225,16 +225,21 @@ class App extends React.Component {
                     <Button
 
                         type="primary" onClick={() => this.toggleFunc('toggleCreatePopup')}>Submit New</Button>
+                    <Button
+                        onClick={this.fetchBugs}
+                    >
+                        Refresh
+                    </Button>
                     <Search
                         value={this.state.search}
                         placeholder="Search"
                         onChange={(e) => {
                             this.setState({
                                 search: e.target.value
-                            }, this._handleListUpdate)
+                            }, this.fetchBugs)
                         }}
                         onSearch={(e) => {
-                            this._handleListUpdate()
+                            this.fetchBugs()
                         }} style={{ width: 200 }} />
 
                     <Dropdown overlay={menu({
@@ -256,7 +261,7 @@ class App extends React.Component {
                                     this.setState({
                                         page: 1,
                                         checked
-                                    }, this._handleListUpdate)
+                                    }, this.fetchBugs)
 
                                 }}
                             />
@@ -274,7 +279,7 @@ class App extends React.Component {
                     footer={null}
                     onCancel={() => this.toggleFunc('toggleCreatePopup')}>
                     <CreateBug
-                        _handleListUpdate={this._handleListUpdate}
+                        _handleListUpdate={this.fetchBugs}
                         toggleFunc={() => this.toggleFunc('toggleCreatePopup')}
                     />
                 </Modal>
@@ -367,7 +372,7 @@ class App extends React.Component {
                     placement="right"
                     closable={true}
                     onClose={() => {
-                        this._handleListUpdate();
+                        this.fetchBugs();
                         this.setState({ toggleDrawer: false })
                     }}
                     visible={this.state.toggleDrawer}
