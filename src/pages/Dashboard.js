@@ -1,16 +1,13 @@
 import React from 'react';
 import {
     BrowserRouter as Router,
-    Switch,
     Route,
-    Link,
-    Redirect,
     withRouter
 } from "react-router-dom";
 import Chart from 'chart.js/auto';
 import Overview from './sub-pages/Overview';
 import SkeletonProject from './sub-pages/SkeletonProject';
-import { Avatar, Menu, Button, Space, Drawer, Dropdown } from 'antd';
+import { Avatar, Menu, Button, Space, Drawer, Dropdown, notification } from 'antd';
 import {
     UserOutlined,
     BellFilled,
@@ -21,13 +18,10 @@ import Home from './../components/Home';
 import Settings from './Settings';
 import Notifications from './Notifications';
 import {
-    AppstoreOutlined,
     MenuUnfoldOutlined,
     MenuFoldOutlined,
-    PieChartOutlined,
     DesktopOutlined,
-    ContainerOutlined,
-    MailOutlined,
+
 } from '@ant-design/icons';
 import Messages from './Messages';
 import AvatarSettings from '../components/AvatarSettings';
@@ -55,14 +49,21 @@ class App extends React.Component {
             isAuthed: false,
             collapsed: false,
             toggleDrawer: false,
-            projects: []
+            projects: [],
+            socket: null
         };
 
     }
+
+    fetchNotifications;
+
     componentDidMount() {
         PubSub.join('project').on('update', this.updateProjects);
         this.updateProjects()
+        this.connectToSocket()
     }
+
+    TOKEN = window.localStorage.getItem('token');
 
     updateProjects = async () => {
         const token = window.localStorage.getItem('token');
@@ -79,6 +80,16 @@ class App extends React.Component {
             // console.log(data.projects)
         } catch (e) {
             console.log(e)
+        }
+    }
+
+    getAction = (type, payload) => {
+        switch (type) {
+            case 'PROJECT_INVITE':
+                alert("project invite")
+                break;
+            default:
+                alert("no type given")
         }
     }
 
@@ -103,8 +114,49 @@ class App extends React.Component {
 
 
     };
+
+    connectToSocket = () => {
+        let io = document.io;
+        io.sails.rejectUnauthorized = false;
+        io.sails.url = 'http://localhost:1337';
+        io.sails.autoConnect = false;
+        io.sails.reconnection = true;
+        io.sails.headers = {
+            'x-auth-token': this.TOKEN
+        }
+        try {
+            let socket = io.sails.connect()
+            socket.on('connect', () => {
+                socket.post('http://localhost:1337/notification/subscribe', {}, (res, jwr) => {
+                    console.log(res)
+                    console.log(jwr)
+                });
+                this.setState({
+                    socket
+                })
+            })
+            socket.on('new-notification', this.onRecieveNotitification);
+        } catch (e) {
+            console.log(e)
+        }
+
+        console.log("hello")
+    }
+
+    onRecieveNotitification = (notif) => {
+        notification.open({
+            message: notif.title,
+            description: notif.description + ' Click this notification to join.',
+            onClick: () => this.getAction(notif.type, notif.payload)
+        })
+    }
+
+    componentWillUnmount() {
+        let { socket } = this.state
+        if (socket) socket.off('new-notification', this.onRecieveNotitification);
+    }
+
     render() {
-        // let match = useRouteMatch();
         return (
             <div
                 id="bugg-dashboard"
@@ -170,13 +222,6 @@ class App extends React.Component {
                             className="bugg-sub-menu"
 
                         >
-                            {/* <Menu.Item
-                                style={{
-                                    backgroundColor: 'transparent'
-                                }}
-                                onClick={() => this.props.history.push('/dashboard/projects/mixtape')}
-                                //className="bugg-sub-menu"
-                                key="5">Mixtape</Menu.Item> */}
                             {
                                 this.state.projects.map((doc, ind) =>
                                     <Menu.Item
@@ -264,7 +309,9 @@ class App extends React.Component {
                     onClose={() => this.setState({ toggleDrawer: false })}
                     visible={this.state.toggleDrawer}
                 >
-                    <Notifications />
+                    <Notifications
+                        socket={this.state.socket}
+                    />
                 </Drawer>
 
                 <Messages />
