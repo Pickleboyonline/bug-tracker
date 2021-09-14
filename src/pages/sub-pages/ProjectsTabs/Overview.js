@@ -9,6 +9,7 @@ import {
 import Chart from 'chart.js/auto';
 import { Card, Statistic, Row, Col, Button, Space } from 'antd';
 import axios from 'axios';
+import { logErrorMessage } from '../../../libraries/network-error-handling';
 
 
 class App extends React.Component {
@@ -96,7 +97,7 @@ class App extends React.Component {
                 totalMembers
             }, this.updateChart)
         } catch (e) {
-            console.log(e.response || e)
+            logErrorMessage(e)
         }
     }
 

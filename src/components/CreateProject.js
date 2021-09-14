@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Input, Space, Button, Select, Form, Upload, notification } from 'antd';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
+import { getErrorMessage } from '../libraries/network-error-handling';
 const PubSub = require('./../PubSub');
 
 const { Option } = Select;
@@ -65,18 +66,10 @@ export function CreateProject(props) {
             //  let imageResponse = 
 
         } catch (e) {
-            if (e.response) {
-                console.log(e.response.data)
-                //message.error()
-                notification.error({
-                    message: e.response.data.split('\n')[0]
-                })
-            } else {
-                console.log(e)
-                notification.error({
-                    message: e.message
-                })
-            }
+            console.error(getErrorMessage(e))
+            notification.error({
+                message: getErrorMessage(e)
+            })
         }
         if (res) {
             console.log(res.data)
@@ -110,12 +103,7 @@ export function CreateProject(props) {
                     }
                 })
             } catch (e) {
-                if (e.response) {
-                    //console.log(e.response.data)
-                    //message.error()
-                } else {
-                    console.log(e)
-                }
+                console.error(getErrorMessage(e))
                 setLoading(false);
                 return
             }

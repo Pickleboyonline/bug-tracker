@@ -17,6 +17,7 @@ import {
 } from '@ant-design/icons';
 import { Typography } from 'antd';
 import axios from 'axios';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 const { Title, Paragraph, Text, Link } = Typography;
 const { Search } = Input;
@@ -79,7 +80,7 @@ class BugDescription extends React.Component {
                 files: [...this.state.files, file]
             })
         } catch (e) {
-            message.error("Error: " + e.message)
+            message.error("Error: " + getErrorMessage(e))
         }
 
 
@@ -106,7 +107,7 @@ class BugDescription extends React.Component {
                     })
 
                 } catch (e) {
-                    message.error("Error: " + e.message)
+                    message.error("Error: " + getErrorMessage(e))
                 }
                 break;
             }

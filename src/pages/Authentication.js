@@ -7,6 +7,7 @@ import { Card } from 'antd';
 import { Typography } from 'antd';
 import { Form, Input, Button } from 'antd';
 import axios from 'axios';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 const { Title } = Typography;
 
@@ -44,11 +45,9 @@ const AuthenticationHooks = () => {
                     })
             }
         } catch (e) {
-            console.log("Error: " + e.message);
-            if (e.response) {
-                console.log(e.response.data)
-                alert(e.response.data.split('\n')[0])
-            }
+            let message = getErrorMessage(e)
+            console.error("Error: " + message);
+            alert('Error: ' + message)
         }
 
 

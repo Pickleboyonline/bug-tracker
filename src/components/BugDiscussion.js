@@ -11,6 +11,7 @@ import './../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
 import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -87,7 +88,7 @@ class App extends React.Component {
                 comments: [...this.state.comments, ...comments].reverse()
             })
         } catch (e) {
-            console.log(e)
+            console.error(getErrorMessage(e))
         }
     }
 
@@ -115,7 +116,7 @@ class App extends React.Component {
             } else {
                 console.log(e)
             }
-            message.error('Could not send message: ' + e.message)
+            message.error('Could not send message: ' + getErrorMessage(e))
             return this.setState({ submitting: false })
         }
 

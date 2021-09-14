@@ -1,6 +1,7 @@
 import react from "react";
 import { List, message, Switch } from 'antd'
 import axios from "axios";
+import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 
 
 export default class Notifications extends react.Component {
@@ -30,9 +31,8 @@ export default class Notifications extends react.Component {
             })
 
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
-            message.error("Could get update settings: " + e.message)
+            logErrorMessage(e)
+            message.error("Error: " + getErrorMessage(e))
         }
     }
 
@@ -48,9 +48,8 @@ export default class Notifications extends react.Component {
             message.success('Setting updated!')
             this.setState({ enableNotifications: checked })
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
-            message.error("Could not update settings: " + e.message)
+            logErrorMessage(e)
+            message.error('Error: ' + getErrorMessage(e))
         }
 
     }

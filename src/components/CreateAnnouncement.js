@@ -4,6 +4,7 @@ import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import axios from 'axios';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 function CreateAnnouncement(props) {
     const [editorState, setEditorState] = useState(EditorState.createEmpty())
@@ -30,9 +31,8 @@ function CreateAnnouncement(props) {
             props.updateList()
             // TODO, refresh list on create
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
-            message.error('Could not create announcement')
+            console.error(getErrorMessage(e))
+            message.error('Error: ' + getErrorMessage(e))
         }
 
     }

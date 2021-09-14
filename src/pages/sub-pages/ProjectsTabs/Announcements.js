@@ -19,6 +19,7 @@ import CreateAnnouncement from '../../../components/CreateAnnouncement';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
+import { logErrorMessage } from '../../../libraries/network-error-handling';
 const { Search } = Input;
 
 function Message(props) {
@@ -160,13 +161,11 @@ class App extends React.Component {
                 hasMore: true
             })
         } catch (e) {
-            console.log(e);
-            console.log(e.repsonse);
-            console.log(this.props.project.id)
+            logErrorMessage(e)
         }
     }
 
-    _handleOnSearch = async (search) => {
+    onSearch = async (search) => {
         let resetList = false;
         if (search !== this.state.search) resetList = true;
 
@@ -232,7 +231,7 @@ class App extends React.Component {
                         Refresh
                     </Button>
                     <Search placeholder="search"
-                        onChange={(e) => this._handleOnSearch(e.target.value)}
+                        onChange={(e) => this.onSearch(e.target.value)}
                         onSearch={() => alert('hey')} style={{ width: 200 }} />
                     {/* <Button>
                         Mark All as Read

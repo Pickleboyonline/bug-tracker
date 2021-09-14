@@ -3,7 +3,8 @@ import { Modal, Form, Input, Switch, Select, Space, Button, message } from "antd
 import axios
     from "axios";
 
-import { CirclePicker } from 'react-color'
+import { CirclePicker } from 'react-color';
+import { getErrorMessage } from "../libraries/network-error-handling";
 const PERMISSIONS = {
     ALL: 'ALL',
     MODIFY_GENERAL: 'MODIFY_GENERAL',
@@ -63,11 +64,7 @@ const ModifyRole = (props) => {
             }
             setMembers(newMembers)
         } catch (e) {
-            if (e.response) {
-                console.log(e.response.data)
-            } else {
-                console.log(e)
-            }
+            console.error(getErrorMessage(e))
         }
     }
 
@@ -120,9 +117,8 @@ const ModifyRole = (props) => {
             fetchRoles();
             message.success("Role updated")
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
-            message.error("Role could not be created: " + e.message)
+            console.error(getErrorMessage(e))
+            message.error(getErrorMessage(e))
         }
     }
 

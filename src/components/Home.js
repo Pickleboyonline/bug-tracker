@@ -8,6 +8,7 @@ import axios from 'axios';
 import {
     withRouter
 } from "react-router-dom";
+import { getErrorMessage } from '../libraries/network-error-handling';
 const PubSub = require('./../PubSub');
 
 const JoinProject = (props) => {
@@ -27,22 +28,15 @@ const JoinProject = (props) => {
             })
         } catch (e) {
 
-            if (e.response) {
-                console.log(e.response.data)
-                notification.error({
-                    message: e.response.data.split('\n')[0]
-                })
-            } else {
-                console.log(e)
-                notification.error({
-                    message: e.message
-                })
-            }
+            console.error(getErrorMessage(e))
+            notification.error({
+                message: getErrorMessage(e)
+            })
             return
         }
 
         notification.success({
-            message: 'You have joined project ' + res.data.title + '!'
+            message: 'You have joined project ' + res.data.project.title + '!'
         })
         PubSub.join('project').emit('update');
         setProjectId('');
@@ -81,57 +75,48 @@ const JoinProject = (props) => {
 }
 
 const ProjectButton = (props) => {
-    return (<Col span={12}>
+    return (
         <Space
             style={{
-                width: '100%'
+                width: '100%',
+                borderRadius: 5
             }}
+
             direction='vertical'
+            onClick={props.onClick}
             align='center'>
-            <Button
-                onClick={props.onClick}
+
+            <div
+                className="bugg-button"
                 style={{
-                    width: 110,
-                    height: 130,
+                    width: 120,
+                    borderRadius: 5,
+                    paddingTop: 5
+                }}>
 
-                }}
-                icon={
-                    <div>
-                        {/* <img style={{
-                            borderRadius: 5,
-                            borderColor: 'rgba(0,0,0,.2)',
-                            borderStyle: 'solid',
-                            borderWidth: 1,
-                            width: 100,
-                            backgroundColor: 'rgba(0 0 0 / 20%)'
-                        }}
-                            //src="https://getmixtape.app/static/media/JUSTFORAPPLE.fa2ec9e8.png"
-                            src={props.imageUrl}
-                        /> */}
-                        <div style={{
-                            width: 100,
-                            height: 100,
-                            borderRadius: 5,
-                            borderColor: 'rgba(0,0,0,.2)',
-                            borderStyle: 'solid',
-                            borderWidth: 1,
-                            backgroundImage: 'url(' + props.imageUrl + ')',
-                            backgroundPosition: 'center',
-                            backgroundSize: 'cover',
-                            marginLeft: 'auto',
-                            marginRight: 'auto'
-                        }} />
-                        <h4>
-                            {props.title}
-                        </h4>
-                    </div>
-                }
-                type='text' />
-
+                <div style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 5,
+                    borderColor: 'rgba(0,0,0,.2)',
+                    borderStyle: 'solid',
+                    backgroundRepeat: 'no-repeat',
+                    borderWidth: 1,
+                    backgroundImage: 'url(' + props.imageUrl + ')',
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                    backgroundColor: 'rgba(0 0 0 / 5%)',
+                    marginLeft: 'auto',
+                    marginRight: 'auto'
+                }} />
+                <h4 style={{ maxWidth: 120, textAlign: 'center' }}>
+                    {props.title}
+                </h4>
+            </div>
 
         </Space>
 
-    </Col>)
+    )
 }
 
 class Home extends React.Component {
@@ -166,7 +151,7 @@ class Home extends React.Component {
             });
             // console.log(data.projects)
         } catch (e) {
-            console.log(e)
+            console.error(getErrorMessage(e))
         }
     }
 
@@ -203,8 +188,8 @@ class Home extends React.Component {
 
     render() {
         return (
-            <div style={{ width: 1100 }}>
-                <div style={{ width: 800 }}>
+            <div >
+                <div style={{ width: '90%' }}>
 
 
                     <h1>
@@ -233,24 +218,67 @@ class Home extends React.Component {
 
 
 
+                <style>{`
+.bugg-button:hover {
+    background-color: rgba(0 0 0 / 10%);
+    cursor: pointer;
+}
 
-                <Row gutter={16}>
-                    <Col span={8}>
+.bugg-button {
+    transition: 0.5s;
+}
+`}</style>
+                <Row
+                    style={{ width: '90%' }}
+                    gutter={16}>
+                    <Col span={24}>
                         <Card
+                            bodyStyle={{
+                                paddingLeft: 40,
+                                paddingRight: 40
+                            }}
                             extra={
                                 <Space>
-                                    <Button onClick={() => this.setState({ visibleCreate: true })}>Create</Button>
+                                    <Button type='primary' onClick={() => this.setState({ visibleCreate: true })}>Create</Button>
                                     <Button onClick={() => this.setState({ visibleJoin: true })}>Join</Button>
                                 </Space>
                             }
                             title="Projects">
                             {
-                                this._renderProjects()
+                                null && this._renderProjects()
                             }
+                            <Row gutter={[40, 40]} >
+                                {
+                                    this.state.projects.map((item) => {
+                                        function getImageUri() {
+                                            if (item.icon.id) {
+                                                return 'http://localhost:1337/icon/' + item.icon.id
+                                            } else {
+                                                return ''
+                                            }
+                                        }
+                                        return (
+                                            <Col //span={3}
+                                                xs={12}
+                                                md={6}
+                                                xl={3}
+                                            >
+                                                <ProjectButton
+                                                    title={item.title}
+                                                    onClick={() => this.props.history.push('/dashboard/projects/' + item.id)}
+                                                    imageUrl={getImageUri()}
+                                                />
+                                            </Col>
+                                        )
+                                    })
+
+                                }
+                            </Row>
+
 
                         </Card>
                     </Col>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Card
 
                             title="Activity Feed">
@@ -261,7 +289,7 @@ class Home extends React.Component {
                                 <Timeline.Item>Network problems being solved 2015-09-01</Timeline.Item>
                             </Timeline>
                         </Card>
-                    </Col>
+                    </Col> */}
                 </Row>
             </div>
         )

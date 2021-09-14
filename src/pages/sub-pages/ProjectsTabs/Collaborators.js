@@ -2,10 +2,12 @@ import React from 'react';
 import {
     Popconfirm, List,
     Input,
-    Avatar, Button, Space, Modal, Select, message
+    Avatar, Button, Space, Modal, Select, message, Tag
 } from 'antd';
+import { withRouter } from 'react-router-dom'
 import axios from 'axios';
-
+import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
+import { getMe } from './../../../libraries/bugg'
 const { Search } = Input;
 const { Option } = Select;
 
@@ -64,8 +66,7 @@ class App extends React.Component {
                 total: data.total
             })
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
+            logErrorMessage(e)
         }
     }
 
@@ -104,9 +105,8 @@ class App extends React.Component {
             this.toggleAddMember()
             this.fetchMembers()
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
-            message.error('Could not invite users')
+            logErrorMessage(e)
+            message.error('Error: ' + getErrorMessage(e))
         }
     }
 
@@ -143,12 +143,12 @@ class App extends React.Component {
                 membersToAdd: members
             })
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
+            logErrorMessage(e)
         }
     }
 
     removeMember = async (userId) => {
+
         try {
             await axios.delete('http://localhost:1337/project/member', {
                 headers: {
@@ -164,9 +164,22 @@ class App extends React.Component {
                 confirmVisible: false,
                 deleteButtonLoading: false
             })
+
+
+            try {
+                let user = await getMe();
+                if (user.id === userId) {
+                    this.props.updateProject()
+                    this.props.history.push('/dashboard')
+                }
+
+            } catch (e) {
+                logErrorMessage(e)
+            }
+
         } catch (e) {
-            console.log(e.response || e)
-            message.error('Could not remove member')
+            logErrorMessage(e)
+            message.error('Error: ' + getErrorMessage(e))
         }
     }
 
@@ -203,7 +216,7 @@ class App extends React.Component {
                     renderItem={item => (
                         <List.Item
                             actions={[
-                                <Popconfirm
+                                (!item.isOwner && <Popconfirm
                                     title="Are you sure?"
                                     // visible={this.state.confirmVisible}
                                     okButtonProps={{ loading: this.state.deleteButtonLoading }}
@@ -212,12 +225,16 @@ class App extends React.Component {
                                     <Button
                                         // onClick={() => this.setState({ confirmVisible: true })}
                                         danger>Remove</Button>
-                                </Popconfirm>
+                                </Popconfirm>)
 
                             ]}
                         >
                             <Avatar style={{ marginRight: 10 }}>{item.name.substring(0, 1)}</Avatar>
                             {`${item.name.split(' ')[0]} ${(item.name.split(' ')[1] ? item.name.split(' ')[1].substring(0, 1).toUpperCase() + '.' : '')} (${item.email})`}
+                            {
+                                item.isOwner && <Tag color='red' style={{ marginLeft: 10 }}>OWNER</Tag>
+                            }
+
                         </List.Item>
                     )}
                 />
@@ -256,4 +273,4 @@ class App extends React.Component {
 }
 
 
-export default App;
+export default withRouter(App);

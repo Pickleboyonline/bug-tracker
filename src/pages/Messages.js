@@ -1,37 +1,29 @@
 import React from 'react';
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect,
     withRouter
 } from "react-router-dom";
 
-import { Avatar, Menu, Button, Space, Tooltip, Card, Input, } from 'antd';
 import {
-    UserOutlined,
-    MessageOutlined, CloseOutlined, MinusOutlined
+    Avatar,
+    Button,
+    Space,
+    Tooltip,
+    Card,
+} from 'antd';
+import {
+    MessageOutlined,
+    MinusOutlined
 } from '@ant-design/icons';
 import anime from 'animejs/lib/anime.es.js';
-import { List, Typography, Divider } from 'antd';
+import { List } from 'antd';
 import axios from 'axios';
 import MessageContainer from '../components/MessageContainer';
 import moment from 'moment';
 import CreateConversation from '../components/CreateConversation';
+import { logErrorMessage } from '../libraries/network-error-handling';
+import { addEventListener, removeEventListener } from '../libraries/socket';
 
-const { SubMenu } = Menu;
-const { Search } = Input;
 
-// var socketIOClient = require('socket.io-client');
-// var sailsIOClient = require('sails.io.js');
-
-// var IO = sailsIOClient(socketIOClient);
-
-// IO.sails.url = 'http://localhost:1337';
-// IO.sails.transports = ['websocket'];
-
-// IO.sails.rejectUnauthorized = false
 
 class App extends React.Component {
     constructor(props) {
@@ -55,35 +47,12 @@ class App extends React.Component {
     // TODO: on recieve new message, re fetch conversations
     componentDidMount() {
         this.fetchConversations()
-        this.connectToSocket()
+        // this.connectToSocket()
+        addEventListener('new-message', this.fetchConversations)
     }
 
-    connectToSocket = () => {
-        let io = document.io;
-        io.sails.rejectUnauthorized = false;
-        io.sails.url = 'http://localhost:1337';
-        io.sails.autoConnect = false;
-        io.sails.reconnection = true;
-        io.sails.headers = {
-            'x-auth-token': this.TOKEN
-        }
-        try {
-            let socket = io.sails.connect()
-            socket.on('connect', () => {
-                socket.post('http://localhost:1337/message/subscribe', {}, (res, jwr) => {
-                    console.log(res)
-                    console.log(jwr)
-                });
-                this.setState({
-                    socket
-                })
-            })
-
-        } catch (e) {
-            console.log(e)
-        }
-
-        console.log("hello")
+    componentWillUnmount() {
+        removeEventListener('new-message', this.fetchConversations)
     }
 
     toggleHideSimple = () => {
@@ -147,7 +116,7 @@ class App extends React.Component {
             })
             await new Promise((res) => this.setState({ conversations }, res))
         } catch (e) {
-            console.log(e.response || e)
+            logErrorMessage(e)
         }
     }
 
@@ -219,11 +188,8 @@ class App extends React.Component {
                             <Button
                                 onClick={() => this.toggleCollapse('contactsCollapsed')}
                                 type='text' icon={<MinusOutlined style={{ color: 'white' }} />} />
-                            {/* <Button
-                                    type='text' icon={<CloseOutlined style={{ color: 'white' }} />} /> */}
-
-
-                        </Space>}
+                        </Space>
+                    }
 
                     style={{
                         width: 350,
@@ -296,7 +262,6 @@ class App extends React.Component {
                     this.state.activeConversations.map((item) =>
                         <MessageContainer
                             key={item.id}
-                            // io={io}
                             socket={this.state.socket}
                             toggleHide={this.state.toggleHide}
                             fetchConversations={this.fetchConversations}
@@ -307,7 +272,7 @@ class App extends React.Component {
 
 
                 <CreateConversation
-                    visible={this.state.createConversationIsVisible}// {}
+                    visible={this.state.createConversationIsVisible}
                     fetchConversations={this.fetchConversations}
                     selectConversation={this.selectConversation}
                     closeModal={() => this.setState({ createConversationIsVisible: false })}

@@ -1,19 +1,54 @@
 import React from 'react'
 import {
-    Card, Button, Statistic
+    Input, Button, Statistic
     , Col, Row, Divider, Space, Timeline,
     List,
     Avatar
 } from 'antd'
+import { getMe } from '../libraries/bugg';
+import { logErrorMessage } from '../libraries/network-error-handling';
 
 const data = [
-    'Notifications',
-    'Pages',
+    'General',
+
 ];
-class Home extends React.Component {
+class Settings extends React.Component {
     state = {
+        selectedSetting: data[0].toLowerCase(),
+        user: {
+            name: '',
+            email: '',
+            id: '',
+        },
+        name: '',
+        email: ''
+    }
+    componentDidMount() {
+        this.fetchUser()
+    }
+
+
+    fetchUser = async () => {
+        try {
+            let user = await getMe();
+            this.setState({
+                user,
+                name: user.name
+            })
+        } catch (e) {
+            logErrorMessage(e)
+        }
+    }
+
+    /**
+     * Udates user name and email?
+     */
+    updateUserField = (field, value) => {
 
     }
+
+
+
     render() {
         return (
             <div style={{ width: 1100 }}>
@@ -29,8 +64,8 @@ class Home extends React.Component {
                 </div>
 
                 <div style={{
-                    display: 'inline-flex'
-
+                    display: 'inline-flex',
+                    width: '100%'
                 }}>
                     <style>{`
 .bugg-list-item-button:hover {
@@ -50,8 +85,16 @@ class Home extends React.Component {
                             width: 300
                         }}
                         renderItem={item => (
-                            <List.Item className="bugg-list-item-button">
-                                <Avatar>S</Avatar> {item}
+                            <List.Item
+                                style={{
+                                    color: (this.state.selectedSetting === item.toLowerCase() ? '#0094f7' : 'black')
+                                }}
+                                className="bugg-list-item-button">
+                                <Avatar
+                                    style={{
+                                        marginRight: 10
+                                    }}
+                                >{item.substring(0, 1).toLocaleUpperCase()}</Avatar> {item}
                             </List.Item>
                         )}
                     />
@@ -61,9 +104,48 @@ class Home extends React.Component {
                     }}>
                         {
                             (() => {
-                                switch (this.state.activeSetting) {
-                                    case 2:
-                                        return "@"
+                                const settings = [
+                                    {
+                                        title: 'Name',
+                                        reactNode: (<Space  >
+                                            {
+                                                this.state.name !== this.state.user.name ?
+                                                    <Button
+                                                        //onClick={() => updateProject('title')}
+                                                        type='primary'>
+                                                        Update
+                                                    </Button> : null}
+                                            <Input
+                                                value={this.state.name}
+                                                onPressEnter={() => {
+                                                    //  if (title !== project.title) updateProject('title')
+                                                }}
+                                                onChange={(e) => {
+                                                    this.setState({
+                                                        name: e.target.value
+                                                    })
+                                                }}
+                                                type="text" />
+
+                                        </Space>)
+                                    },]
+                                switch (this.state.selectedSetting) {
+                                    case data[0].toLowerCase():
+                                        return (
+                                            <List
+                                                bordered
+                                                style={{
+                                                    maxWidth: 600
+                                                }}
+                                                dataSource={settings}
+                                                renderItem={item =>
+                                                    <List.Item
+                                                        extra={[item.reactNode]}
+                                                    >
+                                                        {item.title}
+                                                    </List.Item>}
+                                            />
+                                        )
                                     default:
                                         return 'no tab selected'
                                 }
@@ -92,4 +174,4 @@ class Home extends React.Component {
     }
 }
 
-export default Home;
+export default Settings;

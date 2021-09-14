@@ -19,6 +19,7 @@ import {
 import moment from 'moment';
 import axios from 'axios';
 import ViewBug from './../ProjectsTabs/ViewBug';
+import { logErrorMessage } from '../../../libraries/network-error-handling';
 
 function getListData(value) {
     let listData;
@@ -70,17 +71,17 @@ class App extends React.Component {
 
 
     componentDidMount() {
-        this._handleRetrieveBugs()
+        this.fetchBugs()
     }
 
     componentDidUpdate(prevProps) {
         if (prevProps.project.id !== this.props.project.id) {
-            this._handleRetrieveBugs()
+            this.fetchBugs()
         }
     }
 
     // retrives bugs assoiated with this project and sends them to this.state.bugs
-    _handleRetrieveBugs = async () => {
+    fetchBugs = async () => {
         if (!this.props.project.id) return;
         try {
             let { data } = await axios.get('http://localhost:1337/bug/all', {
@@ -105,14 +106,13 @@ class App extends React.Component {
                 }))
             })
         } catch (e) {
-            console.log(e)
-            if (e.response) console.log(e.response)
+            logErrorMessage(e)
         }
     }
 
     componentDidUpdate(prevProps) {
         if (prevProps.project.id !== this.props.project.id) {
-            this._handleRetrieveBugs()
+            this.fetchBugs()
         }
     }
 
@@ -132,7 +132,7 @@ class App extends React.Component {
     // toggle drawer state and refresh bug data
     _onDrawerClose = () => {
         this._toggleDrawerState()
-        this._handleRetrieveBugs()
+        this.fetchBugs()
     }
 
     _onBugSelect = () => {

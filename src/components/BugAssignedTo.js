@@ -7,6 +7,7 @@ import {
 } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 
 const { Paragraph, Title } = Typography;
@@ -56,8 +57,7 @@ class BugStats extends React.Component {
                 total: data.total
             })
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
+            console.error(getErrorMessage(e))
         }
     }
 
@@ -84,12 +84,7 @@ class BugStats extends React.Component {
                 }
             })
         } catch (e) {
-            if (e.response) {
-                console.log(e.response.data)
-                //message.error()
-            } else {
-                console.log(e)
-            }
+            console.error(getErrorMessage(e))
 
             return
         }
@@ -130,12 +125,8 @@ class BugStats extends React.Component {
             this.setState({ editAssigned: false })
             message.success('Members added')
         } catch (e) {
-            if (e.response) {
-                console.log(e.response)
-            } else {
-                console.log(e)
-            }
-            message.error("Could not add members due to an error")
+            console.error(getErrorMessage(e))
+            message.error("Error: " + getErrorMessage(e))
         }
     }
 

@@ -5,9 +5,15 @@ import {
     Divider,
     Select, Upload,
     Space,
-    message
+    message,
+    List,
+    Popconfirm,
+    notification
 } from 'antd';
 import axios from "axios";
+import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
+import { useHistory } from "react-router";
+import config from "../../../config";
 
 export default function General(props) {
 
@@ -41,7 +47,7 @@ export default function General(props) {
                     setDescription(data.project.description)
                 }
             } catch (e) {
-                console.log(e)
+                logErrorMessage(e)
             }
         }
 
@@ -79,9 +85,8 @@ export default function General(props) {
             setImageUri(newImageUri)
             message.success('Icon was updated')
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
-            message.error('Could not upload image')
+            logErrorMessage(e)
+            message.error('Error: ' + getErrorMessage(e))
         }
 
 
@@ -95,7 +100,6 @@ export default function General(props) {
         } else if (field === 'description') {
             value = description;
         }
-
         try {
             let { data } = await axios.put('http://localhost:1337/project/' + project.id, {
                 [field]: value
@@ -111,9 +115,26 @@ export default function General(props) {
             message.success(`${field} was updated to "${value}"`)
             props.updateProject()
         } catch (e) {
-            console.log(e)
-            console.log(e.resonse)
-            message.error("Could not update project details")
+            logErrorMessage(e)
+            message.error("Error: " + getErrorMessage(e))
+        }
+    }
+
+    let history = useHistory();
+    const deleteProject = async () => {
+        const projectId = props.project.id;
+        try {
+            await axios.delete(config.baseUrl + '/project/' + projectId, {
+                headers: config.getDefaultHeader()
+            });
+            notification.success({
+                message: "Project was deleted"
+            })
+            props.updateProjectOnNavigation()
+            history.push('/dashboard')
+        } catch (e) {
+            logErrorMessage(e)
+            message.error('Error: ' + getErrorMessage(e))
         }
     }
 
@@ -121,71 +142,115 @@ export default function General(props) {
     useEffect(initializeComponent, [])
 
 
-    return (<div>
-
-
-        <p>Title</p>
-        <Space style={{ marginBottom: 20 }} >
-            <Input
-                value={title}
-                onChange={(e) => {
-                    setTitle(e.target.value)
-                }}
-                type="text" />
-            {
-                title !== project.title ?
-                    <Button
-                        onClick={() => updateProject('title')}
-                        type='primary'>
-                        Update
-                    </Button> : null}
-        </Space>
-
-        <br />
-        <p>Description</p>
-        <Space style={{ marginBottom: 20 }}>
-            <Input
-                value={description}
-                onChange={(e) => {
-                    setDescription(e.target.value)
-                }}
-                type="text" />
-            {
-                description !== project.description ?
-                    <Button
-                        onClick={() => updateProject('description')}
-                        type='primary'>
-                        Update
-                    </Button> : null}
-        </Space>
-        <br />
-
-        <Upload
-            name="avatar"
-            listType="picture-card"
-
-            showUploadList={false}
-            // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            beforeUpload={beforeUpload}
-        // onChange={this.handleChange}
-        >
-            {
-                imageUri === '' ?
-                    "Upload Icon" :
-                    <div style={{
-                        width: '80%',
-                        height: '80%',
-                        backgroundImage: 'url(' + imageUri + ')',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+    const settings = [
+        {
+            title: 'Title',
+            reactNode: (<Space  >
+                {
+                    title !== project.title ?
+                        <Button
+                            onClick={() => updateProject('title')}
+                            type='primary'>
+                            Update
+                        </Button> : null}
+                <Input
+                    value={title}
+                    onPressEnter={() => {
+                        if (title !== project.title) updateProject('title')
                     }}
-                    />
+                    onChange={(e) => {
+                        setTitle(e.target.value)
+                    }}
+                    type="text" />
 
-            }
+            </Space>)
+        },
+        {
+            title: 'Description',
+            reactNode: (
+                <Space >
+                    {
+                        description !== project.description ?
+                            <Button
+                                onClick={() => updateProject('description')}
+                                type='primary'>
+                                Update
+                            </Button> : null}
+                    <Input
+                        value={description}
+                        onPressEnter={() => {
+                            if (description !== project.description) updateProject('description')
+                        }}
+                        onChange={(e) => {
+                            setDescription(e.target.value)
+                        }}
+                        o
+                        type="text" />
 
-        </Upload>
+                </Space>
+            )
+        },
+        {
+            title: 'Project Icon',
+            reactNode: (
+                <div>
+                    <Upload
+                        name="avatar"
+                        listType="picture-card"
 
-        <br />
+                        showUploadList={false}
+                        // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                        beforeUpload={beforeUpload}
+                    // onChange={this.handleChange}
+                    >
+                        {
+                            imageUri === '' ?
+                                "Upload Icon" :
+                                <div style={{
+                                    width: '80%',
+                                    height: '80%',
+                                    backgroundImage: 'url(' + imageUri + ')',
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center'
+                                }}
+                                />
+
+                        }
+
+                    </Upload>
+                </div>
+
+            )
+        },
+        {
+            title: 'Delete Project?',
+            reactNode: (
+                <Popconfirm
+                    title="Are you sure?"
+                    onConfirm={deleteProject}
+                >
+                    <Button danger>Delete</Button>
+                </Popconfirm>
+            )
+        }
+    ]
+
+
+    return (<div style={{ width: '100%' }}>
+        <List
+            style={{
+                width: '100%',
+                maxWidth: 600
+            }}
+            dataSource={settings}
+            bordered
+            renderItem={(item) => <List.Item
+                extra={[item.reactNode]}
+            >
+                {item.title}
+            </List.Item>}
+        />
+
 
 
 

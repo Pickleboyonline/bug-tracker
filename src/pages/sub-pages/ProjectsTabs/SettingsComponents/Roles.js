@@ -18,6 +18,7 @@ import axios from "axios";
 import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons';
 import ModifyRole from './../../../../components/ModifyRole'
 import { CirclePicker } from 'react-color'
+import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 
 const { SubMenu } = Menu;
 
@@ -89,12 +90,7 @@ export default class Roles extends react.Component {
                 members: newMembers
             })
         } catch (e) {
-            if (e.response) {
-                console.log(e.response.data)
-                //message.error()
-            } else {
-                console.log(e)
-            }
+            logErrorMessage(e)
 
             return
         }
@@ -150,14 +146,14 @@ export default class Roles extends react.Component {
                 }
             })
             this.setState({
-                roles: [...this.state.roles, role],
+                // roles: [...this.state.roles, role],
                 isModalVisible: false
             })
             message.success("Role created")
+            this.fetchRoles()
         } catch (e) {
-            console.log(e)
-            console.log(e.response)
-            message.error("Role could not be created: " + e.message)
+            logErrorMessage(e)
+            message.error("Error: " + getErrorMessage(e))
         }
     }
 
@@ -175,8 +171,7 @@ export default class Roles extends react.Component {
                 roles
             })
         } catch (e) {
-            console.log(e)
-            console.log(e.repsponse)
+            logErrorMessage(e)
         }
     }
 
@@ -199,9 +194,8 @@ export default class Roles extends react.Component {
             this.fetchRoles()
             message.success('role was deleted')
         } catch (e) {
-            console.log(e)
-            console.log(e.repsonse)
-            message.error("Role could not be deleted: " + e.message)
+            logErrorMessage(e)
+            message.error("Error: " + getErrorMessage(e))
         }
     }
 

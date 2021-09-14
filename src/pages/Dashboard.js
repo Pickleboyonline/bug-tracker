@@ -26,20 +26,24 @@ import {
 import Messages from './Messages';
 import AvatarSettings from '../components/AvatarSettings';
 import axios from 'axios';
+import { getErrorMessage, logErrorMessage } from './../libraries/network-error-handling';
+import { addEventListener, removeEventListener } from '../libraries/socket';
 
 const PubSub = require('./../PubSub');
 
 const { SubMenu } = Menu;
 const menu = (
-    <Menu>
-        <Menu.Item key="0">
-            1st menu item
+    <Menu style={{
+        width: 150,
+    }}>
+        <Menu.Item
+            style={{
+                color: 'red'
+            }}
+            key="0">
+            Logout
         </Menu.Item>
-        <Menu.Item key="1">
-            2nd menu item
-        </Menu.Item>
-        <Menu.Divider />
-        <Menu.Item key="3">3rd menu item</Menu.Item>
+
     </Menu>
 );
 class App extends React.Component {
@@ -50,7 +54,8 @@ class App extends React.Component {
             collapsed: false,
             toggleDrawer: false,
             projects: [],
-            socket: null
+            socket: null,
+            name: ''
         };
 
     }
@@ -60,8 +65,22 @@ class App extends React.Component {
     componentDidMount() {
         PubSub.join('project').on('update', this.updateProjects);
         this.updateProjects()
-        this.connectToSocket()
+        // this.connectToSocket();
+        this.getWelcomeMessage();
+        // this.handleErrorTest()
+
+        addEventListener('new-notification', this.onRecieveNotitification)
     }
+
+    handleErrorTest = async () => {
+        try {
+            await axios.get('http://localhost:1337/throw-error')
+        } catch (e) {
+            let message = getErrorMessage(e);
+            console.log(message)
+        }
+    }
+
 
     TOKEN = window.localStorage.getItem('token');
 
@@ -79,14 +98,14 @@ class App extends React.Component {
             });
             // console.log(data.projects)
         } catch (e) {
-            console.log(e)
+            console.error(getErrorMessage(e))
         }
     }
 
-    getAction = (type, payload) => {
-        switch (type) {
+    getAction = (notification) => {
+        switch (notification.type) {
             case 'PROJECT_INVITE':
-                alert("project invite")
+                this.joinProject(notification.payload.projectId)
                 break;
             default:
                 alert("no type given")
@@ -115,45 +134,68 @@ class App extends React.Component {
 
     };
 
-    connectToSocket = () => {
-        let io = document.io;
-        io.sails.rejectUnauthorized = false;
-        io.sails.url = 'http://localhost:1337';
-        io.sails.autoConnect = false;
-        io.sails.reconnection = true;
-        io.sails.headers = {
-            'x-auth-token': this.TOKEN
-        }
-        try {
-            let socket = io.sails.connect()
-            socket.on('connect', () => {
-                socket.post('http://localhost:1337/notification/subscribe', {}, (res, jwr) => {
-                    console.log(res)
-                    console.log(jwr)
-                });
-                this.setState({
-                    socket
-                })
-            })
-            socket.on('new-notification', this.onRecieveNotitification);
-        } catch (e) {
-            console.log(e)
-        }
 
-        console.log("hello")
-    }
 
     onRecieveNotitification = (notif) => {
         notification.open({
             message: notif.title,
             description: notif.description + ' Click this notification to join.',
-            onClick: () => this.getAction(notif.type, notif.payload)
+            onClick: () => this.getAction(notif)
         })
     }
 
     componentWillUnmount() {
-        let { socket } = this.state
-        if (socket) socket.off('new-notification', this.onRecieveNotitification);
+        removeEventListener('new-notification', this.onRecieveNotitification)
+    }
+
+    getWelcomeMessage = async () => {
+        let formatName = (name) => {
+            var nameSegments = name.split(' ');
+            let shortHandName = nameSegments[0];
+
+            if (nameSegments[1]) {
+                shortHandName += ' ' + nameSegments[1].substring(0, 1).toUpperCase() + '.'
+            }
+
+            return shortHandName
+        }
+        try {
+            let { data: { user } } = await axios.get('http://localhost:1337/user/me', {
+                headers: {
+                    'x-auth-token': this.TOKEN
+                }
+            })
+
+            this.setState({
+                name: formatName(user.name)
+            });
+        } catch (e) {
+            console.error(getErrorMessage(e))
+        }
+    }
+
+
+    joinProject = async (projectId) => {
+        const token = window.localStorage.getItem('token');
+        try {
+            let { data } = await axios.post('http://localhost:1337/project/join', {
+                projectId
+            }, {
+                headers: {
+                    'x-auth-token': token
+                }
+            })
+            notification.success({
+                message: 'You have joined project ' + data.project.title + '!'
+            })
+            this.updateProjects();
+        } catch (e) {
+            logErrorMessage(e);
+            notification.error({
+                message: getErrorMessage(e)
+            })
+
+        }
     }
 
     render() {
@@ -246,7 +288,7 @@ class App extends React.Component {
                         className="header"
                         style={styles.header}>
                         <h2>
-                            Welcome, Imran S.
+                            {'Welcome' + (this.state.name ? ', ' : '') + this.state.name}
                         </h2>
                         <Space size='large'>
                             <Button
@@ -310,6 +352,7 @@ class App extends React.Component {
                     visible={this.state.toggleDrawer}
                 >
                     <Notifications
+                        joinProject={this.joinProject}
                         socket={this.state.socket}
                     />
                 </Drawer>
@@ -404,6 +447,8 @@ const styles = {
         'box-shadow': '-7px 0px 13px 0px black',
         height: 800,
         boxShadow: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
         position: 'fixed',
         left: 0,
         top: 0,

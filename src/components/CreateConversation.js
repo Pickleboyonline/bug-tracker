@@ -1,6 +1,7 @@
 import react from "react";
 import { Input, message, Modal, Select } from "antd";
 import axios from "axios";
+import { getErrorMessage } from "../libraries/network-error-handling";
 
 const { Option } = Select;
 export default class CreateConversation extends react.Component {
@@ -25,12 +26,7 @@ export default class CreateConversation extends react.Component {
                 }
             })
         } catch (e) {
-            if (e.response) {
-                console.log(e.response.data)
-                //message.error()
-            } else {
-                console.log(e)
-            }
+            console.error(getErrorMessage(e))
 
             return
         }
@@ -87,7 +83,7 @@ export default class CreateConversation extends react.Component {
             this.props.selectConversation(data.message.conversation)
             this.props.closeModal()
         } catch (e) {
-            console.log(e.response || e)
+            console.error(getErrorMessage(e))
         }
     }
 

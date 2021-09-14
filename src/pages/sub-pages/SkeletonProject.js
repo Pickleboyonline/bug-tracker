@@ -21,6 +21,7 @@ import {
 
 } from '@ant-design/icons';
 import axios from 'axios';
+import { logErrorMessage } from '../../libraries/network-error-handling';
 
 
 const { SubMenu } = Menu;
@@ -34,7 +35,7 @@ class App extends React.Component {
         let id = this.props.location.pathname.split('/');
         id = id[id.length - 1];
         this.state = {
-            activeTab: 'settings',
+            activeTab: 'overview',
             title: '',
             imageUrl: '',
             project: { id }
@@ -48,7 +49,7 @@ class App extends React.Component {
         let id = this.props.location.pathname.split('/');
         id = id[id.length - 1];
         // console.log(id)
-        this._handleProjectUpdate(id);
+        this.updateProject(id);
     }
 
     componentWillUnmount() {
@@ -64,12 +65,12 @@ class App extends React.Component {
         if (locationChanged) {
             let id = this.props.location.pathname.split('/');
             id = id[id.length - 1];
-            this._handleProjectUpdate(id);
-            console.log('yuh')
+            this.updateProject(id);
+
         }
     }
 
-    _handleProjectUpdate = async (id) => {
+    updateProject = async (id) => {
         const token = window.localStorage.getItem('token');
         id = id || this.state.project.id;
         try {
@@ -81,7 +82,7 @@ class App extends React.Component {
                     projectId: id
                 }
             });
-
+            // console.log(data)
             if (data.project) {
                 this.setState({
                     title: data.project.title,
@@ -92,18 +93,18 @@ class App extends React.Component {
 
 
         } catch (e) {
-            console.log(e)
+            logErrorMessage(e)
         }
     }
 
-    updateProject = (newProject) => {
-        this.setState({
-            project: {
-                ...this.state.project,
-                ...newProject
-            }
-        })
-    }
+    // updateProject = (newProject) => {
+    //     this.setState({
+    //         project: {
+    //             ...this.state.project,
+    //             ...newProject
+    //         }
+    //     })
+    // }
 
     handleClick = e => {
         this.setState({ activeTab: e.key });
@@ -114,7 +115,7 @@ class App extends React.Component {
         return (
             <React.Fragment>
                 <Space align='center'>
-                    <img
+                    {/* <img
                         style={{
                             height: 72,
                             width: 72,
@@ -126,13 +127,33 @@ class App extends React.Component {
                         }}
                         //src="https://getmixtape.app/static/media/JUSTFORAPPLE.fa2ec9e8.png"
                         src={this.state.imageUrl}
-                    />
-                    <h1 style={{
-                        fontSize: 50,
-                        margin: 0
-                    }}>
-                        {this.state.title}
-                    </h1>
+                    /> */}
+
+                    <div style={{
+                        width: (this.state.project.description ? 107 : 72),
+                        height: (this.state.project.description ? 107 : 72),
+                        borderRadius: 5,
+                        borderColor: 'rgba(0,0,0,.2)',
+                        borderStyle: 'solid',
+                        borderWidth: 1,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundImage: 'url(' + this.state.imageUrl + ')',
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundColor: 'rgba(0 0 0 / 5%)',
+
+                        marginRight: 10
+                    }} />
+                    <div>
+
+                        <h1 style={{
+                            fontSize: 50,
+                            margin: 0
+                        }}>
+                            {this.state.title}
+                        </h1>
+                        <p style={{ margin: 0, opacity: .7, marginLeft: 3 }}>{this.state.project.description ?? ''}</p>
+                    </div>
                 </Space>
 
                 <div style={{ display: 'flex' }}>
@@ -181,12 +202,16 @@ class App extends React.Component {
                                 return <Calendar project={this.state.project} />
                             case "settings":
                                 return <Settings project={this.state.project} updateProject={() => {
-                                    this._handleProjectUpdate()
+                                    this.updateProject()
                                     this.props.updateProjects()
 
-                                }} />
+                                }}
+                                    updateProjectOnNavigation={this.props.updateProjects}
+                                />
                             case "collaborators":
-                                return <Collaborators project={this.state.project} />
+                                return <Collaborators
+                                    updateProject={this.props.updateProjects}
+                                    project={this.state.project} />
                             default:
                                 return 'hi'
                         }

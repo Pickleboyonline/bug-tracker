@@ -30,6 +30,7 @@ import BugAssignedTo from './../../../components/BugAssignedTo';
 import ViewBug from './ViewBug';
 import axios from 'axios';
 import moment from 'moment';
+import { logErrorMessage } from '../../../libraries/network-error-handling';
 
 
 const { Title, Paragraph, Text, Link } = Typography;
@@ -167,7 +168,7 @@ class App extends React.Component {
                 page
             })
         } catch (e) {
-            console.log(e);
+            logErrorMessage(e)
         }
     }
 

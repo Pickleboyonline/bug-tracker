@@ -22,6 +22,7 @@ import './../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import htmlToDraft from 'html-to-draftjs';
 import draftToHtml from 'draftjs-to-html';
 import axios from 'axios';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 const { Title, Paragraph, Text, Link } = Typography;
 const { Search } = Input;
@@ -66,8 +67,9 @@ class BugDescription extends React.Component {
 
             message.success("Description was updated!")
         } catch (e) {
-            console.log(e)
-            message.error('Error: ' + e.message)
+            let message = getErrorMessage(e)
+            console.error(message)
+            message.error('Error: ' + message)
         }
     }
 

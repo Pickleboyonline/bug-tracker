@@ -12,6 +12,8 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios';
 import anime from 'animejs';
+import { getErrorMessage } from '../libraries/network-error-handling';
+import { addEventListener, removeEventListener } from '../libraries/socket';
 
 
 function Message(props) {
@@ -78,27 +80,18 @@ export default class MessageContainer extends react.Component {
         // }
         this.fetchMessages()
         // add message event handler
-        if (this.props.socket) this.props.socket.on('new-message', this.onRecieveNewMessage);
-        console.log('listing...')
-        this.setState({
-            listening: true
-        })
+        // this.props.socket.on('new-message', this.onRecieveNewMessage);
+        // console.log('listing...')
+        // this.setState({
+        //     listening: true
+        // })
 
+        addEventListener('new-message', this.onRecieveNewMessage)
     }
 
     componentWillUnmount() {
         // remove message event handler
-        if (this.props.socket) this.props.socket.off('new-message', this.onRecieveNewMessage);
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.socket === null && this.state.listening === false) {
-            if (this.props.socket) this.props.socket.on('new-message', this.onRecieveNewMessage);
-            console.log('listing...')
-            this.setState({
-                listening: true
-            })
-        }
+        removeEventListener('new-message', this.onRecieveNewMessage)
     }
 
 
@@ -121,7 +114,7 @@ export default class MessageContainer extends react.Component {
                 total: data.total
             })
         } catch (e) {
-            console.log(e.response || e)
+            console.error(getErrorMessage(e))
         }
     }
 
@@ -144,7 +137,7 @@ export default class MessageContainer extends react.Component {
             })
             this.props.fetchConversations()
         } catch (e) {
-            console.log(e.response || e)
+            console.error(getErrorMessage(e))
         }
     }
 

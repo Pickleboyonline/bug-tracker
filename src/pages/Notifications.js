@@ -6,6 +6,7 @@ import {
 import axios from 'axios';
 import { MailOutlined } from '@ant-design/icons'
 import moment from 'moment';
+import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 
 class Notification extends React.Component {
 
@@ -28,7 +29,7 @@ class Notification extends React.Component {
     getAction = (notification) => {
         switch (notification.type) {
             case 'PROJECT_INVITE':
-                alert("project invite")
+                this.props.joinProject(notification.payload.projectId)
                 break;
             default:
                 alert("no type given")
@@ -56,8 +57,8 @@ class Notification extends React.Component {
             this.fetchNotifications()
             message.success("Notification Dismissed")
         } catch (e) {
-            console.log(e.response || e)
-            message.error("Notification could not be dismissed due to an error")
+            logErrorMessage(e)
+            message.error("Error: " + getErrorMessage(e))
         }
 
     }
@@ -72,8 +73,8 @@ class Notification extends React.Component {
             this.fetchNotifications()
             message.success("All notifications were dismissed")
         } catch (e) {
-            console.log(e.response || e)
-            message.error("Notifications could not be dismissed due to an error")
+            logErrorMessage(e)
+            message.error("Error: " + getErrorMessage(e))
         }
 
     }
@@ -113,12 +114,14 @@ class Notification extends React.Component {
             })
 
         } catch (e) {
-            console.log(e.response || e)
+            logErrorMessage(e)
         }
     }
 
     updatePagination = (page, pageSize) => {
-
+        this.setState({
+            page, pageSize
+        })
     }
 
     render() {

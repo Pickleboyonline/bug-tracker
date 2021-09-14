@@ -17,6 +17,7 @@ import {
 import { ConsoleSqlOutlined, EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -49,7 +50,7 @@ class BugStats extends React.Component {
             })
             message.success(`"${field}" was updated to "${value}"`)
         } catch (e) {
-            message.error("Error: " + e.message)
+            message.error("Error: " + getErrorMessage(e))
         }
 
     }

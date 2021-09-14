@@ -12,6 +12,7 @@ import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import draftToHtml from 'draftjs-to-html';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -99,12 +100,9 @@ const App = (props) => {
             })
 
         } catch (e) {
-            let { message } = e;
-
-            console.log(e)
-
+            console.error(getErrorMessage(e))
             notification.error({
-                message
+                message: getErrorMessage(e)
             })
         }
 
@@ -141,12 +139,7 @@ const App = (props) => {
                     }
                 })
             } catch (e) {
-                if (e.response) {
-                    console.log(e.response.data)
-                    //message.error()
-                } else {
-                    console.log(e)
-                }
+                console.error(getErrorMessage(e))
                 // setLoading(false);
                 return
             }
