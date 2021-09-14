@@ -7,6 +7,7 @@ import axios from 'axios';
 import { MailOutlined } from '@ant-design/icons'
 import moment from 'moment';
 import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from './config';
 
 class Notification extends React.Component {
 
@@ -50,9 +51,7 @@ class Notification extends React.Component {
     dismissNotification = async (notificationId) => {
         try {
             await axios.delete('http://localhost:1337/notification/' + notificationId, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
             this.fetchNotifications()
             message.success("Notification Dismissed")
@@ -66,9 +65,7 @@ class Notification extends React.Component {
     dismissAllNotifications = async () => {
         try {
             await axios.delete('http://localhost:1337/notification/all', {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
             this.fetchNotifications()
             message.success("All notifications were dismissed")
@@ -99,9 +96,7 @@ class Notification extends React.Component {
 
         try {
             let { data } = await axios.get('http://localhost:1337/notification/all', {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                },
+                headers: getDefaultHeader(),
                 params: {
                     limit: pageSize,
                     skip: (page - 1) * pageSize
@@ -145,9 +140,11 @@ class Notification extends React.Component {
                     }}
                     dataSource={this.state.notifications}
                     renderItem={item =>
-                        <div style={{
-                            marginBottom: 20
-                        }}>
+                        <div
+                            key={item.id}
+                            style={{
+                                marginBottom: 20
+                            }}>
                             <Card
                                 actions={[
                                     <Button

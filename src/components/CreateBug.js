@@ -13,6 +13,7 @@ import { InboxOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import draftToHtml from 'draftjs-to-html';
 import { getErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from '../pages/config';
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -68,9 +69,7 @@ const App = (props) => {
             }
             // console.log(requestData)
             let res = await axios.post('http://localhost:1337/bug/create', requestData, {
-                headers: {
-                    'x-auth-token': token
-                }
+                headers: getDefaultHeader()
             })
 
             const { data } = res;
@@ -85,7 +84,7 @@ const App = (props) => {
                 console.log(formData.getAll('files'))
                 await axios.post('http://localhost:1337/file/', formData, {
                     headers: {
-                        'x-auth-token': token,
+                        ...(getDefaultHeader()),
                         'Content-Type': 'multipart/form-data'
                     },
                     params: {
@@ -134,9 +133,7 @@ const App = (props) => {
                     params: {
                         query: query
                     },
-                    headers: {
-                        'x-auth-token': token
-                    }
+                    headers: getDefaultHeader()
                 })
             } catch (e) {
                 console.error(getErrorMessage(e))

@@ -70,6 +70,7 @@ class App extends React.Component {
                             let str = item.toLowerCase().split(' ').join('-');
                             return (
                                 <List.Item
+                                    key={str}
                                     className="bugg-list-item-button"
                                     onClick={() => {
                                         this.setState({

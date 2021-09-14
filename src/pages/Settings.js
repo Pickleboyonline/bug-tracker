@@ -1,17 +1,24 @@
 import React from 'react'
 import {
-    Input, Button, Statistic
-    , Col, Row, Divider, Space, Timeline,
+    Input, Button
+    , Modal, Divider, Space, //Timeline,
     List,
-    Avatar
+    Avatar,
+    notification,
+    message
 } from 'antd'
-import { getMe } from '../libraries/bugg';
-import { logErrorMessage } from '../libraries/network-error-handling';
+import bugg, { getMe } from '../libraries/bugg';
+import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
+import { reconfigToken } from '../libraries/socket';
 
 const data = [
     'General',
 
 ];
+
+
+
+
 class Settings extends React.Component {
     state = {
         selectedSetting: data[0].toLowerCase(),
@@ -21,10 +28,16 @@ class Settings extends React.Component {
             id: '',
         },
         name: '',
-        email: ''
+        email: '',
+        loading: false,
+        password: '',
+        newPassword: '',
+        updatePasswordVisible: false,
+        loadingUpdatePassword: false
     }
     componentDidMount() {
         this.fetchUser()
+
     }
 
 
@@ -33,7 +46,8 @@ class Settings extends React.Component {
             let user = await getMe();
             this.setState({
                 user,
-                name: user.name
+                name: user.name,
+                email: user.email
             })
         } catch (e) {
             logErrorMessage(e)
@@ -41,15 +55,125 @@ class Settings extends React.Component {
     }
 
     /**
-     * Udates user name and email?
+     * Udates user name and email
      */
-    updateUserField = (field, value) => {
+    updateUser = async (field, value) => {
+        this.setState({ loading: true })
+        try {
+            let user = await bugg.User.updateUser(field, value)
 
+            this.setState({
+                user,
+                name: user.name,
+                email: user.email
+            });
+            this.props.getWelcomeMessage()
+            message.success("user updated")
+        } catch (e) {
+            this.setState({
+                [field]: this.state.user[field]
+            })
+            message.error('Error: ' + getErrorMessage(e))
+        }
+        this.setState({ loading: false })
     }
 
+    updatePassword = async () => {
+        const { password, newPassword } = this.state;
 
+        if (!(password && newPassword)) {
+            message.error('Please input current and new password')
+            return;
+        }
+        this.setState({
+            loadingUpdatePassword: true
+        })
+        try {
+            let token = await bugg.User.updatePassword(password, newPassword);
+            message.success('Password updated');
+            this.setState({
+                updatePasswordVisible: false
+            })
+            window.localStorage.setItem('token', token);
+            reconfigToken();
+            this.fetchUser()
+
+        } catch (e) {
+            message.error(getErrorMessage(e))
+        }
+        this.setState({
+            loadingUpdatePassword: false
+        })
+    }
 
     render() {
+        const settings = [
+            {
+                title: 'Name',
+                reactNode: (<Space  >
+
+                    <Input
+                        value={this.state.name}
+                        onPressEnter={() => {
+                            if (this.state.name !== this.state.user.name) this.updateUser('name', this.state.name)
+                        }}
+                        onChange={(e) => {
+                            this.setState({
+                                name: e.target.value
+                            })
+                        }}
+                        type="text" />
+                    <Button
+                        loading={this.state.loading}
+                        onClick={() => this.updateUser('name', this.state.name)}
+                        type='primary'
+                        disabled={(this.state.name === this.state.user.name)}
+
+                    >
+                        Update
+                    </Button>
+
+                </Space>)
+            }, {
+                title: 'Email',
+                reactNode: (<Space  >
+
+                    <Input
+                        value={this.state.email}
+                        onPressEnter={() => {
+                            if (this.state.email !== this.state.user.email) this.updateUser('email', this.state.email)
+                        }}
+                        onChange={(e) => {
+                            this.setState({
+                                email: e.target.value
+                            })
+                        }}
+                        type="text" />
+                    <Button
+                        loading={this.state.loading}
+                        onClick={() => this.updateUser('email', this.state.email)}
+                        type='primary'
+                        disabled={(this.state.email === this.state.user.email)}
+
+                    >
+                        Update
+                    </Button>
+
+                </Space>)
+            }, {
+                title: 'Password',
+                reactNode: (
+                    <Button
+
+                        onClick={() => this.setState({ updatePasswordVisible: true })}
+                        type='primary'
+
+
+                    >
+                        Update
+                    </Button>
+                )
+            }]
         return (
             <div style={{ width: 1100 }}>
                 <div style={{ width: 800 }}>
@@ -76,7 +200,7 @@ class Settings extends React.Component {
     background-color: white;
 }
 `}</style>
-                    <List
+                    <div> <List
                         // header={<div>Header</div>}
                         // footer={<div>Footer</div>}
                         bordered
@@ -84,8 +208,9 @@ class Settings extends React.Component {
                         style={{
                             width: 300
                         }}
-                        renderItem={item => (
+                        renderItem={(item, ind) => (
                             <List.Item
+                                key={ind}
                                 style={{
                                     color: (this.state.selectedSetting === item.toLowerCase() ? '#0094f7' : 'black')
                                 }}
@@ -97,38 +222,15 @@ class Settings extends React.Component {
                                 >{item.substring(0, 1).toLocaleUpperCase()}</Avatar> {item}
                             </List.Item>
                         )}
-                    />
+                    /></div>
+
                     <div style={{
                         flex: 1,
                         marginLeft: 20
                     }}>
                         {
                             (() => {
-                                const settings = [
-                                    {
-                                        title: 'Name',
-                                        reactNode: (<Space  >
-                                            {
-                                                this.state.name !== this.state.user.name ?
-                                                    <Button
-                                                        //onClick={() => updateProject('title')}
-                                                        type='primary'>
-                                                        Update
-                                                    </Button> : null}
-                                            <Input
-                                                value={this.state.name}
-                                                onPressEnter={() => {
-                                                    //  if (title !== project.title) updateProject('title')
-                                                }}
-                                                onChange={(e) => {
-                                                    this.setState({
-                                                        name: e.target.value
-                                                    })
-                                                }}
-                                                type="text" />
 
-                                        </Space>)
-                                    },]
                                 switch (this.state.selectedSetting) {
                                     case data[0].toLowerCase():
                                         return (
@@ -140,6 +242,7 @@ class Settings extends React.Component {
                                                 dataSource={settings}
                                                 renderItem={item =>
                                                     <List.Item
+                                                        key={item.title}
                                                         extra={[item.reactNode]}
                                                     >
                                                         {item.title}
@@ -153,6 +256,35 @@ class Settings extends React.Component {
                             })()
                         }
                     </div>
+                    <Modal
+                        okButtonProps={{
+                            loading: this.state.loadingUpdatePassword
+                        }}
+                        destroyOnClose
+                        visible={this.state.updatePasswordVisible}
+                        title="Update Password"
+                        onOk={this.updatePassword}
+                        onCancel={() => this.setState({ updatePasswordVisible: false })}
+                    >
+                        <p style={{ marginBottom: 10 }}>Current Password: </p>
+                        <Input
+                            type='password'
+                            autoComplete='new-password'
+                            name='new-password'
+                            value={this.state.password}
+                            onChange={(e) => this.setState({ password: e.target.value })}
+                            placeholder='Type here...'
+                        />
+
+                        <p style={{ marginBottom: 10, marginTop: 20 }}>New Password: </p>
+                        <Input
+                            type='password'
+                            autoComplete='new-password'
+                            value={this.state.newPassword}
+                            onChange={(e) => this.setState({ newPassword: e.target.value })}
+                            placeholder='Type here...'
+                        />
+                    </Modal>
                     {/* <div style={{
                         flex: 1,
                         marginLeft: 20

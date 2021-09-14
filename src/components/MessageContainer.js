@@ -14,6 +14,7 @@ import axios from 'axios';
 import anime from 'animejs';
 import { getErrorMessage } from '../libraries/network-error-handling';
 import { addEventListener, removeEventListener } from '../libraries/socket';
+import { getDefaultHeader } from '../pages/config';
 
 
 function Message(props) {
@@ -75,17 +76,7 @@ export default class MessageContainer extends react.Component {
     TOKEN = window.localStorage.getItem('token')
 
     componentDidMount() {
-        // io.sails.headers = {
-        //     'x-auth-t'
-        // }
         this.fetchMessages()
-        // add message event handler
-        // this.props.socket.on('new-message', this.onRecieveNewMessage);
-        // console.log('listing...')
-        // this.setState({
-        //     listening: true
-        // })
-
         addEventListener('new-message', this.onRecieveNewMessage)
     }
 
@@ -100,9 +91,7 @@ export default class MessageContainer extends react.Component {
     fetchMessages = async () => {
         try {
             let { data } = await axios.get('http://localhost:1337/conversation/' + this.props.conversation.id, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                },
+                headers: getDefaultHeader(),
                 params: {
                     limit: 20,
                     skip: 0
@@ -125,9 +114,7 @@ export default class MessageContainer extends react.Component {
             let { data } = await axios.post('http://localhost:1337/message/' + this.props.conversation.recipient.id, {
                 body: this.state.body
             }, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
             let { messages } = this.state;
             messages.push(data.message);
@@ -241,7 +228,7 @@ export default class MessageContainer extends react.Component {
 
                             dataSource={this.state.messages}
                             renderItem={(item, index) =>
-                                <div>
+                                <div key={item.id}>
                                     <Message
                                         sender={item.sender.isYou}
                                         recipient={!item.sender.isYou}

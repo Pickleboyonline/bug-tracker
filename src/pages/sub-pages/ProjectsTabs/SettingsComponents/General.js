@@ -13,7 +13,7 @@ import {
 import axios from "axios";
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 import { useHistory } from "react-router";
-import config from "../../../config";
+import config, { getDefaultHeader } from "../../../config";
 
 export default function General(props) {
 
@@ -31,9 +31,7 @@ export default function General(props) {
         const retreiveProject = async () => {
             try {
                 let { data } = await axios.get('http://localhost:1337/project/find', {
-                    headers: {
-                        'x-auth-token': TOKEN
-                    },
+                    headers: getDefaultHeader(),
                     params: {
                         projectId: props.project.id
                     }
@@ -71,7 +69,7 @@ export default function General(props) {
         try {
             let { data } = await axios.post('http://localhost:1337/icon/upload', formData, {
                 headers: {
-                    'x-auth-token': TOKEN,
+                    ...(getDefaultHeader()),
                     'Content-Type': 'multipart/form-data'
                 },
                 params: {
@@ -104,9 +102,7 @@ export default function General(props) {
             let { data } = await axios.put('http://localhost:1337/project/' + project.id, {
                 [field]: value
             }, {
-                headers: {
-                    'x-auth-token': TOKEN
-                }
+                headers: getDefaultHeader()
             })
 
             let newProject = data.project;
@@ -245,6 +241,7 @@ export default function General(props) {
             dataSource={settings}
             bordered
             renderItem={(item) => <List.Item
+                key={item.title}
                 extra={[item.reactNode]}
             >
                 {item.title}

@@ -22,6 +22,7 @@ import moment from 'moment';
 import CreateConversation from '../components/CreateConversation';
 import { logErrorMessage } from '../libraries/network-error-handling';
 import { addEventListener, removeEventListener } from '../libraries/socket';
+import { getDefaultHeader } from './config';
 
 
 
@@ -110,9 +111,7 @@ class App extends React.Component {
     fetchConversations = async () => {
         try {
             let { data: { conversations } } = await axios.get('http://localhost:1337/conversation/all', {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                },
+                headers: getDefaultHeader()
             })
             await new Promise((res) => this.setState({ conversations }, res))
         } catch (e) {

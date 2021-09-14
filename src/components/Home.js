@@ -9,6 +9,7 @@ import {
     withRouter
 } from "react-router-dom";
 import { getErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from '../pages/config';
 const PubSub = require('./../PubSub');
 
 const JoinProject = (props) => {
@@ -22,9 +23,7 @@ const JoinProject = (props) => {
             res = await axios.post('http://localhost:1337/project/join', {
                 projectId
             }, {
-                headers: {
-                    'x-auth-token': token
-                }
+                headers: getDefaultHeader()
             })
         } catch (e) {
 
@@ -138,13 +137,11 @@ class Home extends React.Component {
     }
 
     _handleProjectUpdate = async () => {
-        const token = window.localStorage.getItem('token');
+
 
         try {
             let { data } = await axios.get('http://localhost:1337/project/all', {
-                headers: {
-                    'x-auth-token': token
-                }
+                headers: getDefaultHeader()
             });
             this.setState({
                 projects: data.projects

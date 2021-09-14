@@ -27,16 +27,18 @@ import Messages from './Messages';
 import AvatarSettings from '../components/AvatarSettings';
 import axios from 'axios';
 import { getErrorMessage, logErrorMessage } from './../libraries/network-error-handling';
-import { addEventListener, removeEventListener } from '../libraries/socket';
+import { addEventListener, reconfigToken, removeEventListener } from '../libraries/socket';
+import { getDefaultHeader } from './config';
 
 const PubSub = require('./../PubSub');
 
 const { SubMenu } = Menu;
-const menu = (
+const menu = (props) => (
     <Menu style={{
         width: 150,
     }}>
         <Menu.Item
+            onClick={props.logout}
             style={{
                 color: 'red'
             }}
@@ -68,6 +70,7 @@ class App extends React.Component {
         // this.connectToSocket();
         this.getWelcomeMessage();
         // this.handleErrorTest()
+        reconfigToken()
 
         addEventListener('new-notification', this.onRecieveNotitification)
     }
@@ -84,14 +87,17 @@ class App extends React.Component {
 
     TOKEN = window.localStorage.getItem('token');
 
+    logout = () => {
+        window.localStorage.removeItem('token');
+        this.props.history.push('/auth')
+    }
+
     updateProjects = async () => {
         const token = window.localStorage.getItem('token');
 
         try {
             let { data } = await axios.get('http://localhost:1337/project/all', {
-                headers: {
-                    'x-auth-token': token
-                }
+                headers: getDefaultHeader()
             });
             this.setState({
                 projects: data.projects
@@ -161,9 +167,7 @@ class App extends React.Component {
         }
         try {
             let { data: { user } } = await axios.get('http://localhost:1337/user/me', {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
 
             this.setState({
@@ -181,9 +185,7 @@ class App extends React.Component {
             let { data } = await axios.post('http://localhost:1337/project/join', {
                 projectId
             }, {
-                headers: {
-                    'x-auth-token': token
-                }
+                headers: getDefaultHeader()
             })
             notification.success({
                 message: 'You have joined project ' + data.project.title + '!'
@@ -315,7 +317,7 @@ class App extends React.Component {
                             </style>
                             <Dropdown
                                 //overlay={<AvatarSettings />}
-                                overlay={menu}
+                                overlay={menu({ logout: this.logout })}
                                 trigger={['click']}
                             >
 
@@ -337,7 +339,7 @@ class App extends React.Component {
                         {/* <Overview /> */}
                     </Route>
                     <Route path='/dashboard/settings'>
-                        <Settings />
+                        <Settings getWelcomeMessage={this.getWelcomeMessage} />
                     </Route>
                     <Route path="/dashboard/projects/:name">
                         <SkeletonProject updateProjects={this.updateProjects} />

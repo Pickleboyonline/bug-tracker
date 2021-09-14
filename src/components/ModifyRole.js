@@ -5,6 +5,7 @@ import axios
 
 import { CirclePicker } from 'react-color';
 import { getErrorMessage } from "../libraries/network-error-handling";
+import { getDefaultHeader } from "../pages/config";
 const PERMISSIONS = {
     ALL: 'ALL',
     MODIFY_GENERAL: 'MODIFY_GENERAL',
@@ -47,9 +48,7 @@ const ModifyRole = (props) => {
                 params: {
                     query: search
                 },
-                headers: {
-                    'x-auth-token': TOKEN
-                }
+                headers: getDefaultHeader()
             })
             //console.log(results.data)
             let newMembers = [];
@@ -105,14 +104,8 @@ const ModifyRole = (props) => {
                 permissions: permissions.join(','),
                 users: selectedMembers.join(',')
             }, {
-                headers: {
-                    'x-auth-token': TOKEN
-                }
+                headers: getDefaultHeader()
             })
-            // this.setState({
-            //     roles: [...this.state.roles, role],
-            //     isModalVisible: false
-            // })
             toggleUpdateRoleModal();
             fetchRoles();
             message.success("Role updated")

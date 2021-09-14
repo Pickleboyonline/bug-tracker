@@ -18,6 +18,7 @@ import { ConsoleSqlOutlined, EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
 import { getErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from '../pages/config';
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -36,16 +37,13 @@ class BugStats extends React.Component {
 
     toggleValue = (val) => this.setState({ [val]: !this.state[val] })
 
-    _updateValueOnServer = async (field, value) => {
-        const token = window.localStorage.getItem('token');
+    updateStatistic = async (field, value) => {
 
         try {
-            let res = await axios.put('http://localhost:1337/bug/' + this.props.bugId, {
+            await axios.put('http://localhost:1337/bug/' + this.props.bugId, {
                 [field]: value
             }, {
-                headers: {
-                    'x-auth-token': token
-                }
+                headers: getDefaultHeader(),
 
             })
             message.success(`"${field}" was updated to "${value}"`)
@@ -121,7 +119,7 @@ class BugStats extends React.Component {
                                 <Button
                                     onClick={() => {
                                         if (this.state.editStatus) {
-                                            this._updateValueOnServer('status', this.state.values.status)
+                                            this.updateStatistic('status', this.state.values.status)
                                         }
                                         this.toggleValue('editStatus')
                                     }}
@@ -145,7 +143,7 @@ class BugStats extends React.Component {
                                 <Button
                                     onClick={() => {
                                         if (this.state.editTags) {
-                                            this._updateValueOnServer('tags', this.state.values.tags.join())
+                                            this.updateStatistic('tags', this.state.values.tags.join())
                                         }
                                         this.toggleValue('editTags')
                                     }}
@@ -200,7 +198,7 @@ class BugStats extends React.Component {
                                     onClick={() => {
                                         if (this.state.editDueDate && this.state.values.dueDate) {
 
-                                            this._updateValueOnServer('dueDate', this.state.values.dueDate.toDate().getTime())
+                                            this.updateStatistic('dueDate', this.state.values.dueDate.toDate().getTime())
                                         }
                                         this.toggleValue('editDueDate')
                                     }}
@@ -253,7 +251,7 @@ class BugStats extends React.Component {
 
                                     onClick={() => {
                                         if (this.state.editReproducibility) {
-                                            this._updateValueOnServer('reproducibility', this.state.values.reproducibility)
+                                            this.updateStatistic('reproducibility', this.state.values.reproducibility)
                                         }
                                         this.toggleValue('editReproducibility')
                                     }}
@@ -312,7 +310,7 @@ class BugStats extends React.Component {
                                 <Button type="text"
                                     onClick={() => {
                                         if (this.state.editSeverity) {
-                                            this._updateValueOnServer('severity', this.state.values.severity)
+                                            this.updateStatistic('severity', this.state.values.severity)
                                         }
                                         this.toggleValue('editSeverity')
                                     }}
@@ -371,7 +369,7 @@ class BugStats extends React.Component {
                                 <Button type="text"
                                     onClick={() => {
                                         if (this.state.editCatagory) {
-                                            this._updateValueOnServer('catagory', this.state.values.catagory)
+                                            this.updateStatistic('catagory', this.state.values.catagory)
                                         }
                                         this.toggleValue('editCatagory')
                                     }}

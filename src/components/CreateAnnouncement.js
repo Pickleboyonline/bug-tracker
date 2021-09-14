@@ -5,6 +5,7 @@ import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from '../pages/config';
 
 function CreateAnnouncement(props) {
     const [editorState, setEditorState] = useState(EditorState.createEmpty())
@@ -22,9 +23,7 @@ function CreateAnnouncement(props) {
                 title,
                 body
             }, {
-                headers: {
-                    'x-auth-token': TOKEN
-                }
+                headers: getDefaultHeader()
             })
             message.success('Announcement was created')
             props.closeModal()

@@ -12,6 +12,7 @@ import draftToHtml from 'draftjs-to-html';
 import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from '../pages/config';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -26,16 +27,6 @@ const CommentList = ({ comments }) => (
     />
 );
 
-const Editor = ({ onChange, onSubmit, submitting, value }) => (
-    <>
-        <Form.Item>
-            <TextArea rows={4} onChange={onChange} value={value} />
-        </Form.Item>
-        <Form.Item>
-
-        </Form.Item>
-    </>
-);
 
 
 class App extends React.Component {
@@ -55,35 +46,27 @@ class App extends React.Component {
     _handleUpdateComments = async () => {
         try {
             let { data } = await axios.get('http://localhost:1337/comment', {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                },
+                headers: getDefaultHeader(),
                 params: {
                     bugId: this.props.bug.id
                 }
             });
 
-            let comments = data.comments.map((item) => {
+            let comments = data.comments.map((item) => ({
+                author: item.owner.name,
+                key: item.id,
+                avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+                content: <div
+                    style={{
+                        width: 700,
+                        minHeight: 50,
+                        overflowX: 'auto'
+                    }}
+                    dangerouslySetInnerHTML={{ __html: item.body }} />,
+                datetime: moment(new Date(item.createdAt)).fromNow(),
 
-                return {
-                    author: item.owner.name,
-                    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-                    content: <div
-                        style={{
-                            width: 700,
-                            minHeight: 50,
-                            overflowX: 'auto'
-                        }}
-                        dangerouslySetInnerHTML={{ __html: item.body }} />,
-                    datetime: moment(new Date(item.createdAt)).fromNow(),
-
-                }
             })
-            // for (let i = 0; i < comments.length; i++) {
-            //     this.state.comments.push(comments[i])
-            // }
-            // console.log(this.state.comments)
-
+            )
             this.setState({
                 comments: [...this.state.comments, ...comments].reverse()
             })
@@ -93,22 +76,16 @@ class App extends React.Component {
     }
 
     handleSubmit = async () => {
-        if (!this.state.value) {
-            return;
-        }
+        if (!this.state.value) return
 
-        this.setState({
-            submitting: true,
-        });
+        this.setState({ submitting: true });
 
         try {
             await axios.post('http://localhost:1337/comment/', {
                 bugId: this.props.bug.id,
                 body: this.state.value
             }, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader(),
             })
         } catch (e) {
             if (e.response) {

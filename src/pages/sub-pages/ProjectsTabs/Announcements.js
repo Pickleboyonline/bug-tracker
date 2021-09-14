@@ -20,6 +20,7 @@ import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
 import { logErrorMessage } from '../../../libraries/network-error-handling';
+import { getDefaultHeader } from '../../config';
 const { Search } = Input;
 
 function Message(props) {
@@ -136,9 +137,7 @@ class App extends React.Component {
         const TOKEN = window.localStorage.getItem('token')
         try {
             let { data } = await axios.get('http://localhost:1337/announcement/', {
-                headers: {
-                    'x-auth-token': TOKEN
-                },
+                headers: getDefaultHeader(),
                 params: {
                     projectId: this.props.project.id,
                     limit,
@@ -288,6 +287,7 @@ class App extends React.Component {
                                 renderItem={(item) => (
 
                                     <List.Item
+                                        key={item.id}
                                         className="bugg-list-item-button-321312312"
                                         onClick={() => {
                                             this.setState({

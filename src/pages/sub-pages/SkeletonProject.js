@@ -22,6 +22,7 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios';
 import { logErrorMessage } from '../../libraries/network-error-handling';
+import { getDefaultHeader } from '../config';
 
 
 const { SubMenu } = Menu;
@@ -75,9 +76,7 @@ class App extends React.Component {
         id = id || this.state.project.id;
         try {
             let { data } = await axios.get('http://localhost:1337/project/find', {
-                headers: {
-                    'x-auth-token': token
-                },
+                headers: getDefaultHeader(),
                 params: {
                     projectId: id
                 }

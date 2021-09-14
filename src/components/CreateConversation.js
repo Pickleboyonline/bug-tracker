@@ -2,6 +2,7 @@ import react from "react";
 import { Input, message, Modal, Select } from "antd";
 import axios from "axios";
 import { getErrorMessage } from "../libraries/network-error-handling";
+import { getDefaultHeader } from "../pages/config";
 
 const { Option } = Select;
 export default class CreateConversation extends react.Component {
@@ -21,9 +22,7 @@ export default class CreateConversation extends react.Component {
                 params: {
                     query: query
                 },
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
         } catch (e) {
             console.error(getErrorMessage(e))
@@ -68,9 +67,7 @@ export default class CreateConversation extends react.Component {
             let { data } = await axios.post('http://localhost:1337/message/' + this.state.selectedMember, {
                 body: this.state.body
             }, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
             // let { messages } = this.state;
             // messages.push(data.message);

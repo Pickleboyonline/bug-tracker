@@ -8,6 +8,7 @@ import { withRouter } from 'react-router-dom'
 import axios from 'axios';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
 import { getMe } from './../../../libraries/bugg'
+import { getDefaultHeader } from '../../config';
 const { Search } = Input;
 const { Option } = Select;
 
@@ -51,9 +52,7 @@ class App extends React.Component {
 
         try {
             const { data } = await axios.get('http://localhost:1337/project/users/' + this.props.project.id, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                },
+                headers: getDefaultHeader(),
                 params: {
                     skip: (page - 1) * pageSize,
                     limit: pageSize,
@@ -97,9 +96,7 @@ class App extends React.Component {
                 userEmails: selectedMembersToAdd,
                 projectId: this.props.project.id
             }, {
-                headers: {
-                    'x-auth-token': TOKEN
-                }
+                headers: getDefaultHeader()
             });
             message.success("users invited!")
             this.toggleAddMember()
@@ -119,9 +116,7 @@ class App extends React.Component {
                 params: {
                     query: query
                 },
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
             let members = results.data.results.map((item) => ({
                 key: item.email,
@@ -151,9 +146,7 @@ class App extends React.Component {
 
         try {
             await axios.delete('http://localhost:1337/project/member', {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                },
+                headers: getDefaultHeader(),
                 data: {
                     projectId: this.props.project.id,
                     userId
@@ -215,6 +208,7 @@ class App extends React.Component {
                     }}
                     renderItem={item => (
                         <List.Item
+                            key={item.id}
                             actions={[
                                 (!item.isOwner && <Popconfirm
                                     title="Are you sure?"

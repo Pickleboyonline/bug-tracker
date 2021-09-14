@@ -20,6 +20,7 @@ import moment from 'moment';
 import axios from 'axios';
 import ViewBug from './../ProjectsTabs/ViewBug';
 import { logErrorMessage } from '../../../libraries/network-error-handling';
+import { getDefaultHeader } from '../../config';
 
 function getListData(value) {
     let listData;
@@ -85,9 +86,7 @@ class App extends React.Component {
         if (!this.props.project.id) return;
         try {
             let { data } = await axios.get('http://localhost:1337/bug/all', {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                },
+                headers: getDefaultHeader(),
                 params: {
                     projectId: this.props.project.id
                 }

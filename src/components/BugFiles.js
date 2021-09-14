@@ -8,8 +8,8 @@ import {
 import Chart from 'chart.js/auto';
 import { Button, Divider, Modal, Upload } from 'antd';
 import {
-    Avatar, Skeleton,
-    Menu, List, message, Space, Drawer,
+
+    List, message, Space,
     Input,
 } from 'antd';
 import {
@@ -18,6 +18,7 @@ import {
 import { Typography } from 'antd';
 import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from '../pages/config';
 
 const { Title, Paragraph, Text, Link } = Typography;
 const { Search } = Input;
@@ -63,7 +64,8 @@ class BugDescription extends React.Component {
         try {
             let { data } = await axios.post('http://localhost:1337/file/', formData, {
                 headers: {
-                    'x-auth-token': this.token,
+                    ...(getDefaultHeader()),
+                    // 'x-auth-token': this.token,
                     'Content-Type': 'multipart/form-data'
                 },
                 params: {
@@ -95,9 +97,7 @@ class BugDescription extends React.Component {
                 try {
 
                     await axios.delete('http://localhost:1337/file/' + file.serverId, {
-                        headers: {
-                            'x-auth-token': this.token
-                        }
+                        headers: getDefaultHeader(),
                     })
 
                     message.success(`"${file.name}" was deleted!`)
@@ -167,7 +167,7 @@ class BugDescription extends React.Component {
                             bordered
                             size='small'
                             dataSource={this.state.files}
-                            renderItem={item => <List.Item>
+                            renderItem={item => <List.Item key={item.serverId}>
                                 <a href={"http://localhost:1337/file/" + item.serverId}>{item.name}</a>
                             </List.Item>}
                         />

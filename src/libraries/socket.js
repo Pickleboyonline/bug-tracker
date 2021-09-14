@@ -28,6 +28,8 @@ function initilizeSocket() {
     });
 
 
+
+
 }
 initilizeSocket()
 
@@ -44,6 +46,8 @@ const removeEventListener = (name, func) => {
 
 const reconfigToken = () => {
     let { io } = document;
+    if (!io.socket.isConnected()) return
+
     io.socket.disconnect();
     io.sails.headers = {
         'x-auth-token': window.localStorage.getItem('token')

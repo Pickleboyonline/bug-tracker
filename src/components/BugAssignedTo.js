@@ -8,6 +8,7 @@ import {
 import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from '../pages/config';
 
 
 const { Paragraph, Title } = Typography;
@@ -42,9 +43,7 @@ class BugStats extends React.Component {
         // console.log(search)
         try {
             let { data } = await axios.get('http://localhost:1337/bug/assignee', {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                },
+                headers: getDefaultHeader(),
                 params: {
                     bugId: this.props.bug.id,
                     search
@@ -79,9 +78,7 @@ class BugStats extends React.Component {
                 params: {
                     query: query
                 },
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader(),
             })
         } catch (e) {
             console.error(getErrorMessage(e))
@@ -118,9 +115,7 @@ class BugStats extends React.Component {
                 assignees: selectedMembers.join(','),
                 bugId: this.props.bug.id
             }, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader(),
             })
             this.setState({ editAssigned: false })
             message.success('Members added')
@@ -183,12 +178,14 @@ class BugStats extends React.Component {
                     renderItem={(item, ind) => {
                         //console.log(ind)
                         if (ind >= (page - 1) * pageSize && ind < (page - 1) * pageSize + pageSize) {
-                            return (<List.Item>
-                                <Avatar style={{ color: '#f56a00', backgroundColor: '#fde3cf', marginRight: 15 }}>
-                                    {item.name.substring(0, 1)}
-                                </Avatar>
-                                {`${item.name.split(' ')[0]} ${(item.name.split(' ')[1] ? item.name.split(' ')[1].substring(0, 1).toUpperCase() + '.' : '')} (${item.email})`}
-                            </List.Item>)
+                            return (
+                                <List.Item key={item.id ?? ind}>
+                                    <Avatar style={{ color: '#f56a00', backgroundColor: '#fde3cf', marginRight: 15 }}>
+                                        {item.name.substring(0, 1)}
+                                    </Avatar>
+                                    {`${item.name.split(' ')[0]} ${(item.name.split(' ')[1] ? item.name.split(' ')[1].substring(0, 1).toUpperCase() + '.' : '')} (${item.email})`}
+                                </List.Item>
+                            )
                         }
 
                         return null

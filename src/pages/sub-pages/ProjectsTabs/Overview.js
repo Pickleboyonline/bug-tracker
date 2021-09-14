@@ -10,6 +10,7 @@ import Chart from 'chart.js/auto';
 import { Card, Statistic, Row, Col, Button, Space } from 'antd';
 import axios from 'axios';
 import { logErrorMessage } from '../../../libraries/network-error-handling';
+import { getDefaultHeader } from '../../config';
 
 
 class App extends React.Component {
@@ -79,9 +80,7 @@ class App extends React.Component {
     fetchStats = async () => {
         try {
             let { data } = await axios.get('http://localhost:1337/project/stats/' + this.props.project.id, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader(),
             });
 
             let {

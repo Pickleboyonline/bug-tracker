@@ -19,6 +19,7 @@ import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/ico
 import ModifyRole from './../../../../components/ModifyRole'
 import { CirclePicker } from 'react-color'
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
+import { getDefaultHeader } from "../../../config";
 
 const { SubMenu } = Menu;
 
@@ -71,9 +72,7 @@ export default class Roles extends react.Component {
                 params: {
                     query: search
                 },
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
             //console.log(results.data)
             let newMembers = [];
@@ -141,9 +140,7 @@ export default class Roles extends react.Component {
                 color: this.state.color,
                 users: this.state.selectedMembers.join(',')
             }, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
             this.setState({
                 // roles: [...this.state.roles, role],
@@ -161,9 +158,7 @@ export default class Roles extends react.Component {
     fetchRoles = async () => {
         try {
             let { data: { roles } } = await axios.get('http://localhost:1337/role/all/' + this.props.project.id, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             })
             console.log("Roles on fetch: ")
             console.log(roles)
@@ -187,9 +182,7 @@ export default class Roles extends react.Component {
     deleteRole = async (roleId) => {
         try {
             await axios.delete('http://localhost:1337/role/' + roleId, {
-                headers: {
-                    'x-auth-token': this.TOKEN
-                }
+                headers: getDefaultHeader()
             });
             this.fetchRoles()
             message.success('role was deleted')

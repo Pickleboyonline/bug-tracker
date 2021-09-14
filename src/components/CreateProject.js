@@ -3,6 +3,7 @@ import { Input, Space, Button, Select, Form, Upload, notification } from 'antd';
 import axios from 'axios';
 import { UploadOutlined } from '@ant-design/icons';
 import { getErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from '../pages/config';
 const PubSub = require('./../PubSub');
 
 const { Option } = Select;
@@ -48,14 +49,12 @@ export function CreateProject(props) {
                 members: value.join()
             },
                 {
-                    headers: {
-                        'x-auth-token': token
-                    }
+                    headers: getDefaultHeader()
                 });
             if (formData.get('icon')) {
                 await axios.post('http://localhost:1337/icon/upload', formData, {
                     headers: {
-                        'x-auth-token': token,
+                        ...(getDefaultHeader()),
                         'Content-Type': 'multipart/form-data'
                     },
                     params: {
@@ -98,9 +97,7 @@ export function CreateProject(props) {
                     params: {
                         query: query
                     },
-                    headers: {
-                        'x-auth-token': token
-                    }
+                    headers: getDefaultHeader()
                 })
             } catch (e) {
                 console.error(getErrorMessage(e))

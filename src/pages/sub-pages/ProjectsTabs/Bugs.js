@@ -31,6 +31,7 @@ import ViewBug from './ViewBug';
 import axios from 'axios';
 import moment from 'moment';
 import { logErrorMessage } from '../../../libraries/network-error-handling';
+import { getDefaultHeader } from '../../config';
 
 
 const { Title, Paragraph, Text, Link } = Typography;
@@ -149,9 +150,7 @@ class App extends React.Component {
 
         try {
             let { data } = await axios.get('http://localhost:1337/bug/all', {
-                headers: {
-                    'x-auth-token': token
-                },
+                headers: getDefaultHeader(),
                 params: {
                     projectId: id,
                     limit: pageSize,
@@ -300,6 +299,7 @@ class App extends React.Component {
                         dataSource={this.state.bugs}
                         renderItem={item => (
                             <List.Item
+                                key={item.id}
                                 actions={[<a key="list-loadmore-edit" onClick={(e) => {
                                     this.setState({
                                         toggleDrawer: true,
@@ -314,27 +314,20 @@ class App extends React.Component {
                                     e.preventDefault()
                                 }
 
-                                }>share</a>, <a key="list-loadmore-edit" onClick={(e) => {
+                                }>share</a>, <a key="list-loadmore-edit"
+                                    style={{ color: 'red' }}
+                                    onClick={(e) => {
 
-                                    e.preventDefault()
-                                }
+                                        e.preventDefault()
+                                    }
 
-                                }>delete</a>]}
+                                    }>delete</a>]}
                             >
                                 <Skeleton avatar title={false}
                                     loading={false}
                                     active>
                                     <List.Item.Meta
-                                        // avatar={
-                                        //     <ExclamationCircleOutlined
-                                        //         twoToneColor="red"
-                                        //         style={{
-                                        //             color: 'red',
-                                        //             fontSize: 24,
-                                        //             marginTop: 10
-                                        //         }}
-                                        //     />
-                                        // }
+
                                         title={<div style={{
                                             display: 'inline'
                                         }}>

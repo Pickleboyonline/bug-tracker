@@ -1,15 +1,8 @@
 import React from 'react';
+
+import { Button, Divider, } from 'antd';
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Redirect
-} from "react-router-dom";
-import Chart from 'chart.js/auto';
-import { Button, Divider, Modal, Tag } from 'antd';
-import {
-    List, Avatar, Skeleton,
-    Menu, Dropdown, message, Space, Drawer,
+    message, Space,
     Input,
 } from 'antd';
 import {
@@ -23,9 +16,10 @@ import htmlToDraft from 'html-to-draftjs';
 import draftToHtml from 'draftjs-to-html';
 import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from '../pages/config';
 
-const { Title, Paragraph, Text, Link } = Typography;
-const { Search } = Input;
+const { Title, Paragraph, } = Typography;
+
 
 
 
@@ -60,9 +54,7 @@ class BugDescription extends React.Component {
             await axios.put('http://localhost:1337/bug/' + this.props.bug.id, {
                 description: this.state.description
             }, {
-                headers: {
-                    'x-auth-token': token
-                }
+                headers: getDefaultHeader(),
             });
 
             message.success("Description was updated!")
