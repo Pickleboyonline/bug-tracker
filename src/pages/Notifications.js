@@ -1,13 +1,14 @@
 import React from 'react'
 import {
     Card, Button, Avatar
-    , Col, Row, Divider, List, notification, Space, message
+    , Col, Row, Tag, List, notification, Space, message
 } from 'antd'
 import axios from 'axios';
 import { MailOutlined } from '@ant-design/icons'
 import moment from 'moment';
 import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from './config';
+import { addEventListener, removeEventListener } from '../libraries/socket';
 
 class Notification extends React.Component {
 
@@ -15,14 +16,14 @@ class Notification extends React.Component {
         page: 1,
         pageSize: 10,
         notifications: [],
+        total: 1,
         isListening: false
     }
     TOKEN = window.localStorage.getItem('token')
 
 
     componentDidMount() {
-        let { socket } = this.props
-        if (socket) socket.on('new-notification', this.onRecieveNotitification)
+        addEventListener('new-notification', this.onRecieveNotitification)
         this.fetchNotifications()
         // alert('hi')
     }
@@ -40,8 +41,7 @@ class Notification extends React.Component {
 
 
     componentWillUnmount() {
-        let { socket } = this.props;
-        if (this.props.socket) socket.off('new-notification', this.onRecieveNotitification)
+        removeEventListener('new-notification', this.onRecieveNotitification)
     }
 
     /**
@@ -105,7 +105,8 @@ class Notification extends React.Component {
             console.log(data)
 
             this.setState({
-                notifications: data.notifications
+                notifications: data.notifications,
+                total: data.totalNotifications
             })
 
         } catch (e) {
@@ -116,7 +117,7 @@ class Notification extends React.Component {
     updatePagination = (page, pageSize) => {
         this.setState({
             page, pageSize
-        })
+        }, this.fetchNotifications)
     }
 
     render() {
@@ -136,7 +137,7 @@ class Notification extends React.Component {
                         pageSize: this.state.pageSize,
                         page: this.state.page,
                         onChange: this.updatePagination,
-
+                        total: this.state.total
                     }}
                     dataSource={this.state.notifications}
                     renderItem={item =>
@@ -157,7 +158,12 @@ class Notification extends React.Component {
                             >
                                 <Card.Meta
                                     avatar={<Avatar icon={<MailOutlined />} />}
-                                    title={item.title}
+                                    title={<>{item.title}
+                                        {/* <span style={{ color: 'red' }}>
+                                            {!item.read ? 'ddd' : ' - Unread'}
+                                        </span> */}
+                                        {item.read ? null : <Tag color='red' style={{ marginLeft: 10 }}>New</Tag>}
+                                    </>}
 
                                     description={
                                         item.description + ' - ' + moment(new Date(item.createdAt)).fromNow()

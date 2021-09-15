@@ -55,11 +55,9 @@ export default function General(props) {
     useEffect(initializeComponent, [props.project.id])
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [icon, setIcon] = useState(null);
-    const [form] = Form.useForm()
     const [imageUri, setImageUri] = useState('');
     const [project, setProject] = useState({});
-    const TOKEN = window.localStorage.getItem('token')
+
 
 
     // upload image and set imageUri

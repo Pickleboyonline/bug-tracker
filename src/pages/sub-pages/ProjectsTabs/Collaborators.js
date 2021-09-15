@@ -234,6 +234,7 @@ class App extends React.Component {
                 />
                 <Modal title="Add More Members..."
                     visible={this.state.toggleAddMember}
+                    destroyOnClose
                     onOk={this.addMembers}
                     onCancel={this.toggleAddMember}>
                     <Select

@@ -5,11 +5,13 @@ const { getDefaultHeader, baseUrl } = require('./../../../pages/config');
 function UserData(obj = {
     name: '',
     email: '',
-    id: ''
+    id: '',
+    iconId: ''
 }) {
     this.name = obj.name;
     this.email = obj.email;
     this.id = obj.id;
+    this.iconId = obj.iconId
 }
 
 const throwError = err => {
@@ -21,9 +23,9 @@ const getMe = async () => {
         let { data } = await axios.get(baseUrl + '/user/me', {
             headers: getDefaultHeader()
         })
-        const { id, name, email } = data.user;
+        const { id, name, email, iconId } = data.user;
         let user = {
-            id, name, email
+            id, name, email, iconId
         }
         return new UserData(user)
     } catch (e) {
@@ -78,10 +80,51 @@ const updatePassword = async (password, newPassword) => {
         throwError(e)
     }
 }
+/**
+ * Returns user avatar icon based on user id. Returns logged in user id by 
+ * default
+ * @param {string} id
+ * @returns {string} iconId
+ */
+const getUserIconUri = async (id) => {
+    try {
+        let { iconId } = await getMe();
+        if (iconId) {
+            return baseUrl + '/user/icon/' + iconId
+        } else {
+            return ''
+        }
+    } catch (e) {
+        throwError(e);
+    }
+}
+
+
+/**
+ * Uploads user avatar
+ * @param {FormData} formData attatch 1 icon to "icon" 
+ */
+const uploadUserIcon = async (formData) => {
+    try {
+        if (!formData) throw new Error('Must have formData')
+
+        await axios.post(baseUrl + '/user/icon', formData, {
+            headers: {
+                ...(getDefaultHeader()),
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+    } catch (e) {
+        throwError(e)
+    }
+}
 
 module.exports = {
     getMe,
     updateUser,
-    updatePassword
+    updatePassword,
+    getUserIconUri,
+    uploadUserIcon
 }
 

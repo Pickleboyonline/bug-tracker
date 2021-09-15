@@ -2,7 +2,7 @@ const axios = require('axios')
 const { getDefaultHeader, baseUrl } = require('./../pages/config');
 const { getErrorMessage } = require('./network-error-handling')
 const User = require('./bugg-services/User/index')
-
+const Notification = require('./bugg-services/Notification/index')
 
 function UserData(obj = {
     name: '',
@@ -34,7 +34,8 @@ module.exports = {
         }
     },
 
-    User
+    User,
+    Notification
 
 
 }

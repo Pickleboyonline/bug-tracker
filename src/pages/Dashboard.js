@@ -7,7 +7,11 @@ import {
 import Chart from 'chart.js/auto';
 import Overview from './sub-pages/Overview';
 import SkeletonProject from './sub-pages/SkeletonProject';
-import { Avatar, Menu, Button, Space, Drawer, Dropdown, notification } from 'antd';
+import {
+    Avatar,
+    Badge,
+    Menu, Button, Space, Drawer, Dropdown, notification
+} from 'antd';
 import {
     UserOutlined,
     BellFilled,
@@ -24,11 +28,11 @@ import {
 
 } from '@ant-design/icons';
 import Messages from './Messages';
-import AvatarSettings from '../components/AvatarSettings';
 import axios from 'axios';
 import { getErrorMessage, logErrorMessage } from './../libraries/network-error-handling';
 import { addEventListener, reconfigToken, removeEventListener } from '../libraries/socket';
-import { getDefaultHeader } from './config';
+import { baseUrl, getDefaultHeader } from './config';
+import bugg from '../libraries/bugg';
 
 const PubSub = require('./../PubSub');
 
@@ -57,12 +61,26 @@ class App extends React.Component {
             toggleDrawer: false,
             projects: [],
             socket: null,
-            name: ''
+            name: '',
+            userIconUri: '',
+            unreadNotifications: 0
         };
 
     }
 
-    fetchNotifications;
+    fetchUnreadNotifications = async () => {
+
+        try {
+            let unreadNotifications = await bugg.Notification.getUnreadNotifications();
+
+            this.setState({
+                unreadNotifications
+            })
+        } catch (e) {
+            alert(getErrorMessage(e))
+            logErrorMessage(e)
+        }
+    }
 
     componentDidMount() {
         PubSub.join('project').on('update', this.updateProjects);
@@ -71,7 +89,7 @@ class App extends React.Component {
         this.getWelcomeMessage();
         // this.handleErrorTest()
         reconfigToken()
-
+        this.fetchUnreadNotifications()
         addEventListener('new-notification', this.onRecieveNotitification)
     }
 
@@ -141,13 +159,17 @@ class App extends React.Component {
     };
 
 
+    handleSOMETHING = () => 113120321;
 
     onRecieveNotitification = (notif) => {
+        // alert('SHIT')
+        this.fetchUnreadNotifications()
         notification.open({
             message: notif.title,
             description: notif.description + ' Click this notification to join.',
             onClick: () => this.getAction(notif)
         })
+
     }
 
     componentWillUnmount() {
@@ -166,12 +188,11 @@ class App extends React.Component {
             return shortHandName
         }
         try {
-            let { data: { user } } = await axios.get('http://localhost:1337/user/me', {
-                headers: getDefaultHeader()
-            })
-
+            let user = await bugg.User.getMe();
+            let userIconUri = await bugg.User.getUserIconUri();
             this.setState({
-                name: formatName(user.name)
+                name: formatName(user.name),
+                userIconUri
             });
         } catch (e) {
             console.error(getErrorMessage(e))
@@ -180,7 +201,7 @@ class App extends React.Component {
 
 
     joinProject = async (projectId) => {
-        const token = window.localStorage.getItem('token');
+
         try {
             let { data } = await axios.post('http://localhost:1337/project/join', {
                 projectId
@@ -293,21 +314,26 @@ class App extends React.Component {
                             {'Welcome' + (this.state.name ? ', ' : '') + this.state.name}
                         </h2>
                         <Space size='large'>
-                            <Button
-                                type='text'
-                                shape='circle'
-                                size='large'
-                                style={{
-                                    transform: 'scale(1.2)',
-                                    color: 'rgba(0,0,0,.7)'
-                                }}
-
-                                onClick={() => this.setState({ toggleDrawer: true })}
-                                icon={<BellFilled
+                            <Badge
+                                offset={[-4, 8]}
+                                count={this.state.unreadNotifications}>
+                                <Button
+                                    type='text'
+                                    shape='circle'
+                                    size='large'
                                     style={{
-                                        //fontSize: 64
-                                    }} />}
-                            />
+                                        transform: 'scale(1.2)',
+                                        color: 'rgba(0,0,0,.7)'
+                                    }}
+
+                                    onClick={() => this.setState({ toggleDrawer: true })}
+                                    icon={<BellFilled
+                                        style={{
+                                            //fontSize: 64
+                                        }} />}
+                                />
+                            </Badge>
+
                             <style>
                                 {`
                                 .bugg-profile-pic:hover {
@@ -323,8 +349,15 @@ class App extends React.Component {
 
                                 <Avatar
                                     className="bugg-profile-pic"
-                                    size={64} icon={<UserOutlined />} style={{
-                                        marginRight: 30
+                                    size={64}
+                                    src={this.state.userIconUri}
+                                    //icon={<UserOutlined />} 
+
+                                    style={{
+                                        marginRight: 64,
+                                        borderWidth: 1,
+                                        borderColor: 'rgba(0,0,0,.2)',
+                                        borderStyle: 'solid'
                                     }} />
 
 
@@ -350,10 +383,15 @@ class App extends React.Component {
                     title="Notifications"
                     placement="right"
                     closable={true}
-                    onClose={() => this.setState({ toggleDrawer: false })}
+                    onClose={() => {
+                        this.fetchUnreadNotifications()
+                        this.setState({ toggleDrawer: false })
+                    }}
+                    destroyOnClose
                     visible={this.state.toggleDrawer}
                 >
                     <Notifications
+
                         joinProject={this.joinProject}
                         socket={this.state.socket}
                     />

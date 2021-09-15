@@ -4,12 +4,14 @@ import {
     , Modal, Divider, Space, //Timeline,
     List,
     Avatar,
-    notification,
-    message
+    Upload,
+
+
 } from 'antd'
 import bugg, { getMe } from '../libraries/bugg';
 import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import { reconfigToken } from '../libraries/socket';
+import { message } from 'antd';
 
 const data = [
     'General',
@@ -33,7 +35,8 @@ class Settings extends React.Component {
         password: '',
         newPassword: '',
         updatePasswordVisible: false,
-        loadingUpdatePassword: false
+        loadingUpdatePassword: false,
+        previewImageUri: ''
     }
     componentDidMount() {
         this.fetchUser()
@@ -41,9 +44,44 @@ class Settings extends React.Component {
     }
 
 
+
+    beforeUpload = async (file) => {
+
+        let formData = new FormData();
+
+        formData.append('icon', file);
+
+
+        try {
+            await bugg.User.uploadUserIcon(formData);
+            this.fetchUser()
+            this.props.getWelcomeMessage()
+            message.success('Icon updated')
+        } catch (e) {
+
+            logErrorMessage(e)
+            message.error(getErrorMessage(e))
+        }
+
+        return false;
+    }
+
+    updateIcon = async () => {
+        try {
+            let iconUri = await bugg.User.getUserIconUri();
+            this.setState({
+                previewImageUri: iconUri
+            })
+        } catch (e) {
+
+        }
+    }
+
     fetchUser = async () => {
         try {
             let user = await getMe();
+            this.updateIcon()
+
             this.setState({
                 user,
                 name: user.name,
@@ -173,7 +211,40 @@ class Settings extends React.Component {
                         Update
                     </Button>
                 )
-            }]
+            },
+            {
+                title: 'User Icon',
+                reactNode: (
+                    <div>
+                        <Upload
+                            name="avatar"
+                            listType="picture-card"
+
+                            showUploadList={false}
+
+                            beforeUpload={this.beforeUpload}
+                        // beforeUpload={() => { message.error('das'); return false; }}
+                        >
+                            {
+                                !this.state.previewImageUri ?
+                                    "Upload Icon" :
+                                    <div style={{
+                                        width: '80%',
+                                        height: '80%',
+                                        backgroundImage: 'url(' + this.state.previewImageUri + ')',
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center'
+                                    }}
+                                    />
+
+                            }
+
+                        </Upload>
+                    </div>
+
+                )
+            },
+        ]
         return (
             <div style={{ width: 1100 }}>
                 <div style={{ width: 800 }}>
