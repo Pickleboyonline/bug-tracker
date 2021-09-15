@@ -12,15 +12,22 @@ import {
     Input,
     Modal,
 
-    Spin
+    Spin,
+    notification
 } from 'antd';
+import {
+    withRouter,
+
+} from "react-router-dom";
+
 import { UserOutlined } from '@ant-design/icons';
 import CreateAnnouncement from '../../../components/CreateAnnouncement';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
-import { logErrorMessage } from '../../../libraries/network-error-handling';
+import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
 import { getDefaultHeader } from '../../config';
+import bugg from '../../../libraries/bugg';
 const { Search } = Input;
 
 function Message(props) {
@@ -102,11 +109,21 @@ class App extends React.Component {
         // await (new Promise((res) => this.setState({ loading: true }, res)))
         // await this.fetchAndSetAnnouncements();
         // this.setState({ loading: false })
+        this.handleOpenAnnouncement()
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.project.id !== this.props.project.id) {
+        const locationChanged = this.props.location !== prevProps.location;
+        if (locationChanged) {
             this.fetchAndSetAnnouncements(true)
+            //this.setState({selectedAnnouncement: null}, )
+            this.handleOpenAnnouncement()
+
+        }
+        let uriProjectId = this.props.location.pathname.split('/');
+        uriProjectId = uriProjectId[uriProjectId.length - 1]
+        if (this.state.selectedAnnouncement && uriProjectId !== this.state.selectedAnnouncement.project) {
+            this.setState({ selectedAnnouncement: null })
         }
     }
 
@@ -119,6 +136,33 @@ class App extends React.Component {
         }
 
         return shortHandName
+    }
+
+    handleOpenAnnouncement = async () => {
+        const { location } = this.props;
+        let query = new URLSearchParams(location.search)
+        if (query.get('action') === 'OPEN_ANNOUNCEMENT' && query.has('announcementId')) {
+            try {
+
+                let announcement = await bugg.Announcement.getAnnouncement(query.get('announcementId'));
+
+                if (!announcement) throw new Error('Announcement not found')
+
+                this.props.history.push(location.pathname);
+
+                this.setState({
+                    selectedAnnouncement: announcement
+                })
+                this.fetchAndSetAnnouncements()
+            } catch (e) {
+                notification.error({
+                    message: getErrorMessage(e)
+                })
+            }
+        } else {
+
+        }
+
     }
 
     // fetch announcemnents, set data, and total that match the query
@@ -134,12 +178,14 @@ class App extends React.Component {
             // await (new Promise((res) => this.setState({ hasMore: true }, res)))
         }
         const limit = 5;
-        const TOKEN = window.localStorage.getItem('token')
+
         try {
+            let uriProjectId = this.props.location.pathname.split('/');
+            uriProjectId = uriProjectId[uriProjectId.length - 1]
             let { data } = await axios.get('http://localhost:1337/announcement/', {
                 headers: getDefaultHeader(),
                 params: {
-                    projectId: this.props.project.id,
+                    projectId: uriProjectId,
                     limit,
                     skip,
                     search,
@@ -369,4 +415,4 @@ class App extends React.Component {
 }
 
 
-export default App;
+export default withRouter(App);

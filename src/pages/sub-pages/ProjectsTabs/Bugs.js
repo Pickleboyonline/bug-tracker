@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 
 import CreateBug from './../../../components/CreateBug';
-import { Button, Modal } from 'antd';
+import { Button, Modal, notification } from 'antd';
 import {
     List, Skeleton,
     Menu, Dropdown, Switch as AntSwitch, Space, Drawer,
@@ -21,9 +21,9 @@ import {
 import ViewBug from './ViewBug';
 import axios from 'axios';
 import moment from 'moment';
-import { logErrorMessage } from '../../../libraries/network-error-handling';
+import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
 import { getDefaultHeader } from '../../config';
-
+import bugg from './../../../libraries/bugg'
 
 const { Search } = Input;
 
@@ -93,23 +93,19 @@ class App extends React.Component {
 
     componentDidMount() {
         this.fetchBugs()
+        this.handleActionUri()
     }
 
     _handlePaginationChange = (page, pageSize) => {
+        if (page === this.state.page && pageSize === this.state.pageSize) return;
         this.setState({
             page,
             pageSize
-        }, () => {
-            if (this.state.page !== page || this.state.pageSize !== pageSize) {
-                this.fetchBugs()
-            }
-        })
+        }, this.fetchBugs)
 
     }
 
     fetchBugs = async () => {
-        const token = window.localStorage.getItem('token')
-
         let id = this.props.location.pathname.split('/');
         id = id[id.length - 1];
         let { pageSize, page, search } = this.state;
@@ -161,7 +157,34 @@ class App extends React.Component {
         }
     }
 
-    createBugState = null;
+    /**
+     * Opens bug based on bug Id (fetches from server)
+     * @param {string} bugId 
+     */
+    openBug = async (bugId) => {
+        try {
+            let bug = await bugg.Bug.getBug(bugId);
+            if (!bug) throw new Error('Bug not found')
+            this.props.history.push(this.props.location.pathname)
+            this.setState({
+                selectedBug: bug,
+                toggleDrawer: true,
+                selectedBugTitle: bug.title
+            })
+        } catch (e) {
+            notification.error({
+                message: getErrorMessage(e)
+            })
+        }
+    }
+
+    handleActionUri = () => {
+        const { location } = this.props;
+        let query = new URLSearchParams(location.search)
+        if (query.get('action') === 'OPEN_BUG' && query.get('bugId') !== null) {
+            this.openBug(query.get('bugId'))
+        }
+    }
 
     toggleFunc = (name) => {
         this.setState({
@@ -185,10 +208,7 @@ class App extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const locationChanged =
-            this.props.location !== prevProps.location;
-
-
+        const locationChanged = this.props.location !== prevProps.location;
         if (locationChanged) {
             let id = this.props.location.pathname.split('/');
             id = id[id.length - 1];
@@ -197,6 +217,8 @@ class App extends React.Component {
                 page: 1
             }, this.fetchBugs)
 
+            // parse action from url
+            this.handleActionUri()
         }
     }
 

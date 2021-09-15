@@ -9,6 +9,9 @@ import moment from 'moment';
 import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from './config';
 import { addEventListener, removeEventListener } from '../libraries/socket';
+import {
+    withRouter
+} from "react-router-dom";
 
 class Notification extends React.Component {
 
@@ -19,7 +22,6 @@ class Notification extends React.Component {
         total: 1,
         isListening: false
     }
-    TOKEN = window.localStorage.getItem('token')
 
 
     componentDidMount() {
@@ -35,6 +37,17 @@ class Notification extends React.Component {
                 break;
             case 'NEW_MESSAGE':
                 this.props.openNewMessage(notification.payload.conversationId);
+                this.props.close()
+                break;
+            case 'NEW_BUG':
+                this.props.history
+                    .push('/dashboard/projects/' + notification.payload.projectId + `?action=OPEN_BUG&bugId=${notification.payload.bugId}`);
+                this.props.close()
+                break;
+            case 'NEW_ANNOUNCEMENT':
+                this.props.history
+                    .push('/dashboard/projects/' + notification.payload.projectId + `?action=OPEN_ANNOUNCEMENT&announcementId=${notification.payload.announcementId}`);
+                this.props.close()
                 break;
             default:
                 alert("no type given")
@@ -128,7 +141,7 @@ class Notification extends React.Component {
             'PROJECT_INVITE': 'Join Project',
             'NEW_MESSAGE': 'View Message'
         }
-        return message[type] ?? ''
+        return message[type] ?? 'View'
     }
 
     render() {
@@ -190,4 +203,4 @@ class Notification extends React.Component {
     }
 }
 
-export default Notification;
+export default withRouter(Notification);

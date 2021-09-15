@@ -144,6 +144,20 @@ class App extends React.Component {
             case 'NEW_MESSAGE':
                 this.openNewMessage(notification.payload.conversationId);
                 break;
+            case 'NEW_BUG':
+                this.props.history
+                    .push('/dashboard/projects/' + notification.payload.projectId + `?action=OPEN_BUG&bugId=${notification.payload.bugId}`);
+                this.setState({
+                    toggleDrawer: false
+                })
+                break;
+            case 'NEW_ANNOUNCEMENT':
+                this.props.history
+                    .push('/dashboard/projects/' + notification.payload.projectId + `?action=OPEN_ANNOUNCEMENT&announcementId=${notification.payload.announcementId}`);
+                this.setState({
+                    toggleDrawer: false
+                })
+                break;
             default:
                 alert("no type given")
         }
@@ -177,7 +191,8 @@ class App extends React.Component {
             'PROJECT_INVITE': ' Click this notification to join.',
             'NEW_MESSAGE': ' Click this notification to view.',
         }
-        return messages[type] ?? ''
+
+        return messages[type] ?? ' Click this notification to view.'
     }
 
     onRecieveNotitification = (notif) => {
@@ -433,6 +448,10 @@ class App extends React.Component {
                     visible={this.state.toggleDrawer}
                 >
                     <Notifications
+                        close={() => {
+                            this.fetchUnreadNotifications()
+                            this.setState({ toggleDrawer: false })
+                        }}
                         openNewMessage={this.openNewMessage}
                         joinProject={this.joinProject}
                         socket={this.state.socket}

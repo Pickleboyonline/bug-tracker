@@ -48,12 +48,22 @@ class App extends React.Component {
         id = id[id.length - 1];
         // console.log(id)
         this.updateProject(id);
+
+        const { location } = this.props;
+        let query = new URLSearchParams(location.search)
+        if (query.has('action')) {
+            this.getUriAction(query.get('action'))();
+        }
     }
 
-    componentWillUnmount() {
-
-
+    getUriAction = (action) => {
+        let actionSet = {
+            'OPEN_BUG': () => this.setState({ activeTab: 'bugs' }),
+            'OPEN_ANNOUNCEMENT': () => this.setState({ activeTab: 'announcements' })
+        }
+        return actionSet[action] ?? (() => null);
     }
+
 
     componentDidUpdate(prevProps) {
         const locationChanged =
@@ -65,6 +75,11 @@ class App extends React.Component {
             id = id[id.length - 1];
             this.updateProject(id);
 
+            const { location } = this.props;
+            let query = new URLSearchParams(location.search)
+            if (query.has('action')) {
+                this.getUriAction(query.get('action'))();
+            }
         }
     }
 
@@ -93,18 +108,9 @@ class App extends React.Component {
         }
     }
 
-    // updateProject = (newProject) => {
-    //     this.setState({
-    //         project: {
-    //             ...this.state.project,
-    //             ...newProject
-    //         }
-    //     })
-    // }
 
-    handleClick = e => {
-        this.setState({ activeTab: e.key });
-    };
+    handleClick = e => this.setState({ activeTab: e.key });
+
 
     render() {
         const current = this.state.activeTab;

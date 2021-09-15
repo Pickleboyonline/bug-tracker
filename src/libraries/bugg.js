@@ -4,6 +4,8 @@ const { getErrorMessage } = require('./network-error-handling')
 const User = require('./bugg-services/User/index')
 const Notification = require('./bugg-services/Notification/index')
 const Message = require('./bugg-services/Message/index');
+const Bug = require('./bugg-services/Bug/index');
+const Announcement = require('./bugg-services/Announcement/index')
 
 function UserData(obj = {
     name: '',
@@ -14,6 +16,8 @@ function UserData(obj = {
     this.email = obj.email;
     this.id = obj.id;
 }
+
+
 
 module.exports = {
     /**
@@ -37,7 +41,9 @@ module.exports = {
 
     User,
     Notification,
-    Message
+    Message,
+    Bug,
+    Announcement
 
 
 }
