@@ -1,4 +1,4 @@
-import react, { useState } from 'react';
+import { useState } from 'react';
 import { Form, Button, Input, Space, message } from 'antd'
 import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
@@ -13,7 +13,7 @@ function CreateAnnouncement(props) {
     const [form] = Form.useForm();
 
     const onFormSubmit = async (vals) => {
-        const TOKEN = window.localStorage.getItem('token')
+
         let title = vals.title;
         let body = draftToHtml(convertToRaw(editorState.getCurrentContent()));
 

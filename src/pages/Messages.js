@@ -9,6 +9,7 @@ import {
     Space,
     Tooltip,
     Card,
+    Tag
 } from 'antd';
 import {
     MessageOutlined,
@@ -16,15 +17,13 @@ import {
 } from '@ant-design/icons';
 import anime from 'animejs/lib/anime.es.js';
 import { List } from 'antd';
-import axios from 'axios';
 import MessageContainer from '../components/MessageContainer';
 import moment from 'moment';
 import CreateConversation from '../components/CreateConversation';
 import { logErrorMessage } from '../libraries/network-error-handling';
 import { addEventListener, removeEventListener } from '../libraries/socket';
-import { getDefaultHeader } from './config';
 
-
+const bugg = require('./../libraries/bugg')
 
 class App extends React.Component {
     constructor(props) {
@@ -49,6 +48,7 @@ class App extends React.Component {
     componentDidMount() {
         this.fetchConversations()
         // this.connectToSocket()
+        this.props.setOpenNewMessage(this.openNewMessage);
         addEventListener('new-message', this.fetchConversations)
     }
 
@@ -56,16 +56,32 @@ class App extends React.Component {
         removeEventListener('new-message', this.fetchConversations)
     }
 
-    toggleHideSimple = () => {
-        let val = !this.state.toggleHide;
-        this.setState({ toggleHide: val })
-        if (val) this.fetchConversations()
-        // let targets = [document.getElementById('open-message-card'), document.getElementById('contacts-card')]
+    toggleHideSimple = (disableRefresh) => {
+        let newToggleHide = !this.state.toggleHide;
+        this.setState({ toggleHide: newToggleHide })
 
-        // for (let elem of targets) {
-        //     elem.style.display = val ? 'none' : 'block'
-        // }
 
+        if (!newToggleHide && disableRefresh !== true) {
+            this.fetchConversations()
+
+        }
+    }
+
+    openNewMessage = async (conversationId) => {
+        // alert('HEY')
+        if (this.state.toggleHide) {
+            this.toggleHideSimple(true)
+        }
+
+        await this.fetchConversations()
+        let conversationIds = this.state.conversations.map(doc => doc.id);
+        console.log(conversationId)
+        console.log(conversationIds)
+        let ind = conversationIds.indexOf(conversationId);
+        console.log(ind)
+        if (ind === -1) return;
+
+        this.selectConversation(this.state.conversations[ind]);
     }
 
     // TODO: rework to aim for multiple components
@@ -110,9 +126,10 @@ class App extends React.Component {
      */
     fetchConversations = async () => {
         try {
-            let { data: { conversations } } = await axios.get('http://localhost:1337/conversation/all', {
-                headers: getDefaultHeader()
-            })
+            // let { data: { conversations } } = await axios.get('http://localhost:1337/conversation/all', {
+            //     headers: getDefaultHeader()
+            // })
+            let conversations = await bugg.Message.getConversations()
             await new Promise((res) => this.setState({ conversations }, res))
         } catch (e) {
             logErrorMessage(e)
@@ -133,6 +150,7 @@ class App extends React.Component {
         this.setState({
             activeConversations: newConvos
         })
+        this.props.setActiveConversationIds(newConvos.map(doc => doc.id))
     }
 
     /**
@@ -148,11 +166,22 @@ class App extends React.Component {
             this.setState({
                 activeConversations: newConvos
             })
+            this.props.setActiveConversationIds(newConvos.map(doc => doc.id))
         }
         this.fetchConversations()
+
     }
 
+    showNew = (conversation) => {
+        let activeConversationsIds = this.state.activeConversations.map(doc => doc.id);
 
+        if (activeConversationsIds.includes(conversation.id)) {
+            return false;
+        } else {
+            return conversation.newMessages
+        }
+
+    }
 
     render() {
         // let match = useRouteMatch();
@@ -237,13 +266,22 @@ class App extends React.Component {
                                     extra={[moment((new Date(item.updatedAt)).getTime()).fromNow()]}
                                 >
                                     <List.Item.Meta
-                                        title={
+                                        title={<>
                                             <a href="#" onClick={(e) => {
                                                 this.selectConversation(item)
                                                 e.preventDefault()
                                             }}
                                             >{item.reciepent.name}
-                                            </a>}
+                                            </a>
+                                            {this.showNew(item) ?
+                                                <Tag
+                                                    style={{
+                                                        marginLeft: 10
+                                                    }}
+                                                    color='red'>New</Tag> : null
+                                            }
+
+                                        </>}
                                         avatar={
                                             <Avatar style={{ marginRight: 10 }}>
                                                 {item.reciepent.name.substring(0, 1).toUpperCase()}
@@ -265,7 +303,9 @@ class App extends React.Component {
                             toggleHide={this.state.toggleHide}
                             fetchConversations={this.fetchConversations}
                             removeConversation={this.removeConversation}
-                            conversation={item} />
+                            conversation={item}
+                            fetchUnreadNotifications={this.props.fetchUnreadNotifications}
+                        />
                     )
                 }
 

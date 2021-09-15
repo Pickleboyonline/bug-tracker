@@ -1,27 +1,26 @@
 import react from "react";
 import {
     Button,
-    Divider,
+
     Modal,
     Space,
-    Empty,
+
     message,
     Select,
     Form,
     Input,
     Switch,
-    Menu,
+
     List,
     Popconfirm, Tag
 } from 'antd';
 import axios from "axios";
-import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons';
 import ModifyRole from './../../../../components/ModifyRole'
 import { CirclePicker } from 'react-color'
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 import { getDefaultHeader } from "../../../config";
 
-const { SubMenu } = Menu;
+
 
 const PERMISSIONS = {
     ALL: 'ALL',
@@ -31,13 +30,6 @@ const PERMISSIONS = {
     MODIFY_ANNOUNCEMENTS: 'MODIFY_ANNOUNCEMENTS'
 }
 
-const PERMISSIONS_ARRAY = [
-    'ALL',
-    'MODIFY_GENERAL',
-    'MODIFY_MEMBERS',
-    'MODIFY_BUGS',
-    'MODIFY_ANNOUNCEMENTS'
-]
 const { Option } = Select;
 
 export default class Roles extends react.Component {
@@ -52,7 +44,7 @@ export default class Roles extends react.Component {
         updateRoleModalVisible: false,
         color: '#f44336'
     }
-    TOKEN = window.localStorage.getItem('token')
+
 
     componentDidMount() {
         this.fetchRoles()
@@ -133,7 +125,7 @@ export default class Roles extends react.Component {
         }
 
         try {
-            let { data: { role } } = await axios.post('http://localhost:1337/role', {
+            await axios.post('http://localhost:1337/role', {
                 projectId: this.props.project.id,
                 title,
                 permissions: permissions.join(','),
@@ -143,7 +135,7 @@ export default class Roles extends react.Component {
                 headers: getDefaultHeader()
             })
             this.setState({
-                // roles: [...this.state.roles, role],
+
                 isModalVisible: false
             })
             message.success("Role created")

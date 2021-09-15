@@ -3,6 +3,7 @@ const { getDefaultHeader, baseUrl } = require('./../pages/config');
 const { getErrorMessage } = require('./network-error-handling')
 const User = require('./bugg-services/User/index')
 const Notification = require('./bugg-services/Notification/index')
+const Message = require('./bugg-services/Message/index');
 
 function UserData(obj = {
     name: '',
@@ -35,7 +36,8 @@ module.exports = {
     },
 
     User,
-    Notification
+    Notification,
+    Message
 
 
 }

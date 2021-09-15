@@ -14,13 +14,13 @@ const PERMISSIONS = {
     MODIFY_ANNOUNCEMENTS: 'MODIFY_ANNOUNCEMENTS'
 }
 
-const PERMISSIONS_ARRAY = [
-    'ALL',
-    'MODIFY_GENERAL',
-    'MODIFY_MEMBERS',
-    'MODIFY_BUGS',
-    'MODIFY_ANNOUNCEMENTS'
-]
+// const PERMISSIONS_ARRAY = [
+//     'ALL',
+//     'MODIFY_GENERAL',
+//     'MODIFY_MEMBERS',
+//     'MODIFY_BUGS',
+//     'MODIFY_ANNOUNCEMENTS'
+// ]
 
 const { Option } = Select;
 
@@ -38,8 +38,7 @@ const ModifyRole = (props) => {
     const [search, setSearch] = useState('');
     const { toggleUpdateRoleModal, fetchRoles } = props;
     const [color, setColor] = useState('#f44336')
-    const [form] = Form.useForm()
-    const TOKEN = window.localStorage.getItem('token')
+
 
     // TODO: only search for users apart of the project
     const handleUserSearch = async () => {
@@ -97,7 +96,7 @@ const ModifyRole = (props) => {
         }
 
         try {
-            let { data: { role } } = await axios.put('http://localhost:1337/role', {
+            await axios.put('http://localhost:1337/role', {
                 roleId: props.role.id,
                 title,
                 color,

@@ -1,17 +1,13 @@
 import React from 'react';
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
     withRouter,
-    Redirect
+
 } from "react-router-dom";
-import Chart from 'chart.js/auto';
-import Popup from './../../../components/Popup';
+
 import CreateBug from './../../../components/CreateBug';
-import { Button, Divider, Modal, Tag } from 'antd';
+import { Button, Modal } from 'antd';
 import {
-    List, Avatar, Skeleton,
+    List, Skeleton,
     Menu, Dropdown, Switch as AntSwitch, Space, Drawer,
     Input, Pagination
 } from 'antd';
@@ -20,13 +16,8 @@ import {
     DownOutlined,
     FontSizeOutlined,
     FileSyncOutlined,
-    ExclamationCircleOutlined,
-    EditOutlined
+
 } from '@ant-design/icons';
-import { Typography } from 'antd';
-import BugDissussion from './../../../components/BugDiscussion';
-import BugStats from '../../../components/BugStats';
-import BugAssignedTo from './../../../components/BugAssignedTo';
 import ViewBug from './ViewBug';
 import axios from 'axios';
 import moment from 'moment';
@@ -34,7 +25,6 @@ import { logErrorMessage } from '../../../libraries/network-error-handling';
 import { getDefaultHeader } from '../../config';
 
 
-const { Title, Paragraph, Text, Link } = Typography;
 const { Search } = Input;
 
 const selectedColor = '#1890ff';

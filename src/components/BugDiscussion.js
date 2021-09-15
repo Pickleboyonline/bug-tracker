@@ -2,19 +2,17 @@ import React from 'react';
 import {
     Comment,
     Space, Divider,
-    Avatar, Form, Button, List, Input, Typography, message
+    Avatar, Button, List, Typography, message
 } from 'antd';
 import moment from 'moment';
 import { EditorState, convertToRaw } from 'draft-js';
 import { Editor as DraftEditor } from 'react-draft-wysiwyg';
 import './../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
-import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
 
-const { TextArea } = Input;
 const { Title } = Typography;
 
 
@@ -129,7 +127,7 @@ class App extends React.Component {
     };
 
     render() {
-        const { comments, submitting, value } = this.state;
+        const { comments, submitting } = this.state;
 
         return (
             <>

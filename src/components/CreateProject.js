@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Input, Space, Button, Select, Form, Upload, notification } from 'antd';
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
 import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
 const PubSub = require('./../PubSub');
@@ -11,10 +10,10 @@ let formData = new FormData();
 
 
 export function CreateProject(props) {
-    const token = window.localStorage.getItem('token')
-    const [title, setTitle] = useState('');
+
+
     const [value, setValue] = useState([]);
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
     const [imageUri, setImageUri] = useState('');
 
@@ -90,7 +89,7 @@ export function CreateProject(props) {
     useEffect(() => {
         const handleChange = async () => {
             let results;
-            setLoading(true);
+            // setLoading(true);
 
             try {
                 results = await axios.get('http://localhost:1337/user/search', {
@@ -101,7 +100,7 @@ export function CreateProject(props) {
                 })
             } catch (e) {
                 console.error(getErrorMessage(e))
-                setLoading(false);
+                // setLoading(false);
                 return
             }
 

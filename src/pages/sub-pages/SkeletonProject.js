@@ -2,7 +2,6 @@ import React from 'react';
 import {
     withRouter
 } from "react-router-dom";
-import Chart from 'chart.js/auto';
 import Overview from './ProjectsTabs/Overview';
 import Bugs from './ProjectsTabs/Bugs';
 import Announcements from './ProjectsTabs/Announcements';
@@ -11,7 +10,7 @@ import Settings from './ProjectsTabs/Settings';
 import Collaborators from './ProjectsTabs/Collaborators'
 import { Menu, Space } from 'antd';
 import {
-    MailOutlined,
+
     BugOutlined,
     SettingOutlined,
     DashboardOutlined,
@@ -25,8 +24,6 @@ import { logErrorMessage } from '../../libraries/network-error-handling';
 import { getDefaultHeader } from '../config';
 
 
-const { SubMenu } = Menu;
-const PubSub = require('./../../PubSub');
 
 
 

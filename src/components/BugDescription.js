@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Divider, } from 'antd';
 import {
     message, Space,
-    Input,
+
 } from 'antd';
 import {
     EditOutlined
@@ -48,8 +48,7 @@ class BugDescription extends React.Component {
         })
     }
 
-    _handleUpdateDescription = async (text) => {
-        const token = await window.localStorage.getItem('token')
+    updateDescription = async (text) => {
         try {
             await axios.put('http://localhost:1337/bug/' + this.props.bug.id, {
                 description: this.state.description
@@ -66,9 +65,6 @@ class BugDescription extends React.Component {
     }
 
     render() {
-
-        var listData = [];
-
         return (
             <div>
 
@@ -82,7 +78,7 @@ class BugDescription extends React.Component {
                     <Button shape="circle"
                         onClick={() => {
                             if (this.state.editDescription) {
-                                this._handleUpdateDescription()
+                                this.updateDescription()
                             }
                             this.toggleFunc('editDescription')
                         }}

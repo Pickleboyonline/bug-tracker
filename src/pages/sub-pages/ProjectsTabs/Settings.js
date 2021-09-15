@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect
-} from "react-router-dom";
-import Chart from 'chart.js/auto';
-import { List, Typography, Divider, Avatar } from 'antd';
+
+import { List, Avatar } from 'antd';
 
 import General from './SettingsComponents/General';
 import Roles from './SettingsComponents/Roles';

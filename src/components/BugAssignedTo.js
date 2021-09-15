@@ -5,13 +5,12 @@ import {
     Input, Avatar, Select,
     Button, Divider, Typography, List, Pagination, Modal, message
 } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
 
 
-const { Paragraph, Title } = Typography;
+const { Title } = Typography;
 const { Option } = Select;
 
 

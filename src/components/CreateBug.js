@@ -6,9 +6,9 @@ import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import './../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Form, Input, Button, Space, DatePicker, notification } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+
 import { Select } from 'antd';
-import { Upload, message } from 'antd';
+import { Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import draftToHtml from 'draftjs-to-html';
@@ -27,15 +27,15 @@ const App = (props) => {
     const [title, setTitle] = useState('');
     const [tags, setTags] = useState([]);
     const [value, setValue] = useState([]);
-    const [files, setFiles] = useState(null);
+
     const [dueDate, setDueDate] = useState(0);
-    const [assignTo, setAssignTo] = useState([]);
+    const [assignTo] = useState([]);
     const [severity, setSeverity] = useState('');
     const [reproducibility, setReproducibility] = useState('');
     const [catagory, setCatagory] = useState('');
-    const [formData, setFormData] = useState(new FormData());
-    const [fileRegister, setFileRegister] = useState([]);
-    const token = window.localStorage.getItem('token')
+    const [formData] = useState(new FormData());
+    const [fileRegister] = useState([]);
+
 
     const beforeUpload = async (file, fileList) => {
         fileRegister.push(file)

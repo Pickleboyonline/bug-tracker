@@ -5,16 +5,17 @@ import {
     Button,
     Input,
     Avatar,
-    List
+    List, Tag
 } from 'antd';
 import {
     CloseOutlined, MinusOutlined
 } from '@ant-design/icons';
 import axios from 'axios';
 import anime from 'animejs';
-import { getErrorMessage } from '../libraries/network-error-handling';
+import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import { addEventListener, removeEventListener } from '../libraries/socket';
 import { getDefaultHeader } from '../pages/config';
+import bugg from '../libraries/bugg';
 
 
 function Message(props) {
@@ -27,7 +28,7 @@ function Message(props) {
             }}>
                 <Avatar style={{ marginLeft: 7, }}>{props.avatarLetter}</Avatar>
                 <p style={{
-                    maxWidth: 100,
+                    maxWidth: 200,
                     backgroundColor: 'rgb(0 0 0 / 20%)',
                     padding: 5,
                     borderRadius: 4,
@@ -45,7 +46,7 @@ function Message(props) {
         }}>
 
             <p style={{
-                maxWidth: 100,
+                maxWidth: 200,
                 backgroundColor: 'rgb(24 144 255 / 30%)',
                 padding: 5,
                 borderRadius: 4,
@@ -62,22 +63,22 @@ function Message(props) {
 }
 
 
-function getRecipient(participants) {
-    return ''
-}
 
 export default class MessageContainer extends react.Component {
     state = {
         messages: [],
         body: '',
         toggledState: false,
-        listening: false
+        listening: false,
+        newMessages: false
     }
     TOKEN = window.localStorage.getItem('token')
 
-    componentDidMount() {
-        this.fetchMessages()
+    async componentDidMount() {
+        await this.fetchMessages();
+        this.props.fetchUnreadNotifications()
         addEventListener('new-message', this.onRecieveNewMessage)
+        this.props.fetchConversations()
     }
 
     componentWillUnmount() {
@@ -146,6 +147,9 @@ export default class MessageContainer extends react.Component {
                 duration: 300
             })
         } else {
+            this.setState({
+                newMessages: false
+            })
             anime({
                 targets: [elem],
                 height: 364,
@@ -157,17 +161,33 @@ export default class MessageContainer extends react.Component {
     }
 
     onRecieveNewMessage = (message) => {
-        console.log('NEW MESSAGE')
+
         let { messages } = this.state;
         messages.push(message);
         this.setState({
             messages
         })
+        if (this.state.toggledState) {
+            this.setState({
+                newMessages: true
+            })
+        }
         this.props.fetchConversations()
     }
 
+    readAllMessages = async () => {
+        try {
+            await bugg.Message.readAllMessages(this.props.conversation.id)
+            this.props.fetchUnreadNotifications()
+        } catch (e) {
+            logErrorMessage(e)
+        }
+    }
+
     render() {
-        const { removeConversation, conversation } = this.props;
+        let { removeConversation, conversation } = this.props;
+
+
 
         return (
             <Card
@@ -177,7 +197,7 @@ export default class MessageContainer extends react.Component {
 
                 }}
                 id={conversation.id}
-                title={conversation.reciepent.name}
+                title={<> {conversation.reciepent.name} {this.state.newMessages ? <Tag style={{ marginLeft: 10 }} color='red'>New Message</Tag> : null} </>}
                 extra={
                     <Space size='middle'>
                         <Button
@@ -186,7 +206,10 @@ export default class MessageContainer extends react.Component {
                             type='text' icon={<MinusOutlined style={{ color: 'white' }} />} />
                         <Button
                             type='text'
-                            onClick={() => removeConversation(conversation.id)}
+                            onClick={async () => {
+                                await this.readAllMessages()
+                                removeConversation(conversation.id)
+                            }}
                             icon={<CloseOutlined style={{ color: 'white' }} />}
                         />
 

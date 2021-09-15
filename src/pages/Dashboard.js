@@ -1,11 +1,9 @@
 import React from 'react';
 import {
-    BrowserRouter as Router,
+
     Route,
     withRouter
 } from "react-router-dom";
-import Chart from 'chart.js/auto';
-import Overview from './sub-pages/Overview';
 import SkeletonProject from './sub-pages/SkeletonProject';
 import {
     Avatar,
@@ -13,7 +11,7 @@ import {
     Menu, Button, Space, Drawer, Dropdown, notification
 } from 'antd';
 import {
-    UserOutlined,
+
     BellFilled,
     SettingOutlined, CodeOutlined
 } from '@ant-design/icons';
@@ -63,10 +61,13 @@ class App extends React.Component {
             socket: null,
             name: '',
             userIconUri: '',
-            unreadNotifications: 0
+            unreadNotifications: 0,
+            activeConversationIds: []
         };
 
     }
+
+    setActiveConversationIds = (value) => this.setState({ activeConversationIds: value })
 
     fetchUnreadNotifications = async () => {
 
@@ -103,7 +104,18 @@ class App extends React.Component {
     }
 
 
-    TOKEN = window.localStorage.getItem('token');
+
+
+    openNewMessage = () => undefined;
+
+    setOpenNewMessage = (func) => {
+        this.openNewMessage = (conversationId) => {
+            func(conversationId)
+            this.setState({
+                toggleDrawer: false
+            })
+        };
+    }
 
     logout = () => {
         window.localStorage.removeItem('token');
@@ -111,8 +123,6 @@ class App extends React.Component {
     }
 
     updateProjects = async () => {
-        const token = window.localStorage.getItem('token');
-
         try {
             let { data } = await axios.get('http://localhost:1337/project/all', {
                 headers: getDefaultHeader()
@@ -130,6 +140,9 @@ class App extends React.Component {
         switch (notification.type) {
             case 'PROJECT_INVITE':
                 this.joinProject(notification.payload.projectId)
+                break;
+            case 'NEW_MESSAGE':
+                this.openNewMessage(notification.payload.conversationId);
                 break;
             default:
                 alert("no type given")
@@ -159,16 +172,45 @@ class App extends React.Component {
     };
 
 
-    handleSOMETHING = () => 113120321;
+    getNotificationCallToAction = (type) => {
+        let messages = {
+            'PROJECT_INVITE': ' Click this notification to join.',
+            'NEW_MESSAGE': ' Click this notification to view.',
+        }
+        return messages[type] ?? ''
+    }
 
     onRecieveNotitification = (notif) => {
         // alert('SHIT')
         this.fetchUnreadNotifications()
+        if (notif.type === 'NEW_MESSAGE' && this.state.activeConversationIds.includes(notif.payload.conversationId)) return
+
         notification.open({
             message: notif.title,
-            description: notif.description + ' Click this notification to join.',
-            onClick: () => this.getAction(notif)
+            description: notif.description + this.getNotificationCallToAction(notif.type),
+            onClick: () => {
+                this.getAction(notif)
+                this.dismissNotification(notif.id)
+            }
         })
+
+    }
+
+    /**
+     * Dismisses notification on server
+     * @param {string} notificationId Id of notification
+     */
+    dismissNotification = async (notificationId) => {
+        try {
+            await axios.delete(baseUrl + '/notification/' + notificationId, {
+                headers: getDefaultHeader()
+            })
+            this.fetchUnreadNotifications()
+
+        } catch (e) {
+            logErrorMessage(e)
+
+        }
 
     }
 
@@ -391,13 +433,16 @@ class App extends React.Component {
                     visible={this.state.toggleDrawer}
                 >
                     <Notifications
-
+                        openNewMessage={this.openNewMessage}
                         joinProject={this.joinProject}
                         socket={this.state.socket}
                     />
                 </Drawer>
 
-                <Messages />
+                <Messages
+                    setActiveConversationIds={this.setActiveConversationIds}
+                    setOpenNewMessage={this.setOpenNewMessage}
+                    fetchUnreadNotifications={this.fetchUnreadNotifications} />
             </div >
         );
     }
@@ -485,7 +530,6 @@ const styles = {
         width: 270,
         zIndex: 10,
         'box-shadow': '-7px 0px 13px 0px black',
-        height: 800,
         boxShadow: 1,
         overflowY: 'auto',
         overflowX: 'hidden',

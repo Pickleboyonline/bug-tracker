@@ -1,16 +1,10 @@
 import React from 'react';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Redirect
-} from "react-router-dom";
-import Chart from 'chart.js/auto';
-import { Button, Divider, Modal, Upload } from 'antd';
+
+import { Button, Divider, Upload } from 'antd';
 import {
 
     List, message, Space,
-    Input,
+
 } from 'antd';
 import {
     EditOutlined, InboxOutlined
@@ -20,8 +14,7 @@ import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
 
-const { Title, Paragraph, Text, Link } = Typography;
-const { Search } = Input;
+const { Title } = Typography;
 const { Dragger } = Upload;
 
 class BugDescription extends React.Component {
@@ -120,8 +113,6 @@ class BugDescription extends React.Component {
     }
 
     render() {
-
-        var listData = [];
 
         return (
             <div>

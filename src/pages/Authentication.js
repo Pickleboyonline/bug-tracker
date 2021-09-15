@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Redirect,
     // Link
@@ -17,7 +17,7 @@ const AuthenticationHooks = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+
     const [mode, setMode] = useState('login');
     const [loading, setLoading] = useState(false);
     const [isAuthed, setIsAuthed] = useState(false);
@@ -182,7 +182,7 @@ const AuthenticationHooks = () => {
                                 ]}
                             >
                                 <Input.Password
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                // onChange={(e) => setConfirmPassword(e.target.value)}
 
                                 />
                             </Form.Item>

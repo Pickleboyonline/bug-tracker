@@ -6,21 +6,21 @@ import {
     Col,
     Tag,
     Button,
-    Input,
+
     Switch,
     DatePicker,
-    Upload,
+
     Select,
     message,
-    notification
+
 } from 'antd';
-import { ConsoleSqlOutlined, EditOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
 import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
 
-const { Dragger } = Upload;
+
 const { Option } = Select;
 
 
@@ -110,7 +110,7 @@ class BugStats extends React.Component {
                                 } else {
                                     return <Tag color={(this.state.values.status === 'open' ? "#f50" : "#389e0d")} //"#f50"
                                     >{
-                                            new String(this.state.values.status).toUpperCase()
+                                            ('' + this.state.values.status).toUpperCase()
                                         }</Tag>
                                 }
                             }}

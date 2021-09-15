@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect
-} from "react-router-dom";
+
 import Chart from 'chart.js/auto';
 import { Divider } from 'antd'
 
@@ -20,7 +14,7 @@ class App extends React.Component {
 
     componentDidMount() {
         var ctx = document.getElementById('pieChart').getContext('2d');
-        var pieChart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: [

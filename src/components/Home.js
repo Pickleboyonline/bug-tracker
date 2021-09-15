@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
     Card, Button, Input
-    , Col, Row, Divider, Space, Timeline, Modal, notification
+    , Col, Row, Divider, Space, Modal, notification
 } from 'antd'
 import { CreateProject } from './CreateProject'
 import axios from 'axios';
@@ -16,7 +16,7 @@ const JoinProject = (props) => {
     const [projectId, setProjectId] = useState('');
 
     const handleSubmit = async () => {
-        const token = window.localStorage.getItem('token');
+
         let res;
 
         try {

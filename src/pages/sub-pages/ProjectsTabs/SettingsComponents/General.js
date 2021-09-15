@@ -1,9 +1,8 @@
-import react, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-    Input, Form,
+    Input,
     Button,
-    Divider,
-    Select, Upload,
+    Upload,
     Space,
     message,
     List,

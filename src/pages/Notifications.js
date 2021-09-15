@@ -1,7 +1,7 @@
 import React from 'react'
 import {
     Card, Button, Avatar
-    , Col, Row, Tag, List, notification, Space, message
+    , Tag, List, Space, message
 } from 'antd'
 import axios from 'axios';
 import { MailOutlined } from '@ant-design/icons'
@@ -32,6 +32,9 @@ class Notification extends React.Component {
         switch (notification.type) {
             case 'PROJECT_INVITE':
                 this.props.joinProject(notification.payload.projectId)
+                break;
+            case 'NEW_MESSAGE':
+                this.props.openNewMessage(notification.payload.conversationId);
                 break;
             default:
                 alert("no type given")
@@ -120,6 +123,14 @@ class Notification extends React.Component {
         }, this.fetchNotifications)
     }
 
+    getNotificationActionMessage = (type) => {
+        let message = {
+            'PROJECT_INVITE': 'Join Project',
+            'NEW_MESSAGE': 'View Message'
+        }
+        return message[type] ?? ''
+    }
+
     render() {
         return (
             <div >
@@ -150,7 +161,7 @@ class Notification extends React.Component {
                                 actions={[
                                     <Button
                                         onClick={() => this.getAction(item)}
-                                        type='primary'>Join Project</Button>,
+                                        type='primary'>{this.getNotificationActionMessage(item.type)}</Button>,
                                     <Button
                                         onClick={() => this.dismissNotification(item.id)}
                                         type='link'>Dismiss</Button>

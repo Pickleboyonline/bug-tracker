@@ -1,11 +1,4 @@
 import React from 'react';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect
-} from "react-router-dom";
 import Chart from 'chart.js/auto';
 import { Card, Statistic, Row, Col, Button, Space } from 'antd';
 import axios from 'axios';
@@ -26,7 +19,6 @@ class App extends React.Component {
         };
 
     }
-    TOKEN = window.localStorage.getItem('token');
 
 
     async componentDidMount() {
