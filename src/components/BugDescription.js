@@ -50,7 +50,7 @@ class BugDescription extends React.Component {
 
     updateDescription = async (text) => {
         try {
-            await axios.put('http://localhost:1337/bug/' + this.props.bug.id, {
+            await axios.put('/bug/' + this.props.bug.id, {
                 description: this.state.description
             }, {
                 headers: getDefaultHeader(),

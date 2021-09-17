@@ -18,7 +18,7 @@ function CreateAnnouncement(props) {
         let body = draftToHtml(convertToRaw(editorState.getCurrentContent()));
 
         try {
-            await axios.post('http://localhost:1337/announcement', {
+            await axios.post('/announcement', {
                 projectId: props.project.id,
                 title,
                 body

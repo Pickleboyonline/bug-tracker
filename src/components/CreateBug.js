@@ -68,7 +68,7 @@ const App = (props) => {
                 projectId: props.match.params.projectId
             }
             // console.log(requestData)
-            let res = await axios.post('http://localhost:1337/bug/create', requestData, {
+            let res = await axios.post('/bug/create', requestData, {
                 headers: getDefaultHeader()
             })
 
@@ -82,7 +82,7 @@ const App = (props) => {
                     formData.append(`files`, fileRegister[i])
                 }
                 console.log(formData.getAll('files'))
-                await axios.post('http://localhost:1337/file/', formData, {
+                await axios.post('/file/', formData, {
                     headers: {
                         ...(getDefaultHeader()),
                         'Content-Type': 'multipart/form-data'
@@ -129,7 +129,7 @@ const App = (props) => {
             //setLoading(true);
 
             try {
-                results = await axios.get('http://localhost:1337/user/search', {
+                results = await axios.get('/user/search', {
                     params: {
                         query: query,
                         projectId: props.match.params.projectId,

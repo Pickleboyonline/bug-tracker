@@ -47,7 +47,7 @@ const ModifyRole = (props) => {
     // TODO: only search for users apart of the project
     const handleUserSearch = async () => {
         try {
-            let { data } = await axios.get('http://localhost:1337/user/search', {
+            let { data } = await axios.get('/user/search', {
                 params: {
                     query: search,
                     projectId: props.match.params.projectId,
@@ -102,7 +102,7 @@ const ModifyRole = (props) => {
         }
 
         try {
-            await axios.put('http://localhost:1337/role', {
+            await axios.put('/role', {
                 roleId: props.role.id,
                 title,
                 color,

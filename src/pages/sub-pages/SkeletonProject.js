@@ -87,7 +87,7 @@ class App extends React.Component {
         const token = window.localStorage.getItem('token');
         id = id || this.state.project.id;
         try {
-            let { data } = await axios.get('http://localhost:1337/project/find', {
+            let { data } = await axios.get('/project/find', {
                 headers: getDefaultHeader(),
                 params: {
                     projectId: id
@@ -98,7 +98,7 @@ class App extends React.Component {
                 this.setState({
                     title: data.project.title,
                     project: data.project,
-                    imageUrl: 'http://localhost:1337/icon/' + (data.project.icon && data.project.icon[0] ? data.project.icon[0].id : '')
+                    imageUrl: '/icon/' + (data.project.icon && data.project.icon[0] ? data.project.icon[0].id : '')
                 });
             }
 

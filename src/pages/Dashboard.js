@@ -88,7 +88,7 @@ class App extends React.Component {
 
     handleErrorTest = async () => {
         try {
-            await axios.get('http://localhost:1337/throw-error')
+            await axios.get('/throw-error')
         } catch (e) {
             let message = getErrorMessage(e);
             console.log(message)
@@ -120,7 +120,7 @@ class App extends React.Component {
 
     updateProjects = async () => {
         try {
-            let { data } = await axios.get('http://localhost:1337/project/all', {
+            let { data } = await axios.get('/project/all', {
                 headers: getDefaultHeader()
             });
             this.setState({
@@ -234,7 +234,7 @@ class App extends React.Component {
     joinProject = async (projectId) => {
 
         try {
-            let { data } = await axios.post('http://localhost:1337/project/join', {
+            let { data } = await axios.post('/project/join', {
                 projectId
             }, {
                 headers: getDefaultHeader()

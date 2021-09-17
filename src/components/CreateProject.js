@@ -42,7 +42,7 @@ export function CreateProject(props) {
         console.log(value)
 
         try {
-            res = await axios.post('http://localhost:1337/project/create', {
+            res = await axios.post('/project/create', {
                 title: e.title,
                 description: e.description,
                 members: value.join()
@@ -51,7 +51,7 @@ export function CreateProject(props) {
                     headers: getDefaultHeader()
                 });
             if (formData.get('icon')) {
-                await axios.post('http://localhost:1337/icon/upload', formData, {
+                await axios.post('/icon/upload', formData, {
                     headers: {
                         ...(getDefaultHeader()),
                         'Content-Type': 'multipart/form-data'
@@ -94,7 +94,7 @@ export function CreateProject(props) {
             // setLoading(true);
 
             try {
-                results = await axios.get('http://localhost:1337/user/search', {
+                results = await axios.get('/user/search', {
                     params: {
                         query: query
                     },

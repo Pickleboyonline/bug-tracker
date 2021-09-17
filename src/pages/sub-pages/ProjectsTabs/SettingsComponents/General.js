@@ -27,14 +27,14 @@ function General(props) {
         setTitle(props.project.title);
         setDescription(props.project.description)
         try {
-            setImageUri('http://localhost:1337/icon/' + props.project.icon[0].id)
+            setImageUri('/icon/' + props.project.icon[0].id)
         } catch (e) {
 
         }
 
         const retreiveProject = async () => {
             try {
-                let { data } = await axios.get('http://localhost:1337/project/find', {
+                let { data } = await axios.get('/project/find', {
                     headers: getDefaultHeader(),
                     params: {
                         projectId: props.project.id
@@ -44,7 +44,7 @@ function General(props) {
                 if (data.project) {
                     console.log(data.project)
                     setProject(data.project)
-                    setImageUri('http://localhost:1337/icon/' + data.project.icon[0].id)
+                    setImageUri('/icon/' + data.project.icon[0].id)
                     setTitle(data.project.title);
                     setDescription(data.project.description)
                 }
@@ -69,7 +69,7 @@ function General(props) {
         let formData = new FormData();
         formData.append('icon', file);
         try {
-            let { data } = await axios.post('http://localhost:1337/icon/upload', formData, {
+            let { data } = await axios.post('/icon/upload', formData, {
                 headers: {
                     ...(getDefaultHeader()),
                     'Content-Type': 'multipart/form-data'
@@ -79,7 +79,7 @@ function General(props) {
                 }
             });
             console.log(data)
-            let newImageUri = 'http://localhost:1337/icon/' + data.uploadedFiles[0].id;
+            let newImageUri = '/icon/' + data.uploadedFiles[0].id;
             // TODO: Update project URI
             props.updateProject()
             setImageUri(newImageUri)
@@ -101,7 +101,7 @@ function General(props) {
             value = description;
         }
         try {
-            let { data } = await axios.put('http://localhost:1337/project/' + project.id, {
+            let { data } = await axios.put('/project/' + project.id, {
                 [field]: value
             }, {
                 headers: getDefaultHeader()

@@ -91,7 +91,7 @@ export default class MessageContainer extends react.Component {
     // TODO: add invite reverse scroll
     fetchMessages = async () => {
         try {
-            let { data } = await axios.get('http://localhost:1337/conversation/' + this.props.conversation.id, {
+            let { data } = await axios.get('/conversation/' + this.props.conversation.id, {
                 headers: getDefaultHeader(),
                 params: {
                     limit: 20,
@@ -112,7 +112,7 @@ export default class MessageContainer extends react.Component {
         if (this.state.body.replace(/ /g, "") === '') return;
 
         try {
-            let { data } = await axios.post('http://localhost:1337/message/' + this.props.conversation.recipient.id, {
+            let { data } = await axios.post('/message/' + this.props.conversation.recipient.id, {
                 body: this.state.body
             }, {
                 headers: getDefaultHeader()

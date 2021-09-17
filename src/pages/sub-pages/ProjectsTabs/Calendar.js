@@ -46,7 +46,7 @@ class App extends React.Component {
     fetchBugs = async () => {
         if (!this.props.project.id) return;
         try {
-            let { data } = await axios.get('http://localhost:1337/bug/all', {
+            let { data } = await axios.get('/bug/all', {
                 headers: getDefaultHeader(),
                 params: {
                     projectId: this.props.project.id

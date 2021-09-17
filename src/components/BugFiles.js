@@ -55,7 +55,7 @@ class BugDescription extends React.Component {
         formData.append('files', file);
         // handle uploading
         try {
-            let { data } = await axios.post('http://localhost:1337/file/', formData, {
+            let { data } = await axios.post('/file/', formData, {
                 headers: {
                     ...(getDefaultHeader()),
                     // 'x-auth-token': this.token,
@@ -89,7 +89,7 @@ class BugDescription extends React.Component {
             if (files[i].uid === file.uid) {
                 try {
 
-                    await axios.delete('http://localhost:1337/file/' + file.serverId, {
+                    await axios.delete('/file/' + file.serverId, {
                         headers: getDefaultHeader(),
                     })
 
@@ -159,7 +159,7 @@ class BugDescription extends React.Component {
                             size='small'
                             dataSource={this.state.files}
                             renderItem={item => <List.Item key={item.serverId}>
-                                <a href={"http://localhost:1337/file/" + item.serverId}>{item.name}</a>
+                                <a href={"/file/" + item.serverId}>{item.name}</a>
                             </List.Item>}
                         />
 

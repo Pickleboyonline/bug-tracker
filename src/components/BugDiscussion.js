@@ -43,7 +43,7 @@ class App extends React.Component {
 
     _handleUpdateComments = async () => {
         try {
-            let { data } = await axios.get('http://localhost:1337/comment', {
+            let { data } = await axios.get('/comment', {
                 headers: getDefaultHeader(),
                 params: {
                     bugId: this.props.bug.id
@@ -79,7 +79,7 @@ class App extends React.Component {
         this.setState({ submitting: true });
 
         try {
-            await axios.post('http://localhost:1337/comment/', {
+            await axios.post('/comment/', {
                 bugId: this.props.bug.id,
                 body: this.state.value
             }, {

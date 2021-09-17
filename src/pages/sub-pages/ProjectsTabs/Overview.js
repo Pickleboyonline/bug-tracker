@@ -72,7 +72,7 @@ class App extends React.Component {
 
     fetchStats = async () => {
         try {
-            let { data } = await axios.get('http://localhost:1337/project/stats/' + this.props.project.id, {
+            let { data } = await axios.get('/project/stats/' + this.props.project.id, {
                 headers: getDefaultHeader(),
             });
 

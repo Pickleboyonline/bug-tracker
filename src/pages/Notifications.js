@@ -66,7 +66,7 @@ class Notification extends React.Component {
      */
     dismissNotification = async (notificationId) => {
         try {
-            await axios.delete('http://localhost:1337/notification/' + notificationId, {
+            await axios.delete('/notification/' + notificationId, {
                 headers: getDefaultHeader()
             })
             this.fetchNotifications()
@@ -80,7 +80,7 @@ class Notification extends React.Component {
 
     dismissAllNotifications = async () => {
         try {
-            await axios.delete('http://localhost:1337/notification/all', {
+            await axios.delete('/notification/all', {
                 headers: getDefaultHeader()
             })
             this.fetchNotifications()
@@ -111,7 +111,7 @@ class Notification extends React.Component {
         const { page, pageSize } = this.state;
 
         try {
-            let { data } = await axios.get('http://localhost:1337/notification/all', {
+            let { data } = await axios.get('/notification/all', {
                 headers: getDefaultHeader(),
                 params: {
                     limit: pageSize,

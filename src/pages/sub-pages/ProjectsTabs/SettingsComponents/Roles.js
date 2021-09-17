@@ -60,7 +60,7 @@ export default class Roles extends react.Component {
     _handleUserSearch = async () => {
         const { search } = this.state;
         try {
-            let { data } = await axios.get('http://localhost:1337/user/search', {
+            let { data } = await axios.get('/user/search', {
                 params: {
                     query: search,
                     projectId: this.props.match.params.projectId,
@@ -127,7 +127,7 @@ export default class Roles extends react.Component {
         }
 
         try {
-            await axios.post('http://localhost:1337/role', {
+            await axios.post('/role', {
                 projectId: this.props.project.id,
                 title,
                 permissions: permissions.join(','),
@@ -151,7 +151,7 @@ export default class Roles extends react.Component {
 
     fetchRoles = async () => {
         try {
-            let { data: { roles } } = await axios.get('http://localhost:1337/role/all/' + this.props.project.id, {
+            let { data: { roles } } = await axios.get('/role/all/' + this.props.project.id, {
                 headers: getDefaultHeader()
             })
             console.log("Roles on fetch: ")
@@ -175,7 +175,7 @@ export default class Roles extends react.Component {
 
     deleteRole = async (roleId) => {
         try {
-            await axios.delete('http://localhost:1337/role/' + roleId, {
+            await axios.delete('/role/' + roleId, {
                 headers: getDefaultHeader()
             });
             this.fetchRoles()

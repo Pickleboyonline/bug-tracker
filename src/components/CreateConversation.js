@@ -18,7 +18,7 @@ export default class CreateConversation extends react.Component {
         let results;
         const { query } = this.state;
         try {
-            results = await axios.get('http://localhost:1337/user/search', {
+            results = await axios.get('/user/search', {
                 params: {
                     query: query
                 },
@@ -64,7 +64,7 @@ export default class CreateConversation extends react.Component {
         }
 
         try {
-            let { data } = await axios.post('http://localhost:1337/message/' + this.state.selectedMember, {
+            let { data } = await axios.post('/message/' + this.state.selectedMember, {
                 body: this.state.body
             }, {
                 headers: getDefaultHeader()

@@ -53,7 +53,7 @@ class App extends React.Component {
         var { page, pageSize, search } = this.state;
 
         try {
-            const { data } = await axios.get('http://localhost:1337/project/users/' + this.props.project.id, {
+            const { data } = await axios.get('/project/users/' + this.props.project.id, {
                 headers: getDefaultHeader(),
                 params: {
                     skip: (page - 1) * pageSize,
@@ -94,7 +94,7 @@ class App extends React.Component {
         const { selectedMembersToAdd } = this.state;
 
         try {
-            await axios.post('http://localhost:1337/project/member', {
+            await axios.post('/project/member', {
                 userEmails: selectedMembersToAdd,
                 projectId: this.props.project.id
             }, {
@@ -114,7 +114,7 @@ class App extends React.Component {
     searchMembers = async () => {
         const { query } = this.state;
         try {
-            let results = await axios.get('http://localhost:1337/user/search', {
+            let results = await axios.get('/user/search', {
                 params: {
                     query: query,
                     projectId: this.props.match.params.projectId,
@@ -149,7 +149,7 @@ class App extends React.Component {
     removeMember = async (userId) => {
 
         try {
-            await axios.delete('http://localhost:1337/project/member', {
+            await axios.delete('/project/member', {
                 headers: getDefaultHeader(),
                 data: {
                     projectId: this.props.project.id,

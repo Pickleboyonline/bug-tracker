@@ -187,7 +187,7 @@ class App extends React.Component {
         try {
             let uriProjectId = this.props.location.pathname.split('/');
             uriProjectId = uriProjectId[uriProjectId.length - 1]
-            let { data } = await axios.get('http://localhost:1337/announcement/', {
+            let { data } = await axios.get('/announcement/', {
                 headers: getDefaultHeader(),
                 params: {
                     projectId: uriProjectId,

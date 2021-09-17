@@ -19,7 +19,7 @@ const JoinProject = (props) => {
         let res;
 
         try {
-            res = await axios.post('http://localhost:1337/project/join', {
+            res = await axios.post('/project/join', {
                 projectId
             }, {
                 headers: getDefaultHeader()

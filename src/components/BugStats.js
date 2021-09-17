@@ -40,7 +40,7 @@ class BugStats extends React.Component {
     updateStatistic = async (field, value) => {
 
         try {
-            await axios.put('http://localhost:1337/bug/' + this.props.bugId, {
+            await axios.put('/bug/' + this.props.bugId, {
                 [field]: value
             }, {
                 headers: getDefaultHeader(),

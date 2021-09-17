@@ -45,7 +45,7 @@ class BugStats extends React.Component {
         if (search === '') search = undefined;
         // console.log(search)
         try {
-            let { data } = await axios.get('http://localhost:1337/bug/assignee', {
+            let { data } = await axios.get('/bug/assignee', {
                 headers: getDefaultHeader(),
                 params: {
                     bugId: this.props.bug.id,
@@ -77,7 +77,7 @@ class BugStats extends React.Component {
         let results;
         const { query } = this.state;
         try {
-            results = await axios.get('http://localhost:1337/user/search', {
+            results = await axios.get('/user/search', {
                 params: {
                     query: query,
                     projectId: this.props.match.params.projectId,
@@ -116,7 +116,7 @@ class BugStats extends React.Component {
     _handleAddMembers = async () => {
         const { selectedMembers } = this.state;
         try {
-            await axios.post('http://localhost:1337/bug/assignee', {
+            await axios.post('/bug/assignee', {
                 assignees: selectedMembers.join(','),
                 bugId: this.props.bug.id
             }, {

@@ -118,7 +118,7 @@ class App extends React.Component {
      */
     fetchConversations = async () => {
         try {
-            // let { data: { conversations } } = await axios.get('http://localhost:1337/conversation/all', {
+            // let { data: { conversations } } = await axios.get('/conversation/all', {
             //     headers: getDefaultHeader()
             // })
             let conversations = await bugg.Message.getConversations()

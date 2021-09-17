@@ -94,7 +94,7 @@ function Home(props) {
                                 projects.map((item) => {
                                     function getImageUri() {
                                         if (item.icon.id) {
-                                            return 'http://localhost:1337/icon/' + item.icon.id
+                                            return '/icon/' + item.icon.id
                                         } else {
                                             return ''
                                         }

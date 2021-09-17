@@ -22,7 +22,7 @@ export default class Notifications extends react.Component {
 
     getCurrentSetting = async () => {
         try {
-            const { data } = await axios.get('http://localhost:1337/notification-setting/' + this.props.project.id, {
+            const { data } = await axios.get('/notification-setting/' + this.props.project.id, {
                 headers: getDefaultHeader()
             })
             this.setState({
@@ -37,7 +37,7 @@ export default class Notifications extends react.Component {
 
     setCurrentSetting = async (checked) => {
         try {
-            await axios.put('http://localhost:1337/notification-setting/' + this.props.project.id, {
+            await axios.put('/notification-setting/' + this.props.project.id, {
                 recieveNotifications: checked
             }, {
                 headers: getDefaultHeader()
