@@ -2,6 +2,8 @@
  * Setup single sails socket instance
  */
 
+const { baseUrl } = require('../pages/config');
+
 
 
 function initilizeSocket() {
@@ -14,7 +16,7 @@ function initilizeSocket() {
     var io = sailsIOClient(socketIOClient);
     document.io = io
     // io.sails.autoConnect = false;
-    io.sails.url = 'http://localhost:1337';
+    io.sails.url = baseUrl;
     io.sails.rejectUnauthorized = false;
     io.sails.reconnection = true;
     io.sails.headers = {
@@ -22,7 +24,7 @@ function initilizeSocket() {
     };
 
     io.socket.on('connect', () => {
-        io.socket.post('http://localhost:1337/message/subscribe', {}, (res, jwr) => {
+        io.socket.post('/message/subscribe', {}, (res, jwr) => {
             console.log('Possibly Joined room')
         });
     });

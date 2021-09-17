@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import Dashboard from './pages/Dashboard';
 import './App.less';
-
+import axios from 'axios';
 
 class App extends React.Component {
   constructor(props) {
@@ -30,6 +30,7 @@ class App extends React.Component {
 
   render() {
     let isAuthed = (window.localStorage.getItem('token') !== null);
+    axios.defaults.baseURL = baseURL;
 
     return (
       <Router>
