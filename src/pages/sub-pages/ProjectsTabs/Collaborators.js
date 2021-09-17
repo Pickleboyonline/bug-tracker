@@ -7,10 +7,10 @@ import {
 import { withRouter } from 'react-router-dom'
 import axios from 'axios';
 import { DeleteOutlined } from '@ant-design/icons'
-
+import { getMe } from '../../../libraries/bugg';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
-import { getMe } from './../../../libraries/bugg'
 import { getDefaultHeader } from '../../config';
+
 const { Search } = Input;
 const { Option } = Select;
 

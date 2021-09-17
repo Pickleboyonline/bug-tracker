@@ -20,11 +20,9 @@ import {
 
 } from '@ant-design/icons';
 import axios from 'axios';
+import MediaQuery from 'react-responsive'
 import { logErrorMessage } from '../../libraries/network-error-handling';
 import { baseUrl, getDefaultHeader } from '../config';
-import MediaQuery from 'react-responsive'
-
-
 
 
 class App extends React.Component {
@@ -42,8 +40,6 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        // PubSub.join('selected-project').on('update', this._handleProjectUpdate);
-        // console.log(this.props.location)
         let id = this.props.location.pathname.split('/');
         id = id[id.length - 1];
         // console.log(id)

@@ -17,10 +17,8 @@ import {
 import axios from "axios";
 import ModifyRole from './../../../../components/ModifyRole'
 import { CirclePicker } from 'react-color'
+import { getDefaultHeader } from "../../../config"
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
-import { getDefaultHeader } from "../../../config";
-import { withRouter } from "react-router";
-
 
 const PERMISSIONS = {
     ALL: 'ALL',

@@ -9,8 +9,7 @@ import {
 import Dashboard from './pages/Dashboard';
 import './App.less';
 import axios from 'axios';
-
-const { baseUrl } = require('./pages/config')
+import { baseUrl } from './pages/config';
 
 class App extends React.Component {
   constructor(props) {

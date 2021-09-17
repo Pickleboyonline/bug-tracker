@@ -1,6 +1,6 @@
-const { getErrorMessage } = require('./../../network-error-handling');
-const axios = require('axios');
-const { getDefaultHeader, baseUrl } = require('./../../../pages/config');
+import axios from 'axios';
+import { getErrorMessage } from './../../network-error-handling'
+import { baseUrl, getDefaultHeader } from './../../../pages/config';
 
 function UserData(obj = {
     name: '',
@@ -120,11 +120,20 @@ const uploadUserIcon = async (formData) => {
     }
 }
 
-module.exports = {
+let obj = {
     getMe,
     updateUser,
     updatePassword,
     getUserIconUri,
     uploadUserIcon
 }
+
+export {
+    getMe,
+    updateUser,
+    updatePassword,
+    getUserIconUri,
+    uploadUserIcon
+};
+export default obj;
 

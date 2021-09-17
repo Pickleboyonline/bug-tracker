@@ -1,10 +1,10 @@
 import React from 'react';
 import Chart from 'chart.js/auto';
-import { Card, Statistic, Row, Col, Button, Space } from 'antd';
+import { Card, Statistic, Row, Col, Space } from 'antd';
 import axios from 'axios';
+import MediaQuery from 'react-responsive'
 import { logErrorMessage } from '../../../libraries/network-error-handling';
 import { getDefaultHeader } from '../../config';
-import MediaQuery from 'react-responsive'
 
 
 class App extends React.Component {

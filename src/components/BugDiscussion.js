@@ -10,8 +10,9 @@ import { Editor as DraftEditor } from 'react-draft-wysiwyg';
 import './../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
 import axios from 'axios';
-import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
+import { getErrorMessage } from '../libraries/network-error-handling';
+
 
 const { Title } = Typography;
 

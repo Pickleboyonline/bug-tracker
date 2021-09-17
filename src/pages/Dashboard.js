@@ -14,32 +14,17 @@ import Settings from './Settings';
 import Notifications from './Notifications';
 import Messages from './Messages';
 import axios from 'axios';
-import { getErrorMessage, logErrorMessage } from './../libraries/network-error-handling';
-import { addEventListener, reconfigToken, removeEventListener } from '../libraries/socket';
-import { baseUrl, getDefaultHeader } from './config';
 import MediaQuery from 'react-responsive';
 import DesktopNavBar from '../components/DesktopNavBar';
 import NavWelcomeHeader from '../components/NavWelcomeHeader';
 import MobileNavBar from '../components/MobileNavBar';
+import { getErrorMessage, logErrorMessage } from './../libraries/network-error-handling';
+import { baseUrl, getDefaultHeader } from './config';
+import bugg from '../libraries/bugg';
+import { addEventListener, removeEventListener, reconfigToken } from './../libraries/socket';
 
-const bugg = require('../libraries/bugg')
-const PubSub = require('./../PubSub');
 
-const menu = (props) => (
-    <Menu style={{
-        width: 150,
-    }}>
-        <Menu.Item
-            onClick={props.logout}
-            style={{
-                color: 'red'
-            }}
-            key="0">
-            Logout
-        </Menu.Item>
 
-    </Menu>
-);
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -77,11 +62,8 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        PubSub.join('project').on('update', this.updateProjects);
         this.updateProjects()
-        // this.connectToSocket();
         this.getWelcomeMessage();
-        // this.handleErrorTest()
         reconfigToken()
         this.fetchUnreadNotifications()
         addEventListener('new-notification', this.onRecieveNotitification)

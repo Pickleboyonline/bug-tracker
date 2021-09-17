@@ -20,17 +20,18 @@ import {
     withRouter,
 
 } from "react-router-dom";
-
 import { UserOutlined } from '@ant-design/icons';
 import CreateAnnouncement from '../../../components/CreateAnnouncement';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
+import MediaQuery from 'react-responsive';
+import bugg from '../../../libraries/bugg';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
 import { getDefaultHeader } from '../../config';
-import MediaQuery from 'react-responsive';
 
-const bugg = require('../../../libraries/bugg')
+
+
 const { Search } = Input;
 
 function Message(props) {

@@ -21,13 +21,15 @@ import {
 } from '@ant-design/icons';
 import ViewBug from './ViewBug';
 import axios from 'axios';
-import moment from 'moment';
-import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
-import { baseUrl, getDefaultHeader, staticServerUrl } from '../../config';
 import MediaQuery from 'react-responsive'
-import BugList from './../../../components/BugList'
+import BugList from './../../../components/BugList';
+import bugg from '../../../libraries/bugg';
+import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
+import { getDefaultHeader, staticServerUrl } from '../../config';
+
 const { Search } = Input;
-const bugg = require('./../../../libraries/bugg')
+
+
 
 const selectedColor = '#1890ff';
 

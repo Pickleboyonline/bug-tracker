@@ -1,10 +1,9 @@
 /**
  * Setup single sails socket instance
  */
-
-const { baseUrl } = require('../pages/config');
-
-
+import { baseUrl } from '../pages/config'
+// import { Socket } from 'socket.io-client';
+// import SailsIOJS from 'sails.io.js';
 
 function initilizeSocket() {
     if (document.io) return;
@@ -14,7 +13,7 @@ function initilizeSocket() {
     // Instantiate the socket client (`io`)
     // (for now, you must explicitly pass in the socket.io client when using this library from Node.js)
     var io = sailsIOClient(socketIOClient);
-    document.io = io
+    document.io = io;
     // io.sails.autoConnect = false;
     io.sails.url = baseUrl;
     io.sails.rejectUnauthorized = false;
@@ -71,10 +70,13 @@ const connectSocket = () => {
     io.socket.reconnect();
 }
 
-module.exports = {
+let obj = {
     addEventListener,
     removeEventListener,
     reconfigToken,
     disconnectSocket,
     connectSocket
 }
+
+export { addEventListener, reconfigToken, removeEventListener };
+export default obj;

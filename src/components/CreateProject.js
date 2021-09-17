@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Input, Space, Button, Select, Form, Upload, notification } from 'antd';
 import axios from 'axios';
-import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
-const PubSub = require('./../PubSub');
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 const { Option } = Select;
 let formData = new FormData();

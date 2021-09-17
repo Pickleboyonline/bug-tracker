@@ -4,12 +4,14 @@ import axios
     from "axios";
 
 import { CirclePicker } from 'react-color';
-import { getErrorMessage } from "../libraries/network-error-handling";
-import { getDefaultHeader } from "../pages/config";
 
 import {
     withRouter
 } from "react-router-dom";
+import { getDefaultHeader } from '../pages/config';
+import { getErrorMessage } from '../libraries/network-error-handling';
+
+
 const PERMISSIONS = {
     ALL: 'ALL',
     MODIFY_GENERAL: 'MODIFY_GENERAL',

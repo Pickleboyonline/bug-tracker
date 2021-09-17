@@ -4,8 +4,8 @@ import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import axios from 'axios';
-import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 function CreateAnnouncement(props) {
     const [editorState, setEditorState] = useState(EditorState.createEmpty())

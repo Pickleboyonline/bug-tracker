@@ -15,9 +15,9 @@ import {
 import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
-import { getErrorMessage } from '../libraries/network-error-handling';
-import { getDefaultHeader } from '../pages/config';
 import MediaQuery from 'react-responsive';
+import { getDefaultHeader } from '../pages/config';
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 const { Option } = Select;
 

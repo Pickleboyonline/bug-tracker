@@ -16,8 +16,9 @@ import MessageContainer from '../components/MessageContainer';
 import CreateConversation from '../components/CreateConversation';
 import { logErrorMessage } from '../libraries/network-error-handling';
 import { addEventListener, removeEventListener } from '../libraries/socket';
+import bugg from './../libraries/bugg';
 
-const bugg = require('./../libraries/bugg')
+
 
 class App extends React.Component {
     constructor(props) {

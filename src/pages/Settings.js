@@ -8,13 +8,12 @@ import {
 
 
 } from 'antd';
-import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
-import { reconfigToken } from '../libraries/socket';
 import { message } from 'antd';
 import MediaQuery from 'react-responsive';
+import bugg, { getMe } from '../libraries/bugg';
+import { reconfigToken } from '../libraries/socket';
+import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 
-const bugg = require('../libraries/bugg')
-const { getMe } = bugg;
 const data = [
     'General',
 

@@ -11,8 +11,8 @@ import {
 } from '@ant-design/icons';
 import { Typography } from 'antd';
 import axios from 'axios';
+import { getDefaultHeader, baseUrl } from '../pages/config';
 import { getErrorMessage } from '../libraries/network-error-handling';
-import { baseUrl, getDefaultHeader } from '../pages/config';
 
 const { Title } = Typography;
 const { Dragger } = Upload;

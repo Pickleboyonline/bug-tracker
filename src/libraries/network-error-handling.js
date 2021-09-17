@@ -49,9 +49,15 @@ const logErrorMessage = (error) => {
     console.error('Error: ' + getErrorMessage(error))
 }
 
-module.exports = {
+let obj = {
     getErrorMessage,
     logErrorMessage
 }
 
+export {
+    getErrorMessage,
+    logErrorMessage
+};
+
+export default obj;
 

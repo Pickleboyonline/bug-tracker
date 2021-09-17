@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Redirect,
     // Link
@@ -7,10 +7,12 @@ import { Card } from 'antd';
 import { Typography } from 'antd';
 import { Form, Input, Button, notification } from 'antd';
 import axios from 'axios';
-import { getErrorMessage } from '../libraries/network-error-handling';
 import { useMediaQuery } from 'react-responsive'
+
+import { getErrorMessage } from '../libraries/network-error-handling';
 import { reconfigToken } from '../libraries/socket';
 import { baseUrl } from './config';
+
 
 const { Title } = Typography;
 

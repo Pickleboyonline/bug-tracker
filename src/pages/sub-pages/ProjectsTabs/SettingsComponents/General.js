@@ -10,14 +10,13 @@ import {
     notification
 } from 'antd';
 import axios from "axios";
-import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 import { useHistory } from "react-router";
-import config, { baseUrl, getDefaultHeader } from "../../../config";
 import {
     withRouter
 } from "react-router-dom";
-
-const bugg = require('./../../../../libraries/bugg')
+import config, { baseUrl, getDefaultHeader } from "../../../config"
+import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
+import bugg from "./../../../../libraries/bugg";
 
 function General(props) {
 

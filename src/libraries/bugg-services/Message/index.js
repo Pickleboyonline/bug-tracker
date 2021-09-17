@@ -1,6 +1,6 @@
-const { getErrorMessage } = require('./../../network-error-handling');
-const axios = require('axios');
-const { getDefaultHeader, baseUrl } = require('./../../../pages/config');
+import axios from 'axios';
+import { getDefaultHeader, baseUrl } from '../../../pages/config';
+import { getErrorMessage } from '../../network-error-handling';
 
 
 
@@ -37,9 +37,8 @@ const readAllMessages = async (conversationId) => {
     }
 }
 
-
-module.exports = {
+export default ({
     getConversations,
     readAllMessages
-}
+})
 

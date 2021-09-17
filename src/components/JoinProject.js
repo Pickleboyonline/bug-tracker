@@ -3,13 +3,9 @@ import {
     Button, Input
     , Space, notification
 } from 'antd'
-
 import axios from 'axios';
-
-import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
-
-
+import { getErrorMessage } from '../libraries/network-error-handling';
 
 const JoinProject = (props) => {
     const [projectId, setProjectId] = useState('');
@@ -36,9 +32,7 @@ const JoinProject = (props) => {
         notification.success({
             message: 'You have joined project ' + res.data.project.title + '!'
         })
-        //PubSub.join('project').emit('update');
         props.updateProjects()
-
         setProjectId('');
         props.closeFunc();
 

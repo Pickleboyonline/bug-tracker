@@ -1,8 +1,6 @@
-const { getErrorMessage } = require('./../../network-error-handling');
-const axios = require('axios');
-const { getDefaultHeader, baseUrl } = require('./../../../pages/config');
-
-
+import axios from 'axios';
+import { getDefaultHeader, baseUrl } from './../../../pages/config';
+import { getErrorMessage } from './../../network-error-handling';
 
 const throwError = err => {
     throw new Error(getErrorMessage(err))
@@ -36,7 +34,7 @@ const deleteBug = async (bugId) => {
     }
 }
 
-module.exports = {
+export default {
     getBug,
     deleteBug
 }

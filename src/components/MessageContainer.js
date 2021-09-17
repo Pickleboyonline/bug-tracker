@@ -12,10 +12,11 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios';
 import anime from 'animejs';
-import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
-import { addEventListener, removeEventListener } from '../libraries/socket';
 import { getDefaultHeader } from '../pages/config';
-const bugg = require('../libraries/bugg')
+import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
+import bugg from '../libraries/bugg'
+import { addEventListener, removeEventListener } from './../libraries/socket';
+
 
 function Message(props) {
     if (props.recipient)

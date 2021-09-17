@@ -1,8 +1,8 @@
 import react from "react";
 import { List, message, Switch } from 'antd'
 import axios from "axios";
+import { getDefaultHeader } from "../../../config"
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
-import { getDefaultHeader } from "../../../config";
 
 
 export default class Notifications extends react.Component {

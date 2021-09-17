@@ -6,12 +6,12 @@ import {
 import axios from 'axios';
 import { MailOutlined } from '@ant-design/icons'
 import moment from 'moment';
-import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
-import { getDefaultHeader } from './config';
-import { addEventListener, removeEventListener } from '../libraries/socket';
 import {
     withRouter
 } from "react-router-dom";
+import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
+import { getDefaultHeader } from './config';
+import { addEventListener, removeEventListener } from '../libraries/socket';
 
 class Notification extends React.Component {
 
