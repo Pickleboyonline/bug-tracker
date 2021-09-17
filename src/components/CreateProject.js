@@ -173,7 +173,7 @@ export function CreateProject(props) {
                         <Upload
                             name="avatar"
                             listType="picture-card"
-
+                            accept='image/*'
                             showUploadList={false}
                             // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                             beforeUpload={beforeUpload}

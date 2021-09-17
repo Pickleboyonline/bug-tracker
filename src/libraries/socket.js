@@ -30,8 +30,6 @@ function initilizeSocket() {
     });
 
 
-
-
 }
 initilizeSocket()
 
@@ -57,8 +55,26 @@ const reconfigToken = () => {
     io.socket.reconnect();
 }
 
+
+const disconnectSocket = () => {
+    const { io } = document;
+    if (!io.socket.isConnected()) return;
+    io.socket.disconnect();
+}
+
+const connectSocket = () => {
+    const { io } = document;
+    if (io.socket.isConnected() || io.socket.isConnecting()) return;
+    io.sails.headers = {
+        'x-auth-token': window.localStorage.getItem('token')
+    };
+    io.socket.reconnect();
+}
+
 module.exports = {
     addEventListener,
     removeEventListener,
-    reconfigToken
+    reconfigToken,
+    disconnectSocket,
+    connectSocket
 }

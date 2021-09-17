@@ -23,13 +23,15 @@ import ViewBug from './ViewBug';
 import axios from 'axios';
 import moment from 'moment';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
-import { baseUrl, getDefaultHeader } from '../../config';
-import bugg from './../../../libraries/bugg'
+import { baseUrl, getDefaultHeader, staticServerUrl } from '../../config';
 import MediaQuery from 'react-responsive'
 import BugList from './../../../components/BugList'
 const { Search } = Input;
+const bugg = require('./../../../libraries/bugg')
 
 const selectedColor = '#1890ff';
+
+
 
 const menu = (props) => (
     <Menu
@@ -339,20 +341,20 @@ class App extends React.Component {
                                 }}
                                 shareBug={async (e, item) => {
                                     e.preventDefault()
-                                    await navigator.clipboard.writeText('http://localhost:3000' + '/dashboard/projects/' + item.project + '?action=OPEN_BUG&bugId=' + item.id);
-                                    message.success('Link copied to clipboard!')
+                                    let textToCopy = staticServerUrl + '/dashboard/projects/' + item.project + '?action=OPEN_BUG&bugId=' + item.id;
+                                    if (navigator.clipboard) {
+                                        await navigator.clipboard.writeText(textToCopy);
+                                        message.success('Link copied to clipboard!')
+                                    } else {
+                                        window.Clipboard.copy(textToCopy)
+                                        message.success('Link copied to clipboard!')
+                                    }
 
                                 }}
                                 deleteBug={this.deleteBug}
 
                             />
-                            {/* <Pagination
-                                style={{ float: 'right', marginTop: 20 }}
-                                current={this.state.page}
-                                defaultCurrent={1} total={this.state.totalBugCount}
-                                onChange={this._handlePaginationChange}
-                            // pageSizeOptions={[5, 50, 100]}
-                            /> */}
+
                         </div>
                         <Drawer
                             width={isMobile ? '100%' : 800}
@@ -376,6 +378,53 @@ class App extends React.Component {
         );
     }
 }
+
+// Safari copy to clipboard fix
+window.Clipboard = (function (window, document, navigator) {
+    var textArea,
+        copy;
+
+    function isOS() {
+        return navigator.userAgent.match(/ipad|iphone/i);
+    }
+
+    function createTextArea(text) {
+        textArea = document.createElement('textArea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+    }
+
+    function selectText() {
+        var range,
+            selection;
+
+        if (isOS()) {
+            range = document.createRange();
+            range.selectNodeContents(textArea);
+            selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            textArea.setSelectionRange(0, 999999);
+        } else {
+            textArea.select();
+        }
+    }
+
+    function copyToClipboard() {
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
+
+    copy = function (text) {
+        createTextArea(text);
+        selectText();
+        copyToClipboard();
+    };
+
+    return {
+        copy: copy
+    };
+})(window, document, navigator);
 
 
 export default withRouter(App);

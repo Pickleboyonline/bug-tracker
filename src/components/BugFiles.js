@@ -12,7 +12,7 @@ import {
 import { Typography } from 'antd';
 import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
-import { getDefaultHeader } from '../pages/config';
+import { baseUrl, getDefaultHeader } from '../pages/config';
 
 const { Title } = Typography;
 const { Dragger } = Upload;
@@ -159,7 +159,7 @@ class BugDescription extends React.Component {
                             size='small'
                             dataSource={this.state.files}
                             renderItem={item => <List.Item key={item.serverId}>
-                                <a href={"/file/" + item.serverId}>{item.name}</a>
+                                <a href={baseUrl + "/file/" + item.serverId}>{item.name}</a>
                             </List.Item>}
                         />
 

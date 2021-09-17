@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Redirect,
     // Link
@@ -118,7 +118,7 @@ const AuthenticationHooks = () => {
                 }}>
                     Bugg
                 </h1>
-                <p style={{ color: 'white', marginBottom: 30, opacity: .7 }}>A simply bug tracker
+                <p style={{ color: 'white', marginBottom: 30, opacity: .7 }}>A simple bug tracker
                 </p>
             </div>
 

@@ -21,7 +21,7 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios';
 import { logErrorMessage } from '../../libraries/network-error-handling';
-import { getDefaultHeader } from '../config';
+import { baseUrl, getDefaultHeader } from '../config';
 import MediaQuery from 'react-responsive'
 
 
@@ -98,7 +98,7 @@ class App extends React.Component {
                 this.setState({
                     title: data.project.title,
                     project: data.project,
-                    imageUrl: '/icon/' + (data.project.icon && data.project.icon[0] ? data.project.icon[0].id : '')
+                    imageUrl: baseUrl + '/icon/' + (data.project.icon && data.project.icon[0] ? data.project.icon[0].id : '')
                 });
             }
 
@@ -173,6 +173,7 @@ class App extends React.Component {
 
 
                             <Menu
+                                overflowedIndicator='More'
                                 style={{
                                     marginBottom: 20,
                                     marginTop: 20,

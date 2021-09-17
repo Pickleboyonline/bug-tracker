@@ -28,10 +28,9 @@ import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
 import { getDefaultHeader } from '../../config';
-import bugg from '../../../libraries/bugg';
 import MediaQuery from 'react-responsive';
-import { returnStatement } from '@babel/types';
 
+const bugg = require('../../../libraries/bugg')
 const { Search } = Input;
 
 function Message(props) {

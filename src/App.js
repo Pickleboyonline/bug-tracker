@@ -10,6 +10,8 @@ import Dashboard from './pages/Dashboard';
 import './App.less';
 import axios from 'axios';
 
+const { baseUrl } = require('./pages/config')
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -30,8 +32,7 @@ class App extends React.Component {
 
   render() {
     let isAuthed = (window.localStorage.getItem('token') !== null);
-    axios.defaults.baseURL = baseURL;
-
+    axios.defaults.baseURL = baseUrl;
     return (
       <Router>
         {

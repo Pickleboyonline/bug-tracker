@@ -17,11 +17,12 @@ import axios from 'axios';
 import { getErrorMessage, logErrorMessage } from './../libraries/network-error-handling';
 import { addEventListener, reconfigToken, removeEventListener } from '../libraries/socket';
 import { baseUrl, getDefaultHeader } from './config';
-import bugg from '../libraries/bugg';
 import MediaQuery from 'react-responsive';
 import DesktopNavBar from '../components/DesktopNavBar';
 import NavWelcomeHeader from '../components/NavWelcomeHeader';
 import MobileNavBar from '../components/MobileNavBar';
+
+const bugg = require('../libraries/bugg')
 const PubSub = require('./../PubSub');
 
 const menu = (props) => (

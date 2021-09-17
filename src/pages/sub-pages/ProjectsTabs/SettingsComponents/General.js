@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 import { useHistory } from "react-router";
-import config, { getDefaultHeader } from "../../../config";
+import config, { baseUrl, getDefaultHeader } from "../../../config";
 import {
     withRouter
 } from "react-router-dom";
@@ -44,7 +44,7 @@ function General(props) {
                 if (data.project) {
                     console.log(data.project)
                     setProject(data.project)
-                    setImageUri('/icon/' + data.project.icon[0].id)
+                    setImageUri(baseUrl + '/icon/' + data.project.icon[0].id)
                     setTitle(data.project.title);
                     setDescription(data.project.description)
                 }
@@ -79,7 +79,7 @@ function General(props) {
                 }
             });
             console.log(data)
-            let newImageUri = '/icon/' + data.uploadedFiles[0].id;
+            let newImageUri = baseUrl + '/icon/' + data.uploadedFiles[0].id;
             // TODO: Update project URI
             props.updateProject()
             setImageUri(newImageUri)
@@ -207,7 +207,7 @@ function General(props) {
                     <Upload
                         name="avatar"
                         listType="picture-card"
-
+                        accept='image/*'
                         showUploadList={false}
                         // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                         beforeUpload={beforeUpload}

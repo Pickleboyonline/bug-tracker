@@ -15,8 +15,7 @@ import anime from 'animejs';
 import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import { addEventListener, removeEventListener } from '../libraries/socket';
 import { getDefaultHeader } from '../pages/config';
-import bugg from '../libraries/bugg';
-
+const bugg = require('../libraries/bugg')
 
 function Message(props) {
     if (props.recipient)

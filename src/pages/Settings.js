@@ -7,14 +7,14 @@ import {
     Upload,
 
 
-} from 'antd'
-import bugg, { getMe } from '../libraries/bugg';
+} from 'antd';
 import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import { reconfigToken } from '../libraries/socket';
 import { message } from 'antd';
-import MediaQuery from 'react-responsive'
+import MediaQuery from 'react-responsive';
 
-
+const bugg = require('../libraries/bugg')
+const { getMe } = bugg;
 const data = [
     'General',
 
@@ -221,7 +221,7 @@ class Settings extends React.Component {
                         <Upload
                             name="avatar"
                             listType="picture-card"
-
+                            accept='image/*'
                             showUploadList={false}
 
                             beforeUpload={this.beforeUpload}

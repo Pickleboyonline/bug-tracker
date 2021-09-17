@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import JoinProject from './JoinProject';
 import { useMediaQuery } from 'react-responsive'
+import { baseUrl } from '../pages/config';
 
 
 
@@ -94,7 +95,7 @@ function Home(props) {
                                 projects.map((item) => {
                                     function getImageUri() {
                                         if (item.icon.id) {
-                                            return '/icon/' + item.icon.id
+                                            return baseUrl + '/icon/' + item.icon.id
                                         } else {
                                             return ''
                                         }
