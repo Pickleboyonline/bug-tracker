@@ -6,6 +6,8 @@ import {
 } from 'antd';
 import { withRouter } from 'react-router-dom'
 import axios from 'axios';
+import { DeleteOutlined } from '@ant-design/icons'
+
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
 import { getMe } from './../../../libraries/bugg'
 import { getDefaultHeader } from '../../config';
@@ -90,7 +92,7 @@ class App extends React.Component {
 
     addMembers = async () => {
         const { selectedMembersToAdd } = this.state;
-        const { TOKEN } = this;
+
         try {
             await axios.post('http://localhost:1337/project/member', {
                 userEmails: selectedMembersToAdd,
@@ -114,7 +116,9 @@ class App extends React.Component {
         try {
             let results = await axios.get('http://localhost:1337/user/search', {
                 params: {
-                    query: query
+                    query: query,
+                    projectId: this.props.match.params.projectId,
+                    isIn: false
                 },
                 headers: getDefaultHeader()
             })
@@ -177,12 +181,24 @@ class App extends React.Component {
     }
 
     render() {
+        const { isMobile } = this.props;
+
         return (
-            <div>
-                <Space style={{
-                    marginBottom: 20
+            <div
+                style={{
+
+                    marginRight: isMobile ? 10 : 64
+                }}
+            >
+                <div style={{
+                    marginBottom: 20,
+                    gap: 6,
+                    display: 'flex',
+                    flexWrap: 'wrap'
                 }}>
-                    <Search placeholder="search"
+                    <Search
+                        style={{ width: 200 }}
+                        placeholder="search"
                         value={this.state.search}
                         onChange={(e) => this.updateSearch(e.target.value)}
                         onSearch={this.updateSearch} />
@@ -191,7 +207,7 @@ class App extends React.Component {
                         type='primary'>
                         Add New Member
                     </Button>
-                </Space>
+                </div>
 
                 <List
 
@@ -204,7 +220,7 @@ class App extends React.Component {
                     bordered
                     dataSource={this.state.members}
                     style={{
-                        width: 900
+                        maxWidth: 900
                     }}
                     renderItem={item => (
                         <List.Item
@@ -218,7 +234,13 @@ class App extends React.Component {
                                 >
                                     <Button
                                         // onClick={() => this.setState({ confirmVisible: true })}
-                                        danger>Remove</Button>
+
+                                        {
+                                        ...(isMobile ? {
+                                            icon: <DeleteOutlined />
+                                        } : {})
+                                        }
+                                        danger>{isMobile ? '' : 'Remove'}</Button>
                                 </Popconfirm>)
 
                             ]}

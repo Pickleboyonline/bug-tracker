@@ -52,8 +52,9 @@ export default class Notifications extends react.Component {
     }
 
     render() {
+        const { isMobile } = this.props
         return <div style={{
-            width: 500
+            width: isMobile ? 'unset' : 500 //500
         }}>
             <List
                 // header={<div>Header</div>}

@@ -13,8 +13,13 @@ import axios from "axios";
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 import { useHistory } from "react-router";
 import config, { getDefaultHeader } from "../../../config";
+import {
+    withRouter
+} from "react-router-dom";
 
-export default function General(props) {
+const bugg = require('./../../../../libraries/bugg')
+
+function General(props) {
 
     const initializeComponent = () => {
 
@@ -51,7 +56,7 @@ export default function General(props) {
         retreiveProject()
 
     }
-    useEffect(initializeComponent, [props.project.id])
+    useEffect(initializeComponent, [props.project])
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [imageUri, setImageUri] = useState('');
@@ -133,6 +138,18 @@ export default function General(props) {
 
 
     useEffect(initializeComponent, [])
+
+    const leaveProject = async () => {
+        let projectId = props.match.params.projectId;
+        try {
+
+            await bugg.Project.leaveProject(projectId);
+            props.history.push('/dashboard')
+            message.success('Left project')
+        } catch (e) {
+            message.error('Could not leave project: ' + getErrorMessage(e))
+        }
+    }
 
 
     const settings = [
@@ -216,6 +233,17 @@ export default function General(props) {
             )
         },
         {
+            title: 'Leave Project?',
+            reactNode: (
+                <Popconfirm
+                    title="Are you sure?"
+                    onConfirm={leaveProject}
+                >
+                    <Button danger>Leave</Button>
+                </Popconfirm>
+            )
+        },
+        {
             title: 'Delete Project?',
             reactNode: (
                 <Popconfirm
@@ -237,6 +265,7 @@ export default function General(props) {
             }}
             dataSource={settings}
             bordered
+
             renderItem={(item) => <List.Item
                 key={item.title}
                 extra={[item.reactNode]}
@@ -252,3 +281,5 @@ export default function General(props) {
     </div >
     )
 }
+
+export default withRouter(General)

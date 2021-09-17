@@ -13,7 +13,7 @@ import axios from 'axios';
 import ViewBug from './../ProjectsTabs/ViewBug';
 import { logErrorMessage } from '../../../libraries/network-error-handling';
 import { getDefaultHeader } from '../../config';
-
+import MediaQuery from 'react-responsive';
 
 
 class App extends React.Component {
@@ -162,11 +162,13 @@ class App extends React.Component {
 
     render() {
         return (
-            <div>
-                <div style={{
-                    width: 1000
-                }}>
-                    <style>{`
+            <MediaQuery maxWidth={800}>
+                {(isMobile) =>
+                    <div>
+                        <div style={{
+                            marginRight: isMobile ? 10 : 64
+                        }}>
+                            <style>{`
                     .events {
                         margin: 0;
                         padding: 0;
@@ -187,57 +189,59 @@ class App extends React.Component {
                         font-size: 28px;
                       }
                     `}</style>
-                    <Space>
-                        {/* <Button
+                            <Space>
+                                {/* <Button
                             
                             onClick={() => this.setState({ createNewEvent: !this.state.createNewEvent })}>
                             Add Event
                         </Button> */}
-                        <Button
-                            type='primary'
-                            onClick={() => this.setState({ selectedDate: moment() })}
-                        >
-                            Today
-                        </Button>
-                    </Space>
-                    <Calendar
-                        value={this.state.selectedDate}
-                        onSelect={(date) => this.setState({ selectedDate: date })}
-                        dateCellRender={this.dateCellRender}
-                    />
-                    <Modal
-                        visible={this.state.createNewEvent}
-                        onOk={() => this.setState({ createNewEvent: !this.state.createNewEvent })}
-                        onCancel={() => this.setState({ createNewEvent: !this.state.createNewEvent })}
-                        title="Create New Event"
-                    >
+                                <Button
+                                    type='primary'
+                                    onClick={() => this.setState({ selectedDate: moment() })}
+                                >
+                                    Today
+                                </Button>
+                            </Space>
+                            <Calendar
+                                value={this.state.selectedDate}
+                                onSelect={(date) => this.setState({ selectedDate: date })}
+                                dateCellRender={this.dateCellRender}
+                            />
+                            <Modal
+                                visible={this.state.createNewEvent}
+                                onOk={() => this.setState({ createNewEvent: !this.state.createNewEvent })}
+                                onCancel={() => this.setState({ createNewEvent: !this.state.createNewEvent })}
+                                title="Create New Event"
+                            >
 
-                    </Modal>
-                    <Drawer
-                        width={800}
-                        title="View Date"
-                        placement="right"
-                        closable={true}
-                        onClose={() => this.setState({ toggleDrawer: false })}
-                        visible={this.state.toggleDrawer}
-                    >
-                        hey
-                    </Drawer>
+                            </Modal>
+                            <Drawer
+                                width={800}
+                                title="View Date"
+                                placement="right"
+                                closable={true}
+                                onClose={() => this.setState({ toggleDrawer: false })}
+                                visible={this.state.toggleDrawer}
+                            >
+                                hey
+                            </Drawer>
 
-                    <Drawer
-                        width={800}
-                        title={this.state.selectedBug.title}
-                        placement="right"
-                        closable={true}
-                        onClose={this._onDrawerClose}
-                        visible={this.state.toggleDrawer}
-                        destroyOnClose
-                    >
-                        <ViewBug bug={this.state.selectedBug} />
-                    </Drawer>
-                </div>
+                            <Drawer
+                                width={isMobile ? '100%' : 800}
+                                title={this.state.selectedBug.title}
+                                placement="right"
+                                closable={true}
+                                onClose={this._onDrawerClose}
+                                visible={this.state.toggleDrawer}
+                                destroyOnClose
+                            >
+                                <ViewBug bug={this.state.selectedBug} />
+                            </Drawer>
+                        </div>
 
-            </div>
+                    </div>
+                }
+            </MediaQuery>
         );
     }
 }

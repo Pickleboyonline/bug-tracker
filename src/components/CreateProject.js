@@ -76,9 +76,11 @@ export function CreateProject(props) {
                 message: 'project was created'
             })
             form.resetFields();
-            props.closeFunc()
-            PubSub.join('project').emit('update');
+            props.updateProjects()
             setImageUri('')
+            props.closeFunc()
+
+
         }
 
     }

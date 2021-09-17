@@ -13,7 +13,8 @@ import {
     Modal,
 
     Spin,
-    notification
+    notification,
+    Drawer
 } from 'antd';
 import {
     withRouter,
@@ -28,9 +29,13 @@ import moment from 'moment';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
 import { getDefaultHeader } from '../../config';
 import bugg from '../../../libraries/bugg';
+import MediaQuery from 'react-responsive';
+import { returnStatement } from '@babel/types';
+
 const { Search } = Input;
 
 function Message(props) {
+    if (props.announcement === null) return null;
     return (<><div style={{
         display: 'inline-flex',
         alignItems: 'center'
@@ -246,51 +251,49 @@ class App extends React.Component {
 
     render() {
         return (
-            <div>
+            <MediaQuery maxWidth={800}>
+                {(isMobile) =>
+                    <div>
 
-                <Modal
-                    title="Create New Announcement"
-                    visible={this.state.createAnnouncement}
-                    destroyOnClose
-                    footer={null}
-                    width={800}
-                    onCancel={() => this.toggleState('createAnnouncement')}
-                    onOk={() => this.toggleState('createAnnouncement')}>
-                    <CreateAnnouncement
-                        project={this.props.project}
-                        closeModal={() => this.toggleState('createAnnouncement')}
-                        updateList={() => this.fetchAndSetAnnouncements(true)}
-                    />
-                </Modal>
-                <Space style={{
-                    marginBottom: 20
-                }}>
-                    <Button
-                        onClick={() => this.toggleState('createAnnouncement')}
-                        type='primary'>
-                        New Announcement
-                    </Button>
-                    <Button
-                        onClick={() => this.fetchAndSetAnnouncements(true)}
-                    >
-                        Refresh
-                    </Button>
-                    <Search placeholder="search"
-                        onChange={(e) => this.onSearch(e.target.value)}
-                        onSearch={() => alert('hey')} style={{ width: 200 }} />
-                    {/* <Button>
-                        Mark All as Read
-                    </Button> */}
-                    {/* 
-                    <Dropdown overlay={menu}>
+                        <Modal
+                            title="Create New Announcement"
+                            visible={this.state.createAnnouncement}
+                            destroyOnClose
+                            footer={null}
+                            style={{
+                                width: isMobile ? '90%' : 800
+                            }}
+                            //width={800}
+                            onCancel={() => this.toggleState('createAnnouncement')}
+                            onOk={() => this.toggleState('createAnnouncement')}>
+                            <CreateAnnouncement
+                                project={this.props.project}
+                                closeModal={() => this.toggleState('createAnnouncement')}
+                                updateList={() => this.fetchAndSetAnnouncements(true)}
+                            />
+                        </Modal>
+                        <div style={{
+                            marginBottom: 20,
+                            gap: 6,
+                            display: 'flex',
+                            flexWrap: 'wrap'
+                        }}>
+                            <Button
+                                onClick={() => this.toggleState('createAnnouncement')}
+                                type='primary'>
+                                New Announcement
+                            </Button>
+                            <Button
+                                onClick={() => this.fetchAndSetAnnouncements(true)}
+                            >
+                                Refresh
+                            </Button>
+                            <Search placeholder="search"
+                                onChange={(e) => this.onSearch(e.target.value)}
+                                onSearch={() => alert('hey')} style={{ width: 200 }} />
+                        </div>
 
-                        <Button>
-                            Sort By <DownOutlined />
-                        </Button>
-                    </Dropdown> */}
-                </Space>
-                <br />
-                <style>{`
+                        <style>{`
 .bugg-list-item-button-321312312:hover {
     background-color: rgb(0 0 0 / 5%);
     cursor: pointer;
@@ -299,92 +302,93 @@ class App extends React.Component {
     background-color: white;
 }
 `}</style>
-                <div style={{
-                    display: 'inline-flex'
+                        <div style={{
+                            display: isMobile ? 'flex' : 'inline-flex',
+                            flexDirection: isMobile ? 'column' : 'unset',
+                            marginRight: isMobile ? 10 : 'unset'
+                        }}>
+                            <div
+                                style={{
+                                    borderColor: 'rgba(0,0,0,.2)',
+                                    // backgroundColor: 'rgba(0,0,0,.1)',
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    borderRadius: 5,
+                                    width: isMobile ? 'unset' : 360,
+                                    height: 600,
+                                    overflowY: 'auto',
+                                    overflowClipBox: 'content-box'
+                                }}
+                            >
 
-                }}>
-                    <div
-                        style={{
-                            borderColor: 'rgba(0,0,0,.2)',
-                            // backgroundColor: 'rgba(0,0,0,.1)',
-                            borderStyle: 'solid',
-                            borderWidth: 1,
-                            borderRadius: 5,
-                            width: 360,
-                            height: 600,
-                            overflowY: 'auto',
-                            overflowClipBox: 'content-box'
-                        }}
-                    >
 
+                                <InfiniteScroll
+                                    initialLoad={true}
 
-                        <InfiniteScroll
-                            initialLoad={true}
+                                    // threshold={10}
+                                    pageStart={0}
+                                    loadMore={this.handleInfiniteLoad}
+                                    hasMore={!this.state.loading && this.state.hasMore}
+                                    useWindow={false}
+                                >
+                                    <List
+                                        itemLayout="horizontal"
+                                        dataSource={this.state.announcements}
+                                        renderItem={(item) => (
 
-                            // threshold={10}
-                            pageStart={0}
-                            loadMore={this.handleInfiniteLoad}
-                            hasMore={!this.state.loading && this.state.hasMore}
-                            useWindow={false}
-                        >
-                            <List
-                                itemLayout="horizontal"
-                                dataSource={this.state.announcements}
-                                renderItem={(item) => (
-
-                                    <List.Item
-                                        key={item.id}
-                                        className="bugg-list-item-button-321312312"
-                                        onClick={() => {
-                                            this.setState({
-                                                selectedAnnouncement: item
-                                            })
-                                        }}
-                                    >
-                                        <List.Item.Meta
-
-                                            avatar={<Avatar
-                                                style={{
-                                                    marginLeft: 20,
-                                                    marginTop: 9
+                                            <List.Item
+                                                key={item.id}
+                                                className="bugg-list-item-button-321312312"
+                                                onClick={() => {
+                                                    this.setState({
+                                                        selectedAnnouncement: item
+                                                    })
                                                 }}
-                                            >{item.submitter.name.substring(0, 1).toUpperCase()}</Avatar>}
-                                            title={<>
-                                                <a
-                                                    style={{
-                                                        marginRight: 10
-                                                    }}
-                                                    onClick={e => e.preventDefault()}
-                                                    href="#">
+                                            >
+                                                <List.Item.Meta
 
-                                                    {this.formatName(item.submitter.name)}
-                                                </a>
-                                                <Tag color='#f50'>OWNER</Tag>
-                                                <span
-                                                    style={{
-                                                        float: 'right',
-                                                        marginRight: 20,
-                                                        opacity: .8
-                                                    }}>
-                                                    {moment(new Date(item.createdAt)).format('LT')}
-                                                </span>
-                                            </>}
+                                                    avatar={<Avatar
+                                                        style={{
+                                                            marginLeft: 20,
+                                                            marginTop: 9
+                                                        }}
+                                                    >{item.submitter.name.substring(0, 1).toUpperCase()}</Avatar>}
+                                                    title={<>
+                                                        <a
+                                                            style={{
+                                                                marginRight: 10
+                                                            }}
+                                                            onClick={e => e.preventDefault()}
+                                                            href="#">
 
-                                            description={item.plainTextBody}
-                                        />
-                                    </List.Item>
+                                                            {this.formatName(item.submitter.name)}
+                                                        </a>
+                                                        <Tag color='#f50'>OWNER</Tag>
+                                                        <span
+                                                            style={{
+                                                                float: 'right',
+                                                                marginRight: 20,
+                                                                opacity: .8
+                                                            }}>
+                                                            {moment(new Date(item.createdAt)).format('LT')}
+                                                        </span>
+                                                    </>}
+
+                                                    description={item.plainTextBody}
+                                                />
+                                            </List.Item>
 
 
-                                )}
-                            />
-                            {this.state.loading && this.state.hasMore && (
-                                <div className="demo-loading-container">
-                                    <Spin />
-                                </div>
-                            )}
-                        </InfiniteScroll>
-                    </div>
-                    <style>{`
+                                        )}
+                                    />
+                                    {this.state.loading && this.state.hasMore && (
+                                        <div className="demo-loading-container">
+                                            <Spin />
+                                        </div>
+                                    )}
+                                </InfiniteScroll>
+                            </div>
+                            <style>{`
                     .demo-loading-container {
                         position: relative;
                         bottom: 0px;
@@ -393,23 +397,37 @@ class App extends React.Component {
                         text-align: center;
                       }
                     `}</style>
-                    <div style={{
-                        flex: 1,
-                        marginLeft: 20,
-                        width: 600,
-                        minHeight: 600
-                    }}>
-                        {this.state.selectedAnnouncement === null ?
-                            <Empty style={{
-                                marginTop: 100
-                            }}
-                                description="Select an announcement to view"
-                            /> :
-                            <Message announcement={this.state.selectedAnnouncement} />
-                        }
+                            {!isMobile &&
+                                <div style={{
+                                    flex: 1,
+                                    marginLeft: 20,
+                                    width: 600,
+                                    minHeight: 600
+                                }}>
+                                    {this.state.selectedAnnouncement === null ?
+                                        <Empty style={{
+                                            marginTop: 100
+                                        }}
+                                            description="Select an announcement to view"
+                                        /> :
+                                        <Message announcement={this.state.selectedAnnouncement} />
+                                    }
+                                </div>}
+                            {isMobile &&
+                                <Drawer
+                                    visible={this.state.selectedAnnouncement !== null}
+                                    onClose={() => this.setState({ selectedAnnouncement: null })}
+                                    destroyOnClose
+                                    width="90%"
+                                    title="View Announcement"
+                                //drawerStyle={{ width: '100%' }}
+                                >
+                                    <Message announcement={this.state.selectedAnnouncement} />
+                                </Drawer>}
+                        </div>
                     </div>
-                </div>
-            </div>
+                }
+            </MediaQuery>
         );
     }
 }

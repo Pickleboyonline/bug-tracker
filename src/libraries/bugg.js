@@ -6,6 +6,7 @@ const Notification = require('./bugg-services/Notification/index')
 const Message = require('./bugg-services/Message/index');
 const Bug = require('./bugg-services/Bug/index');
 const Announcement = require('./bugg-services/Announcement/index')
+const Project = require('./bugg-services/Project/index')
 
 function UserData(obj = {
     name: '',
@@ -43,7 +44,8 @@ module.exports = {
     Notification,
     Message,
     Bug,
-    Announcement
+    Announcement,
+    Project
 
 
 }

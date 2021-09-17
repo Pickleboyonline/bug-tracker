@@ -2,23 +2,17 @@ import React from 'react';
 import {
     withRouter
 } from "react-router-dom";
-
+import MessageContacts from './../components/MessageContacts';
 import {
-    Avatar,
     Button,
     Space,
     Tooltip,
-    Card,
-    Tag
 } from 'antd';
 import {
-    MessageOutlined,
-    MinusOutlined
+    MessageOutlined
 } from '@ant-design/icons';
 import anime from 'animejs/lib/anime.es.js';
-import { List } from 'antd';
 import MessageContainer from '../components/MessageContainer';
-import moment from 'moment';
 import CreateConversation from '../components/CreateConversation';
 import { logErrorMessage } from '../libraries/network-error-handling';
 import { addEventListener, removeEventListener } from '../libraries/socket';
@@ -41,8 +35,6 @@ class App extends React.Component {
         };
 
     }
-
-    TOKEN = window.localStorage.getItem('token');
 
     // TODO: on recieve new message, re fetch conversations
     componentDidMount() {
@@ -184,117 +176,47 @@ class App extends React.Component {
     }
 
     render() {
-        // let match = useRouteMatch();
+        const { isMobile } = this.props;
+
         return (
             <Space
-                align='end'
+                align={isMobile ? 'start' : 'end'}
                 size='large'
+                direction={isMobile ? 'vertical' : 'horizontal'}
                 style={{
                     position: 'fixed',
-                    left: 17.5,
+                    left: isMobile ? 10 : 17.5,
                     bottom: 20,
-                    zIndex: 100
+                    zIndex: 100,
+
 
                 }}>
-                <Tooltip
-                    placement='right'
-                    title="Messages">
-                    <Button shape="circle" size='large'
-                        onClick={this.toggleHideSimple}
-                        icon={<MessageOutlined />} />
-                </Tooltip>
-                <Card
-                    headStyle={{
-                        backgroundColor: '#2f2f2f',
-                        color: 'white',
+                {
+                    !isMobile && <Tooltip
+                        placement='right'
+                        title="Messages">
+                        <Button shape="circle" size='large'
+                            onClick={this.toggleHideSimple}
+                            icon={<MessageOutlined />} />
+                    </Tooltip>}
+                {
+                    // Contacts card
+                }
+                <div>
+                    <MessageContacts
+                        toggleCollapse={() => this.toggleCollapse('contactsCollapsed')}
+                        toggleHide={this.state.toggleHide}
+                        isMobile={isMobile}
+                        sendMessage={() => this.setState({ createConversationIsVisible: true })}
+                        conversations={this.state.conversations}
+                        selectConversation={(e, item) => {
+                            this.selectConversation(item)
+                            e.preventDefault()
+                        }}
+                        activeConversations={this.state.activeConversations}
+                    />
+                </div>
 
-                    }}
-
-                    title="Contacts"
-                    extra={
-                        <Space size='middle'>
-                            <Button
-                                onClick={() => this.toggleCollapse('contactsCollapsed')}
-                                type='text' icon={<MinusOutlined style={{ color: 'white' }} />} />
-                        </Space>
-                    }
-
-                    style={{
-                        width: 350,
-                        //height: 64,
-                        borderColor: 'rgba(0,0,0,.3)',
-                        padding: 0,
-                        overflow: 'hidden',
-                        display: this.state.toggleHide ? 'none' : 'block'
-                    }}
-                    id="contacts-card"
-                    bodyStyle={{
-                        padding: 0,
-                        height: 300,
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                >
-                    <Space style={{
-                        width: '100%',
-                        marginTop: 20,
-                        marginBottom: 20
-                    }}
-                    >
-                        <Button
-                            style={{
-                                marginLeft: 20
-                            }}
-                            onClick={() => this.setState({ createConversationIsVisible: true })}
-                            type='primary'>
-                            Send New Message
-                        </Button>
-                    </Space>
-                    <div style={{
-                        flex: 1,
-                        overflowY: 'auto'
-                    }}>
-                        <List
-                            dataSource={this.state.conversations}
-                            renderItem={item => (
-                                <List.Item
-                                    key={item.id}
-                                    style={{
-                                        paddingLeft: 20,
-                                        paddingRight: 20
-                                    }}
-                                    extra={[moment((new Date(item.updatedAt)).getTime()).fromNow()]}
-                                >
-                                    <List.Item.Meta
-                                        title={<>
-                                            <a href="#" onClick={(e) => {
-                                                this.selectConversation(item)
-                                                e.preventDefault()
-                                            }}
-                                            >{item.reciepent.name}
-                                            </a>
-                                            {this.showNew(item) ?
-                                                <Tag
-                                                    style={{
-                                                        marginLeft: 10
-                                                    }}
-                                                    color='red'>New</Tag> : null
-                                            }
-
-                                        </>}
-                                        avatar={
-                                            <Avatar style={{ marginRight: 10 }}>
-                                                {item.reciepent.name.substring(0, 1).toUpperCase()}
-                                            </Avatar>}
-                                        description={item.lastMessageText}
-                                    />
-
-                                </List.Item>
-                            )}
-                        />
-                    </div>
-
-                </Card>
                 {
                     this.state.activeConversations.map((item) =>
                         <MessageContainer
@@ -308,7 +230,14 @@ class App extends React.Component {
                         />
                     )
                 }
-
+                {
+                    isMobile && <Tooltip
+                        placement='right'
+                        title="Messages">
+                        <Button shape="circle" size='large'
+                            onClick={this.toggleHideSimple}
+                            icon={<MessageOutlined />} />
+                    </Tooltip>}
 
                 <CreateConversation
                     visible={this.state.createConversationIsVisible}

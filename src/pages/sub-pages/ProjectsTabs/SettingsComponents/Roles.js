@@ -19,7 +19,7 @@ import ModifyRole from './../../../../components/ModifyRole'
 import { CirclePicker } from 'react-color'
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 import { getDefaultHeader } from "../../../config";
-
+import { withRouter } from "react-router";
 
 
 const PERMISSIONS = {
@@ -62,7 +62,9 @@ export default class Roles extends react.Component {
         try {
             let { data } = await axios.get('http://localhost:1337/user/search', {
                 params: {
-                    query: search
+                    query: search,
+                    projectId: this.props.match.params.projectId,
+                    isIn: true
                 },
                 headers: getDefaultHeader()
             })
@@ -185,14 +187,11 @@ export default class Roles extends react.Component {
     }
 
     render() {
-        const { current } = this.state;
-        return (<><div
-            style={{
-                display: 'inline-flex'
-            }}
-        >
+        const { isMobile } = this.props;
+
+        return (<>
             <div style={{
-                width: 500
+                maxWidth: isMobile ? 'unset' : 600 //500
             }}>
                 <div style={{
                     display: 'inline-flex',
@@ -213,8 +212,7 @@ export default class Roles extends react.Component {
                 </div>
 
                 <List
-                    // header={<div>Header</div>}
-                    // footer={<div>Footer</div>}
+
                     bordered
                     dataSource={this.state.roles}
                     renderItem={item => (
@@ -258,7 +256,6 @@ export default class Roles extends react.Component {
             </div>
 
 
-        </div>
             <Modal title="Create Role"
                 visible={this.state.isModalVisible}
                 onOk={this.createRole}
@@ -375,8 +372,3 @@ export default class Roles extends react.Component {
 
 }
 
-const CreateRole = (props) => {
-
-
-    return <></>
-}

@@ -5,10 +5,14 @@ import {
     Input, Avatar, Select,
     Button, Divider, Typography, List, Pagination, Modal, message
 } from 'antd';
+import { PlusOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import { getErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from '../pages/config';
+import {
+    withRouter,
 
+} from "react-router-dom";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -75,7 +79,9 @@ class BugStats extends React.Component {
         try {
             results = await axios.get('http://localhost:1337/user/search', {
                 params: {
-                    query: query
+                    query: query,
+                    projectId: this.props.match.params.projectId,
+                    isIn: true
                 },
                 headers: getDefaultHeader(),
             })
@@ -153,8 +159,10 @@ class BugStats extends React.Component {
                                 }, this._handleUpdateAssignees);
                             }}
                             placeholder="search" style={{ width: 200 }} />
-                        <Button onClick={() => this.setState({ editAssigned: true })} type='primary'>
-                            Add More Members...
+                        <Button
+                            icon={<PlusOutlined />}
+                            onClick={() => this.setState({ editAssigned: true })} type='primary'>
+
                         </Button>
                     </Space>}
                     footer={<div
@@ -229,4 +237,4 @@ class BugStats extends React.Component {
 }
 
 
-export default BugStats;
+export default withRouter(BugStats);

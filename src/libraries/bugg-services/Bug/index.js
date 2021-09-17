@@ -25,7 +25,19 @@ const getBug = async (bugId) => {
     }
 }
 
+const deleteBug = async (bugId) => {
+    try {
+        await axios.delete(baseUrl + '/bug/' + bugId, {
+            headers: getDefaultHeader()
+        })
+
+    } catch (e) {
+        throwError(e)
+    }
+}
+
 module.exports = {
-    getBug
+    getBug,
+    deleteBug
 }
 

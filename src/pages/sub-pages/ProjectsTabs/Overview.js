@@ -4,6 +4,7 @@ import { Card, Statistic, Row, Col, Button, Space } from 'antd';
 import axios from 'axios';
 import { logErrorMessage } from '../../../libraries/network-error-handling';
 import { getDefaultHeader } from '../../config';
+import MediaQuery from 'react-responsive'
 
 
 class App extends React.Component {
@@ -94,65 +95,72 @@ class App extends React.Component {
 
     render() {
         return (
-            <React.Fragment>
+            <MediaQuery maxWidth={800}>
+                {(isMobile) =>
+                    <React.Fragment>
 
-                <Row
-                    style={{
-                        width: '100%'
-                    }}
-                    gutter={16}>
-                    <Col span={8}>
-                        <Card
-                            title="Statistics"
+                        <div
                             style={{
-                                //width: 450
-                            }}>
-                            <Row gutter={16}>
-                                <Col span={12}>
-                                    <Statistic title="Members" value={this.state.totalMembers} />
-                                </Col>
-                                <Col span={12}>
-                                    <Statistic title="Bugs Submited" value={this.state.totalBugs} />
+                                display: isMobile ? 'flex' : 'inline-flex',
+                                flexDirection: isMobile ? 'column' : 'unset',
+                                marginRight: isMobile ? 10 : 64,
+                                gap: 10
+                            }}
+                        >
 
-                                </Col>
-                                <Col span={12}>
-                                    <Statistic title="Bugs Open" value={this.state.totalBugsOpen} />
-                                </Col>
-                                <Col span={12}>
-                                    <Statistic title="Bugs Closed" value={this.state.totalBugsClosed} />
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                    <Col span={8}>
+                            <Card
+                                title="Statistics"
+                            >
+                                <Row gutter={16}>
+                                    <Col span={12}>
+                                        <Statistic title="Members" value={this.state.totalMembers} />
+                                    </Col>
+                                    <Col span={12}>
+                                        <Statistic title="Bugs Submited" value={this.state.totalBugs} />
 
-                        <Card
-                            title="Progress"
-                            style={{
-                                //width: 450
-                            }}>
-                            <Space
+                                    </Col>
+                                    <Col span={12}>
+                                        <Statistic title="Bugs Open" value={this.state.totalBugsOpen} />
+                                    </Col>
+                                    <Col span={12}>
+                                        <Statistic title="Bugs Closed" value={this.state.totalBugsClosed} />
+                                    </Col>
+                                </Row>
+                            </Card>
+
+
+                            <Card
+                                title="Progress"
                                 style={{
-                                    width: '100%'
-                                }}
-                                direction='vertical' align='center'>
-                                <div style={{ width: 400, height: 400 }}>
-                                    <canvas id="pieChart" width="400" height="400"></canvas>
-                                </div>
-                            </Space>
+                                    //width: 450
+                                }}>
+                                <Space
+                                    style={{
+                                        width: '100%',
+                                        // display: 'none'
+                                    }}
+                                    direction='vertical' align='center'>
 
-                        </Card>
+                                    <canvas
+                                        id="pieChart"
+                                    //width="400"
+                                    //height="400"
+                                    ></canvas>
+
+                                </Space>
+
+                            </Card>
 
 
-                    </Col>
-                </Row>
+
+                        </div>
 
 
 
 
-
-            </React.Fragment>
-
+                    </React.Fragment>
+                }
+            </MediaQuery>
         );
     }
 }

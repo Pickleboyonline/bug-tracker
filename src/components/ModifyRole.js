@@ -6,6 +6,10 @@ import axios
 import { CirclePicker } from 'react-color';
 import { getErrorMessage } from "../libraries/network-error-handling";
 import { getDefaultHeader } from "../pages/config";
+
+import {
+    withRouter
+} from "react-router-dom";
 const PERMISSIONS = {
     ALL: 'ALL',
     MODIFY_GENERAL: 'MODIFY_GENERAL',
@@ -45,7 +49,9 @@ const ModifyRole = (props) => {
         try {
             let { data } = await axios.get('http://localhost:1337/user/search', {
                 params: {
-                    query: search
+                    query: search,
+                    projectId: props.match.params.projectId,
+                    isIn: true
                 },
                 headers: getDefaultHeader()
             })
@@ -246,4 +252,4 @@ const ModifyRole = (props) => {
     );
 }
 
-export default ModifyRole;
+export default withRouter(ModifyRole);

@@ -65,7 +65,7 @@ const App = (props) => {
                 reproducibility,
                 catagory,
                 assignees: value.join(','),
-                projectId: props.location.pathname.split('/')[3]
+                projectId: props.match.params.projectId
             }
             // console.log(requestData)
             let res = await axios.post('http://localhost:1337/bug/create', requestData, {
@@ -131,7 +131,9 @@ const App = (props) => {
             try {
                 results = await axios.get('http://localhost:1337/user/search', {
                     params: {
-                        query: query
+                        query: query,
+                        projectId: props.match.params.projectId,
+                        isIn: true
                     },
                     headers: getDefaultHeader()
                 })

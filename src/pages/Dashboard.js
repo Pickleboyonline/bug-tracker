@@ -1,40 +1,29 @@
 import React from 'react';
 import {
-
     Route,
     withRouter
 } from "react-router-dom";
 import SkeletonProject from './sub-pages/SkeletonProject';
 import {
-    Avatar,
-    Badge,
-    Menu, Button, Space, Drawer, Dropdown, notification
+    Menu,
+    Drawer,
+    notification
 } from 'antd';
-import {
-
-    BellFilled,
-    SettingOutlined, CodeOutlined
-} from '@ant-design/icons';
-import anime from 'animejs/lib/anime.es.js';
 import Home from './../components/Home';
 import Settings from './Settings';
 import Notifications from './Notifications';
-import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
-    DesktopOutlined,
-
-} from '@ant-design/icons';
 import Messages from './Messages';
 import axios from 'axios';
 import { getErrorMessage, logErrorMessage } from './../libraries/network-error-handling';
 import { addEventListener, reconfigToken, removeEventListener } from '../libraries/socket';
 import { baseUrl, getDefaultHeader } from './config';
 import bugg from '../libraries/bugg';
-
+import MediaQuery from 'react-responsive';
+import DesktopNavBar from '../components/DesktopNavBar';
+import NavWelcomeHeader from '../components/NavWelcomeHeader';
+import MobileNavBar from '../components/MobileNavBar';
 const PubSub = require('./../PubSub');
 
-const { SubMenu } = Menu;
 const menu = (props) => (
     <Menu style={{
         width: 150,
@@ -62,7 +51,10 @@ class App extends React.Component {
             name: '',
             userIconUri: '',
             unreadNotifications: 0,
-            activeConversationIds: []
+            activeConversationIds: [],
+            initialStyles: {
+
+            }
         };
 
     }
@@ -103,7 +95,11 @@ class App extends React.Component {
         }
     }
 
-
+    componentDidUpdate(prevProps) {
+        if (this.props.location !== prevProps.location) {
+            this.updateProjects()
+        }
+    }
 
 
     openNewMessage = () => undefined;
@@ -162,28 +158,6 @@ class App extends React.Component {
                 alert("no type given")
         }
     }
-
-    toggleCollapsed = () => {
-        let collapsed = !this.state.collapsed
-        this.setState({
-            collapsed
-        });
-
-        let logo = document.getElementById('bugg-nav-logo');
-        let panel = document.getElementById('bugg-nav-background');
-        let button = document.getElementById('bugg-nav-collaspe-button');
-        let dashboard = document.getElementById('bugg-dashboard');
-
-        animate({
-            logo,
-            collapsed,
-            panel,
-            button,
-            dashboard
-        })
-
-
-    };
 
 
     getNotificationCallToAction = (type) => {
@@ -279,322 +253,93 @@ class App extends React.Component {
     }
 
     render() {
+
         return (
-            <div
-                id="bugg-dashboard"
-                className="Dashboard" style={styles.Dashboard}>
-
-                <div
-                    id="bugg-nav-background"
-                    className="navigation" style={styles.navigation}>
-                    <Space
-                        style={styles.Space1}
-                        align='center'
-                        direction='horizontal'
-                    >
-                        <Button
-                            id="bugg-nav-collaspe-button"
-                            type="text"
-                            onClick={this.toggleCollapsed}
-                            style={styles.Button1}>
-                            {
-                                React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined)
-                            }
-                        </Button>
-                        <h2
-                            id="bugg-nav-logo"
-                            style={styles.h2}>
-                            Bugg
-                        </h2>
-                    </Space>
-
-
-                    <Menu
-                        defaultSelectedKeys={['1']}
-                        defaultOpenKeys={['sub1']}
-                        mode="inline"
-                        theme='dark'
-                        style={styles.Menu}
-                        inlineCollapsed={this.state.collapsed}
-                    >
-                        <Menu.Item key="1"
-                            onClick={() => this.props.history.push('/dashboard')}
-                            style={styles.Item1}
-                            icon={<DesktopOutlined />}>
-                            Home
-                        </Menu.Item>
-
-
-                        <Menu.Item key="2"
-                            onClick={() => this.props.history.push('/dashboard/settings')}
-                            style={{
-                                backgroundColor: 'transparent'
-                            }}
-                            icon={<SettingOutlined />}>
-                            Settings
-                        </Menu.Item>
-
-                        <SubMenu
-                            key="sub1"
-                            style={{
-                                backgroundColor: 'transparent'
-                            }}
-                            icon={<CodeOutlined />}
-                            title="Projects"
-                            className="bugg-sub-menu"
-
-                        >
-                            {
-                                this.state.projects.map((doc, ind) =>
-                                    <Menu.Item
-                                        style={{
-                                            backgroundColor: 'transparent'
-                                        }}
-                                        onClick={() => this.props.history.push('/dashboard/projects/' + doc.id)}
-                                        //className="bugg-sub-menu"
-                                        key={'' + (5 + ind)}>{doc.title}</Menu.Item>
-                                )
-                            }
-                        </SubMenu>
-
-                    </Menu>
-
-
-
-                </div>
-                <div className="main-wrapper" style={{ flex: 1 }}>
-
+            <MediaQuery maxWidth={800}>
+                {(isMobile) =>
                     <div
-                        className="header"
-                        style={styles.header}>
-                        <h2>
-                            {'Welcome' + (this.state.name ? ', ' : '') + this.state.name}
-                        </h2>
-                        <Space size='large'>
-                            <Badge
-                                offset={[-4, 8]}
-                                count={this.state.unreadNotifications}>
-                                <Button
-                                    type='text'
-                                    shape='circle'
-                                    size='large'
-                                    style={{
-                                        transform: 'scale(1.2)',
-                                        color: 'rgba(0,0,0,.7)'
-                                    }}
+                        id="bugg-dashboard"
+                        className="Dashboard" style={{
+                            // display: isMobile ? 'inline-flex',
+                            width: '100%',
+                            paddingLeft: 10,//330,
+                            paddingBottom: 64
+                        }}>
+                        <MediaQuery
+                            minWidth={800} >
+                            <DesktopNavBar projects={this.state.projects} />
+                        </MediaQuery>
+                        {
+                            isMobile &&
+                            <MobileNavBar projects={this.state.projects} />
+                        }
+                        <div className="main-wrapper" style={{
+                            flex: 1
+                        }}>
 
-                                    onClick={() => this.setState({ toggleDrawer: true })}
-                                    icon={<BellFilled
-                                        style={{
-                                            //fontSize: 64
-                                        }} />}
+                            <NavWelcomeHeader
+                                name={this.state.name}
+                                unreadNotifications={this.state.unreadNotifications}
+                                logout={this.logout}
+                                userIconUri={this.state.userIconUri}
+                                toggleNotificationDrawer={() => this.setState({ toggleDrawer: true })}
+                            />
+                            <Route exact path="/dashboard">
+
+                                <Home
+                                    projects={this.state.projects}
+                                    updateProjects={this.updateProjects}
                                 />
-                            </Badge>
+                                {/* <Overview /> */}
+                            </Route>
+                            <Route path='/dashboard/settings'>
+                                <Settings getWelcomeMessage={this.getWelcomeMessage} />
+                            </Route>
+                            <Route path="/dashboard/projects/:projectId">
+                                <SkeletonProject updateProjects={this.updateProjects} />
+                            </Route>
+                        </div>
+                        {
+                            // move to react hook for media query
+                        }
+                        <Drawer
+                            // {...notificationDrawerProps}
+                            // width={500}
 
-                            <style>
-                                {`
-                                .bugg-profile-pic:hover {
-                                    cursor: pointer;
-                                }
-                                `}
-                            </style>
-                            <Dropdown
-                                //overlay={<AvatarSettings />}
-                                overlay={menu({ logout: this.logout })}
-                                trigger={['click']}
-                            >
+                            width={isMobile ? '80%' : 500}
+                            title="Notifications"
+                            placement="right"
+                            closable={true}
+                            onClose={() => {
+                                this.fetchUnreadNotifications()
+                                this.setState({ toggleDrawer: false })
+                            }}
+                            destroyOnClose={true}
+                            visible={this.state.toggleDrawer}
+                        >
+                            <Notifications
+                                close={() => {
+                                    this.fetchUnreadNotifications()
+                                    this.setState({ toggleDrawer: false })
+                                }}
+                                openNewMessage={this.openNewMessage}
+                                joinProject={this.joinProject}
+                                socket={this.state.socket}
+                            />
+                        </Drawer>
 
-                                <Avatar
-                                    className="bugg-profile-pic"
-                                    size={64}
-                                    src={this.state.userIconUri}
-                                    //icon={<UserOutlined />} 
-
-                                    style={{
-                                        marginRight: 64,
-                                        borderWidth: 1,
-                                        borderColor: 'rgba(0,0,0,.2)',
-                                        borderStyle: 'solid'
-                                    }} />
-
-
-                            </Dropdown>
-
-                        </Space>
-
-                    </div>
-                    <Route exact path="/dashboard">
-
-                        <Home />
-                        {/* <Overview /> */}
-                    </Route>
-                    <Route path='/dashboard/settings'>
-                        <Settings getWelcomeMessage={this.getWelcomeMessage} />
-                    </Route>
-                    <Route path="/dashboard/projects/:name">
-                        <SkeletonProject updateProjects={this.updateProjects} />
-                    </Route>
-                </div>
-                <Drawer
-                    width={500}
-                    title="Notifications"
-                    placement="right"
-                    closable={true}
-                    onClose={() => {
-                        this.fetchUnreadNotifications()
-                        this.setState({ toggleDrawer: false })
-                    }}
-                    destroyOnClose
-                    visible={this.state.toggleDrawer}
-                >
-                    <Notifications
-                        close={() => {
-                            this.fetchUnreadNotifications()
-                            this.setState({ toggleDrawer: false })
-                        }}
-                        openNewMessage={this.openNewMessage}
-                        joinProject={this.joinProject}
-                        socket={this.state.socket}
-                    />
-                </Drawer>
-
-                <Messages
-                    setActiveConversationIds={this.setActiveConversationIds}
-                    setOpenNewMessage={this.setOpenNewMessage}
-                    fetchUnreadNotifications={this.fetchUnreadNotifications} />
-            </div >
+                        <Messages
+                            isMobile={isMobile}
+                            setActiveConversationIds={this.setActiveConversationIds}
+                            setOpenNewMessage={this.setOpenNewMessage}
+                            fetchUnreadNotifications={this.fetchUnreadNotifications} />
+                    </div >
+                }
+            </MediaQuery>
         );
     }
 }
 
-const animate = (obj = {
-    collapsed: '',
-    logo: '',
-    panel: '',
-    button: '',
-    dashboard: ''
-}) => {
-    if (obj.collapsed) {
-        // TODO collaspe animation
-        anime({
-            targets: [obj.logo],
-            color: 'rgba(0, 0, 0, .5)',
-            translateX: 30,
-            duration: 300,
-            easing: 'easeInOutQuad',
-        })
-        anime({
-            targets: [obj.panel],
-            width: 75,
-            easing: 'easeInOutQuad',
-            duration: 300
-        })
 
-        anime({
-            targets: [obj.button],
-            translateX: 8,
-            duration: 100,
-            easing: 'easeInOutQuad',
-            scale: 1.2
-        })
-        anime({
-            targets: [obj.dashboard],
-            paddingLeft: 200,
-            duration: 300,
-            easing: 'easeInOutQuad',
-
-        })
-    } else {
-        // Expand
-        anime({
-            targets: [obj.logo],
-            color: 'rgba(255, 255, 255, 1)',
-            translateX: 0,
-            duration: 300,
-            easing: 'easeInOutQuad',
-        })
-        anime({
-            targets: [obj.panel],
-            width: 270,
-            easing: 'easeInOutQuad',
-            duration: 300
-        })
-        anime({
-            delay: 0,
-            targets: [obj.button],
-            translateX: 0,
-            duration: 100,
-            easing: 'easeInOutQuad',
-            scale: 1
-        })
-        anime({
-            targets: [obj.dashboard],
-            paddingLeft: 330,
-            duration: 300,
-            easing: 'easeInOutQuad',
-
-        })
-    }
-}
-
-const styles = {
-    Dashboard: {
-        display: 'inline-flex',
-        width: '100%',
-        paddingLeft: 330,
-        paddingBottom: 64
-    },
-    navigation: {
-        color: 'white',
-        width: 270,
-        zIndex: 10,
-        'box-shadow': '-7px 0px 13px 0px black',
-        boxShadow: 1,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        height: '100%',
-        backgroundColor: '#0093E9',
-        backgroundImage: 'linear-gradient(43deg, #0093E9 0%, #80D0C7 100%)',
-        display: 'flex',
-        flexDirection: 'column'
-    },
-    Space1: {
-        marginTop: 30,
-        paddingLeft: 9,
-        marginBottom: 30
-    },
-    Button1: {
-
-        //marginLeft: 9, 
-        color: 'white'
-    },
-    h2: {
-        // marginBottom: 30,
-        // marginLeft: 0,
-        // marginTop: 30,
-        margin: 0,
-        color: 'white',
-        position: 'fixed',
-        top: 29,
-        left: 70
-    },
-    Menu: {
-        backgroundColor: 'transparent'
-    },
-    Item1:
-    {
-        backgroundColor: 'transparent'
-    },
-    header: {
-        width: '100%',
-        display: 'inline-flex',
-        justifyContent: 'space-between',
-        height: 110,
-        alignItems: 'center'
-    }
-}
 
 export default withRouter(App);

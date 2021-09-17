@@ -12,6 +12,8 @@ import bugg, { getMe } from '../libraries/bugg';
 import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import { reconfigToken } from '../libraries/socket';
 import { message } from 'antd';
+import MediaQuery from 'react-responsive'
+
 
 const data = [
     'General',
@@ -40,7 +42,6 @@ class Settings extends React.Component {
     }
     componentDidMount() {
         this.fetchUser()
-
     }
 
 
@@ -160,6 +161,7 @@ class Settings extends React.Component {
                                 name: e.target.value
                             })
                         }}
+
                         type="text" />
                     <Button
                         loading={this.state.loading}
@@ -246,23 +248,14 @@ class Settings extends React.Component {
             },
         ]
         return (
-            <div style={{ width: 1100 }}>
-                <div style={{ width: 800 }}>
-
-
-                    <h1>
-                        Settings
-                    </h1>
-                    <Divider
-
-                    />
-                </div>
-
-                <div style={{
-                    display: 'inline-flex',
-                    width: '100%'
-                }}>
-                    <style>{`
+            <MediaQuery maxWidth={800}>
+                {(isMobile) =>
+                    <div
+                        style={{
+                            marginRight: isMobile ? 10 : 64
+                        }}
+                    >
+                        <style>{`
 .bugg-list-item-button:hover {
     background-color: rgb(0 0 0 / 5%);
     cursor: pointer;
@@ -271,107 +264,117 @@ class Settings extends React.Component {
     background-color: white;
 }
 `}</style>
-                    <div> <List
-                        // header={<div>Header</div>}
-                        // footer={<div>Footer</div>}
-                        bordered
-                        dataSource={data}
-                        style={{
-                            width: 300
-                        }}
-                        renderItem={(item, ind) => (
-                            <List.Item
-                                key={ind}
-                                style={{
-                                    color: (this.state.selectedSetting === item.toLowerCase() ? '#0094f7' : 'black')
-                                }}
-                                className="bugg-list-item-button">
-                                <Avatar
-                                    style={{
-                                        marginRight: 10
-                                    }}
-                                >{item.substring(0, 1).toLocaleUpperCase()}</Avatar> {item}
-                            </List.Item>
-                        )}
-                    /></div>
 
-                    <div style={{
-                        flex: 1,
-                        marginLeft: 20
-                    }}>
-                        {
-                            (() => {
-
-                                switch (this.state.selectedSetting) {
-                                    case data[0].toLowerCase():
-                                        return (
-                                            <List
-                                                bordered
-                                                style={{
-                                                    maxWidth: 600
-                                                }}
-                                                dataSource={settings}
-                                                renderItem={item =>
-                                                    <List.Item
-                                                        key={item.title}
-                                                        extra={[item.reactNode]}
-                                                    >
-                                                        {item.title}
-                                                    </List.Item>}
-                                            />
-                                        )
-                                    default:
-                                        return 'no tab selected'
-                                }
-
-                            })()
-                        }
-                    </div>
-                    <Modal
-                        okButtonProps={{
-                            loading: this.state.loadingUpdatePassword
-                        }}
-                        destroyOnClose
-                        visible={this.state.updatePasswordVisible}
-                        title="Update Password"
-                        onOk={this.updatePassword}
-                        onCancel={() => this.setState({ updatePasswordVisible: false })}
-                    >
-                        <p style={{ marginBottom: 10 }}>Current Password: </p>
-                        <Input
-                            type='password'
-                            autoComplete='new-password'
-                            name='new-password'
-                            value={this.state.password}
-                            onChange={(e) => this.setState({ password: e.target.value })}
-                            placeholder='Type here...'
-                        />
-
-                        <p style={{ marginBottom: 10, marginTop: 20 }}>New Password: </p>
-                        <Input
-                            type='password'
-                            autoComplete='new-password'
-                            value={this.state.newPassword}
-                            onChange={(e) => this.setState({ newPassword: e.target.value })}
-                            placeholder='Type here...'
-                        />
-                    </Modal>
-                    {/* <div style={{
-                        flex: 1,
-                        marginLeft: 20
-                    }}>
 
                         <h1>
-                            Go Ahead, Change Some Stuff
+                            Settings
                         </h1>
-                        <p style={{ maxWidth: 700 }}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                        </p>
+                        <Divider
+
+                        />
 
 
-                    </div> */}
-                </div>
-            </div>
+
+                        <div style={{
+                            display: isMobile ? 'flex' : 'inline-flex',
+                            width: '100%',
+                            flexDirection: isMobile ? 'column' : 'unset'
+                        }}>
+
+                            <div>
+
+                                <List
+                                    // header={<div>Header</div>}
+                                    // footer={<div>Footer</div>}
+                                    bordered
+                                    dataSource={data}
+                                    style={{
+                                        width: isMobile ? 'unset' : 200,
+                                        marginBottom: isMobile ? 20 : 'unset'
+                                    }}
+                                    renderItem={(item, ind) => (
+                                        <List.Item
+                                            key={ind}
+                                            style={{
+                                                color: (this.state.selectedSetting === item.toLowerCase() ? '#0094f7' : 'black')
+                                            }}
+                                            className="bugg-list-item-button">
+                                            <Avatar
+                                                style={{
+                                                    marginRight: 10
+                                                }}
+                                            >{item.substring(0, 1).toLocaleUpperCase()}</Avatar> {item}
+                                        </List.Item>
+                                    )}
+                                /></div>
+
+                            <div style={{
+                                flex: 1,
+                                marginLeft: isMobile ? 0 : 20
+                            }}>
+                                {
+                                    (() => {
+
+                                        switch (this.state.selectedSetting) {
+                                            case data[0].toLowerCase():
+                                                return (
+                                                    <List
+                                                        bordered
+                                                        style={{
+                                                            // maxWidth: 600
+                                                        }}
+                                                        itemLayout="vertical"
+                                                        dataSource={settings}
+                                                        renderItem={item =>
+                                                            <List.Item
+                                                                key={item.title}
+                                                                extra={[item.reactNode]}
+                                                            >
+                                                                {item.title}
+                                                            </List.Item>}
+                                                    />
+                                                )
+                                            default:
+                                                return 'no tab selected'
+                                        }
+
+                                    })()
+                                }
+                            </div>
+                            <Modal
+                                okButtonProps={{
+                                    loading: this.state.loadingUpdatePassword
+                                }}
+                                destroyOnClose
+                                visible={this.state.updatePasswordVisible}
+                                title="Update Password"
+                                onOk={this.updatePassword}
+                                onCancel={() => this.setState({ updatePasswordVisible: false })}
+                            >
+                                <p style={{ marginBottom: 10 }}>Current Password: </p>
+                                <Input
+                                    type='password'
+                                    autoComplete='new-password'
+                                    name='new-password'
+                                    value={this.state.password}
+                                    onChange={(e) => this.setState({ password: e.target.value })}
+                                    placeholder='Type here...'
+                                />
+
+                                <p style={{ marginBottom: 10, marginTop: 20 }}>New Password: </p>
+                                <Input
+                                    type='password'
+                                    autoComplete='new-password'
+                                    value={this.state.newPassword}
+                                    onChange={(e) => this.setState({ newPassword: e.target.value })}
+                                    placeholder='Type here...'
+                                />
+                            </Modal>
+
+                        </div>
+                    </div>
+                }
+            </MediaQuery>
         )
 
     }
