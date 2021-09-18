@@ -50,7 +50,7 @@ class Notification extends React.Component {
                 this.props.close()
                 break;
             default:
-                alert("no type given")
+                message.error("no type given")
         }
         this.dismissNotification(notification.id)
     }

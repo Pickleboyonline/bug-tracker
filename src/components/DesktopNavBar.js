@@ -176,7 +176,7 @@ const animate = async (obj = {
             }).finished,
             anime({
                 targets: [obj.dashboard],
-                paddingLeft: (willUnmount ? 10 : 130),
+                paddingLeft: (willUnmount ? 20 : 130),
                 duration: 300,
                 easing: 'easeInOutQuad',
 

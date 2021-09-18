@@ -66,29 +66,38 @@ class MobileNavBar extends React.Component {
                     borderWidth: 0,
                     borderBottomWidth: 1,
                     borderStyle: 'solid',
-                    marginLeft: -10,
+                    marginLeft: -20,
+                    marginRight: -10
 
                 }}>
                     <div
 
                         style={{
-                            height: '100%',
+                            height: 64,
                             display: 'flex',
                             flexDirection: 'row',
                             alignItems: 'center',
-                            paddingLeft: 10,
-                            gap: 15
+                            paddingLeft: 20,
+                            gap: 15,
+                            zIndex: 100,
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            boxShadow: 'black 0px -4px 13px 0px',
+                            backgroundImage: 'linear-gradient( 43deg, rgb(0, 147, 233) 0%, rgb(128, 208, 199) 100%)',
+                            backgroundColor: 'rgb(0, 147, 233)'
                         }}
                     >
                         <Button
-
-                            // type="text"
+                            type='ghost'
+                            //type="text"
                             onClick={this.toggleCollapsed}
                             style={styles.Button1}>
-                            {this.state.collapsed ? <MenuUnfoldOutlined style={{ color: 'black' }} /> : <MenuFoldOutlined style={{ color: 'black' }} />}
+                            {this.state.collapsed ? <MenuUnfoldOutlined style={{ color: 'white' }} /> : <MenuFoldOutlined style={{ color: 'white' }} />}
 
                         </Button>
-                        <h3 style={{ margin: 0 }}>Bugg</h3>
+                        <h3 style={{ margin: 0, color: 'white' }}>Bugg</h3>
                     </div>
 
                 </div>

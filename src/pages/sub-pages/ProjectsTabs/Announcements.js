@@ -77,20 +77,6 @@ function Message(props) {
     )
 }
 
-const menu = (
-    <Menu onClick={() => alert('sup')}>
-        <Menu.Item key="1" icon={<UserOutlined />}>
-            Date
-        </Menu.Item>
-        <Menu.Item key="2" icon={<UserOutlined />}>
-            Name
-        </Menu.Item>
-        <Menu.Item key="3" icon={<UserOutlined />}>
-            Priority
-        </Menu.Item>
-    </Menu>
-);
-
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -290,7 +276,7 @@ class App extends React.Component {
                             </Button>
                             <Search placeholder="search"
                                 onChange={(e) => this.onSearch(e.target.value)}
-                                onSearch={() => alert('hey')} style={{ width: 200 }} />
+                                onSearch={(search) => this.onSearch(search)} style={{ width: 200 }} />
                         </div>
 
                         <style>{`

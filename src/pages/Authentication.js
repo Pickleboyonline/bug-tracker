@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import { Card } from 'antd';
 import { Typography } from 'antd';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button, notification, Space } from 'antd';
 import axios from 'axios';
 import { useMediaQuery } from 'react-responsive'
 
@@ -61,7 +61,7 @@ const AuthenticationHooks = () => {
         setLoading(false)
         if (res) {
             // store token :)
-            alert(res.data.message)
+            // alert(res.data.message)
             notification.success({
                 message: res.data.message
             })
@@ -78,6 +78,27 @@ const AuthenticationHooks = () => {
             setMode('signup')
         } else {
             setMode('login')
+        }
+    }
+
+    const loginAsDemo = async () => {
+        setLoading(true)
+        try {
+            const { data: { token } } = await axios.post('/user/demo');
+
+            notification.success({
+                message: 'Logged in as demo'
+            })
+
+            window.localStorage.setItem('token', token);
+            reconfigToken()
+            setLoading(false)
+            setIsAuthed(true)
+        } catch (e) {
+            setLoading(false)
+            notification.error({
+                message: getErrorMessage(e)
+            })
         }
     }
 
@@ -120,7 +141,7 @@ const AuthenticationHooks = () => {
                 }}>
                     Bugg
                 </h1>
-                <p style={{ color: 'white', marginBottom: 30, opacity: .7 }}>A simple bug tracker
+                <p style={{ color: 'white', marginBottom: 30, opacity: .9 }}>A simple bug tracker
                 </p>
             </div>
 
@@ -255,11 +276,19 @@ const AuthenticationHooks = () => {
                                 span: 16,
                             }}
                         >
-                            <Button
-                                loading={loading}
-                                type="primary" htmlType="submit">
-                                SUBMIT
-                            </Button>
+                            <Space>
+                                <Button
+                                    loading={loading}
+                                    type="primary" htmlType="submit">
+                                    SUBMIT
+                                </Button>
+                                <Button
+                                    onClick={loginAsDemo}
+                                >
+                                    Use Demo Account Instead
+                                </Button>
+                            </Space>
+
                         </Form.Item>
                     </Form>
                 </Card>

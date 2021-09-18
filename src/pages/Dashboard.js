@@ -7,7 +7,8 @@ import SkeletonProject from './sub-pages/SkeletonProject';
 import {
     Menu,
     Drawer,
-    notification
+    notification,
+    message
 } from 'antd';
 import Home from './../components/Home';
 import Settings from './Settings';
@@ -21,7 +22,7 @@ import MobileNavBar from '../components/MobileNavBar';
 import { getErrorMessage, logErrorMessage } from './../libraries/network-error-handling';
 import { baseUrl, getDefaultHeader } from './config';
 import bugg from '../libraries/bugg';
-import { addEventListener, removeEventListener, reconfigToken } from './../libraries/socket';
+import { addEventListener, removeEventListener, reconfigToken, unsubscribeFromMessages } from './../libraries/socket';
 
 
 
@@ -56,7 +57,7 @@ class App extends React.Component {
                 unreadNotifications
             })
         } catch (e) {
-            alert(getErrorMessage(e))
+            // alert(getErrorMessage(e))
             logErrorMessage(e)
         }
     }
@@ -97,6 +98,8 @@ class App extends React.Component {
     }
 
     logout = () => {
+        let token = window.localStorage.getItem('token');
+        unsubscribeFromMessages(token);
         window.localStorage.removeItem('token');
         this.props.history.push('/auth')
     }
@@ -138,7 +141,7 @@ class App extends React.Component {
                 })
                 break;
             default:
-                alert("no type given")
+                message.error("no type given")
         }
     }
 
@@ -245,13 +248,13 @@ class App extends React.Component {
                         className="Dashboard" style={{
                             // display: isMobile ? 'inline-flex',
                             width: '100%',
-                            paddingLeft: 10,//330,
+                            paddingLeft: 20,//330,
+                            paddingRight: 10,
                             paddingBottom: 64
                         }}>
-                        <MediaQuery
-                            minWidth={800} >
+                        {!isMobile &&
                             <DesktopNavBar projects={this.state.projects} />
-                        </MediaQuery>
+                        }
                         {
                             isMobile &&
                             <MobileNavBar projects={this.state.projects} />
@@ -289,7 +292,7 @@ class App extends React.Component {
                             // {...notificationDrawerProps}
                             // width={500}
 
-                            width={isMobile ? '80%' : 500}
+                            width={isMobile ? '90%' : 500}
                             title="Notifications"
                             placement="right"
                             closable={true}

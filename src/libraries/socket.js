@@ -1,7 +1,7 @@
 /**
  * Setup single sails socket instance
  */
-import { baseUrl } from '../pages/config'
+import { baseUrl, getDefaultHeader } from '../pages/config'
 // import { Socket } from 'socket.io-client';
 // import SailsIOJS from 'sails.io.js';
 
@@ -18,14 +18,24 @@ function initilizeSocket() {
     io.sails.url = baseUrl;
     io.sails.rejectUnauthorized = false;
     io.sails.reconnection = true;
-    io.sails.headers = {
-        'x-auth-token': window.localStorage.getItem('token')
-    };
+    // io.sails.headers = {
+    //     'x-auth-token': window.localStorage.getItem('token')
+    // };
 
     io.socket.on('connect', () => {
-        io.socket.post('/message/subscribe', {}, (res, jwr) => {
+        // io.socket.post('/message/subscribe', {}, );
+
+        io.socket.request({
+            method: 'POST',
+            url: '/message/subscribe',
+            headers: getDefaultHeader(),
+
+        }, (res, jwr) => {
+            console.log(res)
+            console.log(jwr)
             console.log('Possibly Joined room')
         });
+
     });
 
 
@@ -45,13 +55,39 @@ const removeEventListener = (name, func) => {
 
 const reconfigToken = () => {
     let { io } = document;
-    if (!io.socket.isConnected()) return
+    // if (!io.socket.isConnected()) return
 
-    io.socket.disconnect();
-    io.sails.headers = {
-        'x-auth-token': window.localStorage.getItem('token')
-    };
-    io.socket.reconnect();
+    io.socket.request({
+        method: 'POST',
+        url: '/message/subscribe',
+        headers: getDefaultHeader(),
+
+    }, (res, jwr) => {
+        console.log(res)
+        console.log(jwr)
+
+        console.log('Possibly Joined room')
+    });
+}
+/**
+ * Removes user from messages, requires current token
+ * @param {string} token
+ */
+const unsubscribeFromMessages = (token) => {
+    const { io } = document;
+    io.socket.request({
+        method: 'POST',
+        url: '/message/unsubscribe',
+        headers: {
+            'x-auth-token': token
+        },
+
+    }, (res, jwr) => {
+        console.log(res)
+        console.log(jwr)
+
+        console.log('Possibly Joined room')
+    });
 }
 
 
@@ -75,8 +111,9 @@ let obj = {
     removeEventListener,
     reconfigToken,
     disconnectSocket,
-    connectSocket
+    connectSocket,
+    unsubscribeFromMessages
 }
 
-export { addEventListener, reconfigToken, removeEventListener };
+export { addEventListener, reconfigToken, removeEventListener, unsubscribeFromMessages };
 export default obj;

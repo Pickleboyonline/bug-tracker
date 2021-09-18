@@ -36,7 +36,7 @@ class App extends React.Component {
       <Router>
         {
 
-          !isAuthed ? <Redirect to="auth" /> : null
+          !isAuthed ? <Redirect to="/auth" /> : null
         }
         {
           (() => {

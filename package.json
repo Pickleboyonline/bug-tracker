@@ -1,6 +1,7 @@
 {
   "name": "bug-tracker",
   "version": "0.1.0",
+  "homepage": "https://bugg.imranbey.com",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.6.3",
