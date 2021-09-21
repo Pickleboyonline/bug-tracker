@@ -1,4 +1,8 @@
-# Getting Started with Create React App
+# Bugg - a bug tracker
+
+Source code for the front end of Bugg
+
+Source code for back end: [link](https://github.com/Pickleboyonline/bug-tracker-server) 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
