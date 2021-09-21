@@ -1,4 +1,4 @@
-import { List, Popconfirm, } from 'antd'
+import { List, Popconfirm, Tag } from 'antd'
 import moment from "moment"
 import { withRouter } from 'react-router-dom'
 
@@ -87,13 +87,16 @@ function BugList(props) {
                         title={<div style={{
                             display: 'inline'
                         }}>
+                            <Tag color={(item.status === 'open' ? "#f50" : "#389e0d")} //"#f50"
+                            >{
+                                    item.status.toUpperCase()
+                                }</Tag>
                             <a href="#" onClick={(e) => viewBug(e, item)}>
                                 {item.title}
                             </a>
 
                         </div>}
-
-                        description={item.plainTextDescription}
+                        description={formatDescription(item.plainTextDescription)}
                     />
                     <div>{'Last modified ' + moment(new Date(item.updatedAt)).fromNow()}</div>
 
@@ -102,6 +105,17 @@ function BugList(props) {
         />
     </>
     )
+}
+
+// Handle overflow description
+function formatDescription(str) {
+    let len = str.length;
+    let maxChar = 100;
+    if (len > maxChar) {
+        return str.substring(0, maxChar) + '...'
+    } else {
+        return str
+    }
 }
 
 export default withRouter(BugList)

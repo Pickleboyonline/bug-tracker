@@ -167,7 +167,7 @@ class BugStats extends React.Component {
 
                                                 value={this.state.values.tags}
                                                 style={{ width: 200 }} placeholder="Tags Mode">
-                                                <Option key={"Poggers"}>Poggers</Option>)
+                                                )
                                             </Select>)
                                         } else {
 

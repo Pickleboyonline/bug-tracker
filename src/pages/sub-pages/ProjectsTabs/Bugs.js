@@ -309,7 +309,6 @@ class App extends React.Component {
                             destroyOnClose
                             title="Submit New Bug"
                             visible={this.state.toggleCreatePopup}
-                            // onOk={() => this.toggleFunc('toggleCreatePopup')}
                             width={900}
                             footer={null}
                             onCancel={() => this.toggleFunc('toggleCreatePopup')}>

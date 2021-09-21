@@ -1,7 +1,7 @@
 
-const isDev = false;
+const isDev = true;
 
-let baseUrl = isDev ? 'http://192.168.0.167:1337' : 'https://bugg.imranbey.com'
+let baseUrl = true ? 'http://192.168.0.167:1337' : 'https://bugg.imranbey.com'
 const getDefaultHeader = () => ({
     'x-auth-token': window.localStorage.getItem('token')
 });

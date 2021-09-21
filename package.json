@@ -17,6 +17,7 @@
     "browser-event-emitter": "^1.0.2",
     "chart.js": "^3.5.1",
     "craco-less": "^1.18.0",
+    "dompurify": "^2.3.3",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "html-to-draftjs": "^1.5.0",
