@@ -73,7 +73,7 @@ const App = (props) => {
             })
 
             const { data } = res;
-            console.log(data)
+
             // TODO: add file upload
 
             if (fileRegister.length !== 0) {

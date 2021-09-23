@@ -66,7 +66,7 @@ function BugList(props) {
             pagination={{
                 // style={{ float: 'right', marginTop: 20 }}
                 current: page,
-                defaultCurrent: 1,
+                // defaultCurrent: 1,
                 total: totalBugCount,
                 onChange: _handlePaginationChange
             }}
