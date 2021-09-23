@@ -17,7 +17,7 @@ import draftToHtml from 'draftjs-to-html';
 import axios from 'axios';
 import { getDefaultHeader } from '../pages/config';
 import { getErrorMessage } from '../libraries/network-error-handling';
-
+import DOMPurify from 'dompurify';
 const { Title, Paragraph, } = Typography;
 
 
@@ -124,7 +124,7 @@ class BugDescription extends React.Component {
                         <Paragraph >
                             <div
                                 // style={{ textAlign: 'center' }}
-                                dangerouslySetInnerHTML={{ __html: this.state.description }} />
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(this.state.description) }} />
                         </Paragraph>
 
                 }

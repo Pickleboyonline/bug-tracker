@@ -33,13 +33,13 @@ class BugStats extends React.Component {
 
 
     componentDidMount() {
-        this._handleUpdateAssignees()
+        this.fetchAssignees()
     }
 
     TOKEN = window.localStorage.getItem('token');
 
     // updates and retrives ALL assignees. _handlePagination takes care of all pagination of array
-    _handleUpdateAssignees = async () => {
+    fetchAssignees = async () => {
         let { search } = this.state;
 
         if (search === '') search = undefined;
@@ -63,7 +63,7 @@ class BugStats extends React.Component {
         }
     }
 
-    _handlePagination = (page, pageSize) => {
+    paginate = (page, pageSize) => {
         if (page === 0) page = 1;
 
         this.setState({
@@ -73,7 +73,7 @@ class BugStats extends React.Component {
     }
 
     // TODO: only search for users apart of the project
-    _handleUserSearch = async () => {
+    searchUsers = async () => {
         let results;
         const { query } = this.state;
         try {
@@ -107,13 +107,13 @@ class BugStats extends React.Component {
         })
     }
 
-    _handleSelectUser = (val) => {
+    selectUser = (val) => {
         this.setState({
             selectedMembers: val
         })
     }
 
-    _handleAddMembers = async () => {
+    addAssignees = async () => {
         const { selectedMembers } = this.state;
         try {
             await axios.post('/bug/assignee', {
@@ -122,7 +122,7 @@ class BugStats extends React.Component {
             }, {
                 headers: getDefaultHeader(),
             })
-            this.setState({ editAssigned: false })
+            this.setState({ editAssigned: false, page: 1 }, this.fetchAssignees)
             message.success('Members added')
         } catch (e) {
             console.error(getErrorMessage(e))
@@ -132,9 +132,6 @@ class BugStats extends React.Component {
 
     render() {
         const { page, pageSize, members } = this.state;
-        // console.log("Page: " + page)
-        // console.log('PageSize: ' + pageSize)
-
         return (
             <div>
                 <Space align='center'>
@@ -156,7 +153,7 @@ class BugStats extends React.Component {
                             onChange={(e) => {
                                 this.setState({
                                     search: e.target.value
-                                }, this._handleUpdateAssignees);
+                                }, this.fetchAssignees);
                             }}
                             placeholder="search" style={{ width: 200 }} />
                         <Button
@@ -177,7 +174,7 @@ class BugStats extends React.Component {
                             size="small"
                             total={this.state.total}
                             current={this.state.page}
-                            onChange={this._handlePagination} showSizeChanger showQuickJumper />
+                            onChange={this.paginate} showSizeChanger showQuickJumper />
 
                     </div>}
                     bordered
@@ -203,8 +200,8 @@ class BugStats extends React.Component {
                 <Modal title="Add More Members..."
                     visible={this.state.editAssigned}
                     onOk={() => {
-                        this._handleAddMembers()
-                        this._handleUpdateAssignees()
+                        this.addAssignees()
+                        this.fetchAssignees()
                     }} onCancel={() => this.setState({ editAssigned: false })}>
                     <Select
                         showSearch
@@ -218,9 +215,9 @@ class BugStats extends React.Component {
                         onSearch={(e) => {
                             this.setState({
                                 query: e
-                            }, this._handleUserSearch)
+                            }, this.searchUsers)
                         }}
-                        onChange={this._handleSelectUser}
+                        onChange={this.selectUser}
                     // notFoundContent={""}
                     >
                         {/* <Option key={'1'}>{query}</Option> */}

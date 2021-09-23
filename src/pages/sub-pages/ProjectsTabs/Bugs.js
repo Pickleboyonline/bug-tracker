@@ -104,11 +104,13 @@ class App extends React.Component {
     }
 
     _handlePaginationChange = (page, pageSize) => {
+        // console.log({ page, pageSize, statePage: this.state.page, statePageSize: this.state.pageSize })
         if (page === this.state.page && pageSize === this.state.pageSize) return;
         this.setState({
             page,
             pageSize
         }, this.fetchBugs)
+
 
     }
 
@@ -122,15 +124,13 @@ class App extends React.Component {
         }
     }
 
-    fetchBugs = async () => {
+    fetchBugs = async (isSearchUpdated) => {
         let id = this.props.location.pathname.split('/');
         id = id[id.length - 1];
         let { pageSize, page, search } = this.state;
 
-        if (search) {
+        if (isSearchUpdated) {
             page = 1
-        } else {
-            search = undefined
         }
 
         let order;
@@ -229,6 +229,7 @@ class App extends React.Component {
         if (locationChanged) {
             let id = this.props.location.pathname.split('/');
             id = id[id.length - 1];
+            console.log('LOCATION CHANGED')
             this.setState({
                 search: '',
                 page: 1
@@ -271,10 +272,10 @@ class App extends React.Component {
                                 onChange={(e) => {
                                     this.setState({
                                         search: e.target.value
-                                    }, this.fetchBugs)
+                                    }, () => this.fetchBugs(true))
                                 }}
                                 onSearch={(e) => {
-                                    this.fetchBugs()
+                                    this.fetchBugs(true)
                                 }} style={{ width: 200 }} />
 
                             <Dropdown overlay={menu({
@@ -309,7 +310,6 @@ class App extends React.Component {
                             destroyOnClose
                             title="Submit New Bug"
                             visible={this.state.toggleCreatePopup}
-                            // onOk={() => this.toggleFunc('toggleCreatePopup')}
                             width={900}
                             footer={null}
                             onCancel={() => this.toggleFunc('toggleCreatePopup')}>
