@@ -3,7 +3,7 @@ import React from 'react';
 import Chart from 'chart.js/auto';
 import { Divider } from 'antd'
 
-class App extends React.Component {
+class App extends React.Component<any, any, unknown> {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,6 +13,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
+        // @ts-ignore
         var ctx = document.getElementById('pieChart').getContext('2d');
         new Chart(ctx, {
             type: 'pie',
