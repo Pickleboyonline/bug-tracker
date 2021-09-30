@@ -11,17 +11,20 @@ import {
 import {
     MessageOutlined
 } from '@ant-design/icons';
-import anime from 'animejs/lib/anime.es.js';
+import anime from 'animejs';
 import MessageContainer from '../components/MessageContainer';
 import CreateConversation from '../components/CreateConversation';
 import { logErrorMessage } from '../libraries/network-error-handling';
 import { addEventListener, removeEventListener } from '../libraries/socket';
 import bugg from './../libraries/bugg';
 
+interface Conversation {
+    id: string,
+    newMessages: boolean
+}
 
-
-class App extends React.Component {
-    constructor(props) {
+class App extends React.Component<any, any> {
+    constructor(props: any) {
         super(props);
         this.state = {
             isAuthed: false,
@@ -49,7 +52,7 @@ class App extends React.Component {
         removeEventListener('new-message', this.fetchConversations)
     }
 
-    toggleHideSimple = (disableRefresh) => {
+    toggleHideSimple = (disableRefresh?: boolean) => {
         let newToggleHide = !this.state.toggleHide;
         this.setState({ toggleHide: newToggleHide })
 
@@ -60,14 +63,14 @@ class App extends React.Component {
         }
     }
 
-    openNewMessage = async (conversationId) => {
+    openNewMessage = async (conversationId: string) => {
         // alert('HEY')
         if (this.state.toggleHide) {
             this.toggleHideSimple(true)
         }
 
         await this.fetchConversations()
-        let conversationIds = this.state.conversations.map(doc => doc.id);
+        let conversationIds = this.state.conversations.map((doc: any) => doc.id);
         console.log(conversationId)
         console.log(conversationIds)
         let ind = conversationIds.indexOf(conversationId);
@@ -78,7 +81,7 @@ class App extends React.Component {
     }
 
     // TODO: rework to aim for multiple components
-    toggleCollapse = (name) => {
+    toggleCollapse = (name: string) => {
         let toggledState = !this.state[name];
 
         this.setState({
@@ -123,16 +126,17 @@ class App extends React.Component {
             //     headers: getDefaultHeader()
             // })
             let conversations = await bugg.Message.getConversations()
+            // @ts-ignore
             await new Promise((res) => this.setState({ conversations }, res))
-        } catch (e) {
+        } catch (e: any) {
             logErrorMessage(e)
         }
     }
 
 
-    selectConversation = (conversation) => {
+    selectConversation = (conversation: Conversation) => {
         let newConvos = this.state.activeConversations
-        if (newConvos.map((doc) => doc.id).includes(conversation.id)) return
+        if (newConvos.map((doc: any) => doc.id).includes(conversation.id)) return
 
         if (newConvos.length === 2) {
             newConvos.splice(0, 1)
@@ -143,30 +147,30 @@ class App extends React.Component {
         this.setState({
             activeConversations: newConvos
         })
-        this.props.setActiveConversationIds(newConvos.map(doc => doc.id))
+        this.props.setActiveConversationIds(newConvos.map((doc: any) => doc.id))
     }
 
     /**
      * removes conversation from state
      * @param {string} conversationId 
      */
-    removeConversation = (conversationId) => {
+    removeConversation = (conversationId: string) => {
         let newConvos = this.state.activeConversations;
-        let index = newConvos.findIndex((value) => value.id === conversationId);
+        let index = newConvos.findIndex((value: Conversation) => value.id === conversationId);
 
         if (index !== -1) {
             newConvos.splice(index, 1);
             this.setState({
                 activeConversations: newConvos
             })
-            this.props.setActiveConversationIds(newConvos.map(doc => doc.id))
+            this.props.setActiveConversationIds(newConvos.map((doc: Conversation) => doc.id))
         }
         this.fetchConversations()
 
     }
 
-    showNew = (conversation) => {
-        let activeConversationsIds = this.state.activeConversations.map(doc => doc.id);
+    showNew = (conversation: Conversation) => {
+        let activeConversationsIds = this.state.activeConversations.map((doc: Conversation) => doc.id);
 
         if (activeConversationsIds.includes(conversation.id)) {
             return false;
@@ -197,7 +201,7 @@ class App extends React.Component {
                         placement='right'
                         title="Messages">
                         <Button shape="circle" size='large'
-                            onClick={this.toggleHideSimple}
+                            onClick={() => this.toggleHideSimple()}
                             icon={<MessageOutlined />} />
                     </Tooltip>}
                 {
@@ -210,7 +214,7 @@ class App extends React.Component {
                         isMobile={isMobile}
                         sendMessage={() => this.setState({ createConversationIsVisible: true })}
                         conversations={this.state.conversations}
-                        selectConversation={(e, item) => {
+                        selectConversation={(e: Event, item: Conversation) => {
                             this.selectConversation(item)
                             e.preventDefault()
                         }}
@@ -219,7 +223,7 @@ class App extends React.Component {
                 </div>
 
                 {
-                    this.state.activeConversations.map((item) =>
+                    this.state.activeConversations.map((item: Conversation) =>
                         <MessageContainer
                             key={item.id}
                             socket={this.state.socket}
@@ -236,7 +240,7 @@ class App extends React.Component {
                         placement='right'
                         title="Messages">
                         <Button shape="circle" size='large'
-                            onClick={this.toggleHideSimple}
+                            onClick={() => this.toggleHideSimple()}
                             icon={<MessageOutlined />} />
                     </Tooltip>}
 

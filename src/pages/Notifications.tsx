@@ -12,8 +12,19 @@ import {
 import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import { getDefaultHeader } from './config';
 import { addEventListener, removeEventListener } from '../libraries/socket';
+import { BuggNotification } from './Dashboard';
+import { StaticContext } from 'react-router';
 
-class Notification extends React.Component {
+interface NotifactionState extends StaticContext {
+    page: number,
+    pageSize: number,
+    notifications: BuggNotification[],
+    total: number,
+    isListening: boolean
+}
+
+
+class Notification extends React.Component<any, NotifactionState, unknown> {
 
     state = {
         page: 1,
@@ -30,7 +41,7 @@ class Notification extends React.Component {
         // alert('hi')
     }
 
-    getAction = (notification) => {
+    getAction = (notification: BuggNotification) => {
         switch (notification.type) {
             case 'PROJECT_INVITE':
                 this.props.joinProject(notification.payload.projectId)
@@ -64,14 +75,14 @@ class Notification extends React.Component {
      * Dismisses notification on server
      * @param {string} notificationId Id of notification
      */
-    dismissNotification = async (notificationId) => {
+    dismissNotification = async (notificationId: string) => {
         try {
             await axios.delete('/notification/' + notificationId, {
                 headers: getDefaultHeader()
             })
             this.fetchNotifications()
             message.success("Notification Dismissed")
-        } catch (e) {
+        } catch (e: any) {
             logErrorMessage(e)
             message.error("Error: " + getErrorMessage(e))
         }
@@ -85,7 +96,7 @@ class Notification extends React.Component {
             })
             this.fetchNotifications()
             message.success("All notifications were dismissed")
-        } catch (e) {
+        } catch (e: any) {
             logErrorMessage(e)
             message.error("Error: " + getErrorMessage(e))
         }
@@ -93,18 +104,12 @@ class Notification extends React.Component {
     }
 
 
-    onRecieveNotitification = (notif) => {
+    onRecieveNotitification = () => {
         this.setState({
             page: 1
         }, this.fetchNotifications);
 
     }
-
-    // componentDidUpdate(prevProps) {
-    //     if (prevProps.socket === null && this.props.socket !== null) {
-    //         this.props.socket.on('new-notification', this.onRecieveNotitification)
-    //     }
-    // }
 
 
     fetchNotifications = async () => {
@@ -125,22 +130,25 @@ class Notification extends React.Component {
                 total: data.totalNotifications
             })
 
-        } catch (e) {
+        } catch (e: any) {
             logErrorMessage(e)
         }
     }
 
-    updatePagination = (page, pageSize) => {
+    updatePagination = (page: number, pageSize?: number) => {
+
         this.setState({
-            page, pageSize
+            page,
+            pageSize: (pageSize ? pageSize : this.state.pageSize)
         }, this.fetchNotifications)
     }
 
-    getNotificationActionMessage = (type) => {
+    getNotificationActionMessage = (type: string) => {
         let message = {
             'PROJECT_INVITE': 'Join Project',
             'NEW_MESSAGE': 'View Message'
         }
+        // @ts-ignore
         return message[type] ?? 'View'
     }
 
@@ -159,12 +167,12 @@ class Notification extends React.Component {
                 <List
                     pagination={{
                         pageSize: this.state.pageSize,
-                        page: this.state.page,
                         onChange: this.updatePagination,
-                        total: this.state.total
+                        total: this.state.total,
+                        current: this.state.page
                     }}
                     dataSource={this.state.notifications}
-                    renderItem={item =>
+                    renderItem={(item: BuggNotification) =>
                         <div
                             key={item.id}
                             style={{

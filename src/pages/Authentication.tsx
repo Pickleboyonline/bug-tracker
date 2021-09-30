@@ -16,7 +16,9 @@ import { baseUrl } from './config';
 
 const { Title } = Typography;
 
+interface error {
 
+}
 
 const AuthenticationHooks = () => {
     const [name, setName] = useState('');
@@ -49,7 +51,7 @@ const AuthenticationHooks = () => {
                         password,
                     })
             }
-        } catch (e) {
+        } catch (e: any) {
             let message = getErrorMessage(e)
             console.error("Error: " + message);
             notification.error({
@@ -94,7 +96,7 @@ const AuthenticationHooks = () => {
             reconfigToken()
             setLoading(false)
             setIsAuthed(true)
-        } catch (e) {
+        } catch (e: any) {
             setLoading(false)
             notification.error({
                 message: getErrorMessage(e)

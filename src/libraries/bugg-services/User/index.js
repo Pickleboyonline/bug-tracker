@@ -83,7 +83,7 @@ const updatePassword = async (password, newPassword) => {
 /**
  * Returns user avatar icon based on user id. Returns logged in user id by 
  * default
- * @param {string} id
+ * @param {string} [id] id
  * @returns {string} iconId
  */
 const getUserIconUri = async (id) => {

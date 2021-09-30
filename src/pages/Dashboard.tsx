@@ -10,7 +10,7 @@ import {
     notification,
     message
 } from 'antd';
-import Home from './../components/Home';
+import Home from '../components/Home';
 import Settings from './Settings';
 import Notifications from './Notifications';
 import Messages from './Messages';
@@ -19,15 +19,42 @@ import MediaQuery from 'react-responsive';
 import DesktopNavBar from '../components/DesktopNavBar';
 import NavWelcomeHeader from '../components/NavWelcomeHeader';
 import MobileNavBar from '../components/MobileNavBar';
-import { getErrorMessage, logErrorMessage } from './../libraries/network-error-handling';
+import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import { baseUrl, getDefaultHeader } from './config';
 import bugg from '../libraries/bugg';
-import { addEventListener, removeEventListener, reconfigToken, unsubscribeFromMessages } from './../libraries/socket';
+import { addEventListener, removeEventListener, reconfigToken, unsubscribeFromMessages } from '../libraries/socket';
+import { StaticContext } from 'react-router';
 
+interface DashboardProps {
+    location: any,
+    history: any
+}
 
+export interface BuggNotification {
+    payload: any,
+    type: string,
+    id: string,
+    title: string,
+    read: boolean,
+    description: string,
+    createdAt: number
+}
 
-class App extends React.Component {
-    constructor(props) {
+interface DashboardState extends StaticContext {
+    isAuthed: boolean,
+    collapsed: boolean,
+    toggleDrawer: boolean,
+    projects: any,
+    socket: any,
+    name: string,
+    userIconUri: string,
+    unreadNotifications: number,
+    activeConversationIds: any,
+    initialStyles: any
+}
+
+class App extends React.Component<any, DashboardState, unknown> {
+    constructor(props: DashboardProps) {
         super(props);
         this.state = {
             isAuthed: false,
@@ -46,7 +73,7 @@ class App extends React.Component {
 
     }
 
-    setActiveConversationIds = (value) => this.setState({ activeConversationIds: value })
+    setActiveConversationIds = (value: string[]) => this.setState({ activeConversationIds: value })
 
     fetchUnreadNotifications = async () => {
 
@@ -56,7 +83,7 @@ class App extends React.Component {
             this.setState({
                 unreadNotifications
             })
-        } catch (e) {
+        } catch (e: any) {
             // alert(getErrorMessage(e))
             logErrorMessage(e)
         }
@@ -74,22 +101,22 @@ class App extends React.Component {
         try {
             await axios.get('/throw-error')
         } catch (e) {
-            let message = getErrorMessage(e);
+            let message = getErrorMessage(e as Error);
             console.log(message)
         }
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.props.location !== prevProps.location) {
+    componentDidUpdate(prevProps: any) {
+        if ((this.props.location as any) !== prevProps.location) {
             this.updateProjects()
         }
     }
 
 
-    openNewMessage = () => undefined;
+    openNewMessage = (conversationId: string) => { };
 
-    setOpenNewMessage = (func) => {
-        this.openNewMessage = (conversationId) => {
+    setOpenNewMessage = (func: (convoId: string) => void) => {
+        this.openNewMessage = (conversationId: string) => {
             func(conversationId)
             this.setState({
                 toggleDrawer: false
@@ -98,7 +125,7 @@ class App extends React.Component {
     }
 
     logout = () => {
-        let token = window.localStorage.getItem('token');
+        let token = window.localStorage.getItem('token') ?? '';
         unsubscribeFromMessages(token);
         window.localStorage.removeItem('token');
         this.props.history.push('/auth')
@@ -114,11 +141,11 @@ class App extends React.Component {
             });
             // console.log(data.projects)
         } catch (e) {
-            console.error(getErrorMessage(e))
+            console.error(getErrorMessage(e as Error))
         }
     }
 
-    getAction = (notification) => {
+    getAction = (notification: BuggNotification) => {
         switch (notification.type) {
             case 'PROJECT_INVITE':
                 this.joinProject(notification.payload.projectId)
@@ -146,18 +173,19 @@ class App extends React.Component {
     }
 
 
-    getNotificationCallToAction = (type) => {
+    getNotificationCallToAction = (type: string) => {
         let messages = {
             'PROJECT_INVITE': ' Click this notification to join.',
             'NEW_MESSAGE': ' Click this notification to view.',
         }
-
+        // @ts-ignore
         return messages[type] ?? ' Click this notification to view.'
     }
 
-    onRecieveNotitification = (notif) => {
+    onRecieveNotitification = (notif: any) => {
         // alert('SHIT')
         this.fetchUnreadNotifications()
+        // @ts-ignore
         if (notif.type === 'NEW_MESSAGE' && this.state.activeConversationIds.includes(notif.payload.conversationId)) return
 
         notification.open({
@@ -175,14 +203,14 @@ class App extends React.Component {
      * Dismisses notification on server
      * @param {string} notificationId Id of notification
      */
-    dismissNotification = async (notificationId) => {
+    dismissNotification = async (notificationId: string) => {
         try {
             await axios.delete(baseUrl + '/notification/' + notificationId, {
                 headers: getDefaultHeader()
             })
             this.fetchUnreadNotifications()
 
-        } catch (e) {
+        } catch (e: any) {
             logErrorMessage(e)
 
         }
@@ -194,7 +222,7 @@ class App extends React.Component {
     }
 
     getWelcomeMessage = async () => {
-        let formatName = (name) => {
+        let formatName = (name: string) => {
             var nameSegments = name.split(' ');
             let shortHandName = nameSegments[0];
 
@@ -206,18 +234,18 @@ class App extends React.Component {
         }
         try {
             let user = await bugg.User.getMe();
-            let userIconUri = await bugg.User.getUserIconUri();
+            let userIconUri = await bugg.User.getUserIconUri()
             this.setState({
                 name: formatName(user.name),
                 userIconUri
             });
-        } catch (e) {
+        } catch (e: any) {
             console.error(getErrorMessage(e))
         }
     }
 
 
-    joinProject = async (projectId) => {
+    joinProject = async (projectId: string) => {
 
         try {
             let { data } = await axios.post('/project/join', {
@@ -229,7 +257,7 @@ class App extends React.Component {
                 message: 'You have joined project ' + data.project.title + '!'
             })
             this.updateProjects();
-        } catch (e) {
+        } catch (e: any) {
             logErrorMessage(e);
             notification.error({
                 message: getErrorMessage(e)
@@ -242,7 +270,7 @@ class App extends React.Component {
 
         return (
             <MediaQuery maxWidth={800}>
-                {(isMobile) =>
+                {(isMobile: boolean) =>
                     <div
                         id="bugg-dashboard"
                         className="Dashboard" style={{
@@ -327,5 +355,5 @@ class App extends React.Component {
 }
 
 
-
+// @ts-ignore
 export default withRouter(App);
