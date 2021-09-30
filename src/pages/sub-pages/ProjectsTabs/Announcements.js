@@ -28,7 +28,7 @@ import moment from 'moment';
 import MediaQuery from 'react-responsive';
 import bugg from '../../../libraries/bugg';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
-import { getDefaultHeader } from '../../config';
+import { getDefaultHeader } from './../../config';
 
 
 

@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import JoinProject from './JoinProject';
 import { useMediaQuery } from 'react-responsive'
-import { baseUrl } from '../pages/config';
+import { baseUrl } from './../pages/config';
 
 function Home(props) {
 

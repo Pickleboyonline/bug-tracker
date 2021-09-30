@@ -25,7 +25,7 @@ import MediaQuery from 'react-responsive'
 import BugList from './../../../components/BugList';
 import bugg from '../../../libraries/bugg';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
-import { getDefaultHeader, staticServerUrl } from '../../config';
+import { getDefaultHeader, staticServerUrl } from './../../config';
 
 const { Search } = Input;
 

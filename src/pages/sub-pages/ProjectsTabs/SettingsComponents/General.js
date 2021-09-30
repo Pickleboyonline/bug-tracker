@@ -14,7 +14,7 @@ import { useHistory } from "react-router";
 import {
     withRouter
 } from "react-router-dom";
-import config, { baseUrl, getDefaultHeader } from "../../../config"
+import config, { baseUrl, getDefaultHeader } from './../../../config';
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 import bugg from "./../../../../libraries/bugg";
 

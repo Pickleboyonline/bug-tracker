@@ -12,7 +12,7 @@ import { Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import draftToHtml from 'draftjs-to-html';
-import { getDefaultHeader } from '../pages/config';
+import { getDefaultHeader } from './../pages/config';
 import { getErrorMessage } from '../libraries/network-error-handling';
 
 const { Dragger } = Upload;

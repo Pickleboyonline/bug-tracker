@@ -1,7 +1,7 @@
 /**
  * Setup single sails socket instance
  */
-import { baseUrl, getDefaultHeader } from '../pages/config'
+import { baseUrl, getDefaultHeader } from './../pages/config'
 // import { Socket } from 'socket.io-client';
 // import SailsIOJS from 'sails.io.js';
 

@@ -13,7 +13,7 @@ import axios from 'axios';
 import ViewBug from './../ProjectsTabs/ViewBug';
 import MediaQuery from 'react-responsive';
 import { logErrorMessage } from '../../../libraries/network-error-handling';
-import { getDefaultHeader } from '../../config';
+import { getDefaultHeader } from './../../config';
 
 class App extends React.Component {
     constructor(props) {

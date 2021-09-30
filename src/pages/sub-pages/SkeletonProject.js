@@ -22,7 +22,7 @@ import {
 import axios from 'axios';
 import MediaQuery from 'react-responsive'
 import { logErrorMessage } from '../../libraries/network-error-handling';
-import { baseUrl, getDefaultHeader } from '../config';
+import { baseUrl, getDefaultHeader } from './../config';
 
 
 class App extends React.Component {
