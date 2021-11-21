@@ -25,7 +25,7 @@ import MediaQuery from 'react-responsive'
 import BugList from './../../../components/BugList';
 import bugg from '../../../libraries/bugg';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
-import { getDefaultHeader, staticServerUrl } from '../../config';
+import { getDefaultHeader, staticServerUrl } from './../../config';
 
 const { Search } = Input;
 
@@ -75,7 +75,7 @@ const menu = (props) => (
     </Menu>
 );
 
-class App extends React.Component {
+class App extends React.Component<any, any, unknown> {
     constructor(props) {
         super(props);
         this.state = {
@@ -124,7 +124,7 @@ class App extends React.Component {
         }
     }
 
-    fetchBugs = async (isSearchUpdated) => {
+    fetchBugs = async (isSearchUpdated?: boolean) => {
         let id = this.props.location.pathname.split('/');
         id = id[id.length - 1];
         let { pageSize, page, search } = this.state;
@@ -261,7 +261,7 @@ class App extends React.Component {
 
                                 type="primary" onClick={() => this.toggleFunc('toggleCreatePopup')}>Submit New</Button>
                             <Button
-                                onClick={this.fetchBugs}
+                                onClick={() => this.fetchBugs()}
                             >
                                 Refresh
                             </Button>
@@ -348,6 +348,7 @@ class App extends React.Component {
                                         await navigator.clipboard.writeText(textToCopy);
                                         message.success('Link copied to clipboard!')
                                     } else {
+                                        // @ts-ignore
                                         window.Clipboard.copy(textToCopy)
                                         message.success('Link copied to clipboard!')
                                     }
@@ -382,6 +383,7 @@ class App extends React.Component {
 }
 
 // Safari copy to clipboard fix
+// @ts-ignore
 window.Clipboard = (function (window, document, navigator) {
     var textArea,
         copy;

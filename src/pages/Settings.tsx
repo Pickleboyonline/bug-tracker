@@ -22,7 +22,7 @@ const data = [
 
 
 
-class Settings extends React.Component {
+class Settings extends React.Component<any, any, unknown> {
     state = {
         selectedSetting: data[0].toLowerCase(),
         user: {

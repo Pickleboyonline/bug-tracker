@@ -17,7 +17,7 @@ import {
 import axios from "axios";
 import ModifyRole from './../../../../components/ModifyRole'
 import { CirclePicker } from 'react-color'
-import { getDefaultHeader } from "../../../config"
+import { getDefaultHeader } from './../../../config';
 import { getErrorMessage, logErrorMessage } from "../../../../libraries/network-error-handling";
 
 const PERMISSIONS = {

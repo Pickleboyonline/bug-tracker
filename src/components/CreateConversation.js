@@ -1,7 +1,7 @@
 import react from "react";
 import { Input, message, Modal, Select } from "antd";
 import axios from "axios";
-import { getDefaultHeader } from '../pages/config';
+import { getDefaultHeader } from './../pages/config';
 import { getErrorMessage } from '../libraries/network-error-handling';
 
 

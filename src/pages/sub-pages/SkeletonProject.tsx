@@ -25,7 +25,7 @@ import { logErrorMessage } from '../../libraries/network-error-handling';
 import { baseUrl, getDefaultHeader } from '../config';
 
 
-class App extends React.Component {
+class App extends React.Component<any, any, unknown> {
     constructor(props) {
         super(props);
         let id = this.props.location.pathname.split('/');
@@ -79,7 +79,7 @@ class App extends React.Component {
         }
     }
 
-    updateProject = async (id) => {
+    updateProject = async (id?: string) => {
         const token = window.localStorage.getItem('token');
         id = id || this.state.project.id;
         try {

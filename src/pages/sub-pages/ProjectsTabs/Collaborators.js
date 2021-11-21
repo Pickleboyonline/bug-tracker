@@ -9,7 +9,7 @@ import axios from 'axios';
 import { DeleteOutlined } from '@ant-design/icons'
 import { getMe } from '../../../libraries/bugg';
 import { getErrorMessage, logErrorMessage } from '../../../libraries/network-error-handling';
-import { getDefaultHeader } from '../../config';
+import { getDefaultHeader } from './../../config';
 
 const { Search } = Input;
 const { Option } = Select;

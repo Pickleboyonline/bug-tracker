@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios';
 import anime from 'animejs';
-import { getDefaultHeader } from '../pages/config';
+import { getDefaultHeader } from './../pages/config';
 import { getErrorMessage, logErrorMessage } from '../libraries/network-error-handling';
 import bugg from '../libraries/bugg'
 import { addEventListener, removeEventListener } from './../libraries/socket';

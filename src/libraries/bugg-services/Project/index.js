@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getDefaultHeader, baseUrl } from '../../../pages/config';
+import { getDefaultHeader, baseUrl } from './../../../pages/config';
 import { getErrorMessage } from '../../network-error-handling';
 
 

@@ -1,24 +1,26 @@
-import React from 'react';
+import React, { Component } from 'react';
 // import moment from 'moment';
 import {
     Space,
     Input, Avatar, Select,
     Button, Divider, Typography, List, Pagination, Modal, message
 } from 'antd';
+// @ts-ignore
 import { PlusOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import {
     withRouter,
 
 } from "react-router-dom";
-import { getDefaultHeader } from '../pages/config';
+import { getDefaultHeader } from './../pages/config';
 import { getErrorMessage } from '../libraries/network-error-handling';
+import PropTypes from 'prop-types';
 
 const { Title } = Typography;
 const { Option } = Select;
 
 
-class BugStats extends React.Component {
+class BugStats extends Component {
     state = {
         editAssigned: false,
         assignees: [],
@@ -30,6 +32,7 @@ class BugStats extends React.Component {
         members: [],
         selectedMembers: []
     };
+    static propTypes: {};
 
 
     componentDidMount() {
@@ -41,13 +44,14 @@ class BugStats extends React.Component {
     // updates and retrives ALL assignees. _handlePagination takes care of all pagination of array
     fetchAssignees = async () => {
         let { search } = this.state;
-
+        // @ts-ignore
         if (search === '') search = undefined;
         // console.log(search)
         try {
             let { data } = await axios.get('/bug/assignee', {
                 headers: getDefaultHeader(),
                 params: {
+                    // @ts-ignore
                     bugId: this.props.bug.id,
                     search
                 }
@@ -58,11 +62,11 @@ class BugStats extends React.Component {
                 assignees: data.users,
                 total: data.total
             })
-        } catch (e) {
+        } catch (e) {// @ts-ignore
             console.error(getErrorMessage(e))
         }
     }
-
+    // @ts-ignore
     paginate = (page, pageSize) => {
         if (page === 0) page = 1;
 
@@ -80,12 +84,14 @@ class BugStats extends React.Component {
             results = await axios.get('/user/search', {
                 params: {
                     query: query,
+                    // @ts-ignore
                     projectId: this.props.match.params.projectId,
                     isIn: true
                 },
                 headers: getDefaultHeader(),
             })
         } catch (e) {
+            // @ts-ignore
             console.error(getErrorMessage(e))
 
             return
@@ -106,7 +112,7 @@ class BugStats extends React.Component {
             members: newMembers
         })
     }
-
+    // @ts-ignore
     selectUser = (val) => {
         this.setState({
             selectedMembers: val
@@ -118,6 +124,7 @@ class BugStats extends React.Component {
         try {
             await axios.post('/bug/assignee', {
                 assignees: selectedMembers.join(','),
+                // @ts-ignore
                 bugId: this.props.bug.id
             }, {
                 headers: getDefaultHeader(),
@@ -125,7 +132,9 @@ class BugStats extends React.Component {
             this.setState({ editAssigned: false, page: 1 }, this.fetchAssignees)
             message.success('Members added')
         } catch (e) {
+            // @ts-ignore
             console.error(getErrorMessage(e))
+            // @ts-ignore
             message.error("Error: " + getErrorMessage(e))
         }
     }
@@ -183,11 +192,17 @@ class BugStats extends React.Component {
                         //console.log(ind)
                         if (ind >= (page - 1) * pageSize && ind < (page - 1) * pageSize + pageSize) {
                             return (
+                                // @ts-ignore
                                 <List.Item key={item.id ?? ind}>
                                     <Avatar style={{ color: '#f56a00', backgroundColor: '#fde3cf', marginRight: 15 }}>
-                                        {item.name.substring(0, 1)}
+
+                                        {
+                                            // @ts-ignore
+                                            item.name.substring(0, 1)}
                                     </Avatar>
-                                    {`${item.name.split(' ')[0]} ${(item.name.split(' ')[1] ? item.name.split(' ')[1].substring(0, 1).toUpperCase() + '.' : '')} (${item.email})`}
+                                    {
+                                        // @ts-ignore
+                                        `${item.name.split(' ')[0]} ${(item.name.split(' ')[1] ? item.name.split(' ')[1].substring(0, 1).toUpperCase() + '.' : '')} (${item.email})`}
                                 </List.Item>
                             )
                         }
@@ -221,7 +236,7 @@ class BugStats extends React.Component {
                     // notFoundContent={""}
                     >
                         {/* <Option key={'1'}>{query}</Option> */}
-                        {
+                        {// @ts-ignore
                             members.map(doc => <Option key={doc.id}>{`${doc.name} (${doc.email})`}</Option>)
                         }
                     </Select>
@@ -233,5 +248,10 @@ class BugStats extends React.Component {
     }
 }
 
+BugStats.propTypes = {
+    name: PropTypes.string,
+    bug: PropTypes.object
+}
 
+// @ts-ignore
 export default withRouter(BugStats);

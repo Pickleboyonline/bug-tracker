@@ -77,7 +77,7 @@ function Message(props) {
     )
 }
 
-class App extends React.Component {
+class App extends React.Component<any, any, unknown> {
     constructor(props) {
         super(props);
         this.state = {
@@ -160,7 +160,7 @@ class App extends React.Component {
     // will append new announcemnts
     // DOES NOT CHANGE LOADING STATE
     // Will query for 20 at a time
-    fetchAndSetAnnouncements = async (resetList) => {
+    fetchAndSetAnnouncements = async (resetList?: boolean) => {
         // await (new Promise((res) => setTimeout(res, 2000)))
         const { announcements, search, sortBy } = this.state
         let skip = announcements.length;
@@ -320,7 +320,7 @@ class App extends React.Component {
                                     <List
                                         itemLayout="horizontal"
                                         dataSource={this.state.announcements}
-                                        renderItem={(item) => (
+                                        renderItem={(item: any) => (
 
                                             <List.Item
                                                 key={item.id}

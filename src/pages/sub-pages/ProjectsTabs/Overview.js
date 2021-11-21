@@ -4,7 +4,7 @@ import { Card, Statistic, Row, Col, Space } from 'antd';
 import axios from 'axios';
 import MediaQuery from 'react-responsive'
 import { logErrorMessage } from '../../../libraries/network-error-handling';
-import { getDefaultHeader } from '../../config';
+import { getDefaultHeader } from './../../config';
 
 
 class App extends React.Component {

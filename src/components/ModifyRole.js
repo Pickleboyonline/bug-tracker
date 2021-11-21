@@ -8,7 +8,7 @@ import { CirclePicker } from 'react-color';
 import {
     withRouter
 } from "react-router-dom";
-import { getDefaultHeader } from '../pages/config';
+import { getDefaultHeader } from './../pages/config';
 import { getErrorMessage } from '../libraries/network-error-handling';
 
 

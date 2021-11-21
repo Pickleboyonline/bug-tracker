@@ -4,7 +4,7 @@ import {
     , Space, notification
 } from 'antd'
 import axios from 'axios';
-import { getDefaultHeader } from '../pages/config';
+import { getDefaultHeader } from './../pages/config';
 import { getErrorMessage } from '../libraries/network-error-handling';
 
 const JoinProject = (props) => {
